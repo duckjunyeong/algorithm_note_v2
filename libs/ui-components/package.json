@@ -9,6 +9,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.2.8",
     "@radix-ui/react-slot": "^1.1.0",
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.4.0"
@@ -21,6 +22,7 @@
     "@storybook/react": "^8.2.6",
     "@storybook/react-vite": "^8.2.6",
     "@storybook/test": "^8.2.6",
+    "@types/react": "^19.1.13",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "storybook": "^8.2.6"

@@ -118,6 +118,12 @@ export function UserProfile({ userId }: UserProfileProps) {
 *   Use dynamic loading for non-critical components.
 *   Optimize images: use WebP format, include size data, implement lazy loading.
 
+### Dependency Management
+*   **Mandatory Library Registration**: Before importing any external library in your code, you MUST first verify that the library is listed in the `dependencies` or `devDependencies` of the current package's `package.json` file.
+*   **Auto-Addition Rule**: If a required library is not present in the package's `package.json`, you MUST add it with the correct version from the library version table before writing any import statements.
+*   **Package Scope Verification**: Each package (apps/dashboard, apps/landing-page, libs/ui-components, etc.) maintains its own dependencies. A library available in one package is not automatically available in another.
+*   **Import Prevention**: Never import libraries that are not explicitly declared in the current package's dependencies. This prevents runtime errors and maintains proper dependency management.
+
 ### Key Conventions
 *   Use `'nuqs'` for URL search parameter state management.
 *   Optimize Web Vitals (LCP, CLS, FID).
