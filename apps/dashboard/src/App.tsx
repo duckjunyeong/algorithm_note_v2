@@ -1,9 +1,9 @@
 import React from "react"
-import { SignInWithEmailButton }from "../../../libs/ui-components/src/components/sign-in-with-email-button"
+import SignInPage from "./pages/SignIn"
 
 function App() {
   return (
-    <SignInWithEmailButton onClick={() => alert("Clicked!")} />
+    <SignInPage />
   )
 }
 
