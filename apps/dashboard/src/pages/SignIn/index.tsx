@@ -1,10 +1,12 @@
-import LoginPageView from "./LoginPage.view"; 
+import SignInPageView from "./SignInPage.view";
+import { useSignIn } from "./useSignIn";
 
-const LoginPage = () => {
+const SignInPage = () => {
+  const { handleEmailSignInClick } = useSignIn();
 
   return (
-    <LoginPageView />
+    <SignInPageView onEmailSignInClick={handleEmailSignInClick} />
   )
 }
 
-export default LoginPage;
+export default SignInPage;

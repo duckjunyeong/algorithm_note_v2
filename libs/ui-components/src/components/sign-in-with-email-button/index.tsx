@@ -16,7 +16,7 @@ export const SignInWithEmailButton = ({
       type="button"
       className={`
         flex items-center justify-center gap-2 w-full px-4 py-2.5
-        bg-[#1E2025] text-[#E3E4E6] font-medium rounded-lg text-sm
+        bg-[#1E2025] text-[#E3E4E6] font-medium rounded-lg text-xs
         transition-colors duration-200
         hover:bg-[#2a2d33]
         disabled:opacity-75 disabled:cursor-not-allowed
