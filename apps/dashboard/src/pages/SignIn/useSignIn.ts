@@ -7,7 +7,12 @@ export function useSignIn() {
     navigate('/sign-in/email');
   };
 
+  const handleSignUpClick = () => {
+    navigate('/sign-up');
+  };
+
   return {
-    handleEmailSignInClick
+    handleEmailSignInClick,
+    handleSignUpClick
   };
 }

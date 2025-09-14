@@ -4,9 +4,10 @@ import { SignInWithEmailButton } from '../../../../../libs/ui-components/src/com
 
 interface SignInPageViewProps {
   onEmailSignInClick: () => void;
+  onSignUpClick: () => void;
 }
 
-const SignInPageView: React.FC<SignInPageViewProps> = ({ onEmailSignInClick }) => {
+const SignInPageView: React.FC<SignInPageViewProps> = ({ onEmailSignInClick, onSignUpClick }) => {
   return (
     <main className="bg-black text-white min-h-screen flex items-center justify-center p-4">
       
@@ -25,9 +26,9 @@ const SignInPageView: React.FC<SignInPageViewProps> = ({ onEmailSignInClick }) =
         
         <p className="mt-8 text-sm text-gray-400 text-xs">
           Don't have an account?
-          <a href="#" className="font-semibold text-white hover:underline ml-1 text-xs">
+          <button onClick={onSignUpClick} className="font-semibold text-white hover:underline ml-1 text-xs">
             Sign up
-          </a> or
+          </button> or
           <a href="#" className="font-semibold text-white hover:underline ml-1 text-xs">
             Learn more
           </a>

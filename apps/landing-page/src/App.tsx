@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { SignIn, SignOutButton, SignedIn, SignedOut } from '@clerk/clerk-react'
-import { AuthTest } from '../../../libs/ui-components/src/components/auth-test'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -21,7 +20,6 @@ function App() {
       <h1>AlgoRevise Landing</h1>
 
       <div style={{ margin: '2rem 0' }}>
-        <AuthTest />
       </div>
 
       <SignedOut>

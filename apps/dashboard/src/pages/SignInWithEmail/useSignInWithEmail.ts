@@ -43,13 +43,9 @@ export function useSignInWithEmail() {
     setIsLoading(true);
 
     try {
-      // Use Clerk's signIn.create method to start email sign-in flow
       await signIn?.create({
         identifier: email,
       });
-
-      // Additional sign-in flow logic would go here
-      // For now, we'll just log success
       console.log('Email sign-in initiated for:', email);
 
     } catch (err) {

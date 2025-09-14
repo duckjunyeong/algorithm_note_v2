@@ -1,12 +1,14 @@
 import React from 'react'
 
 interface SignInWithEmailButtonProps extends React.ComponentPropsWithoutRef<'button'> {
-  onClick: () => void
+  onClick: () => void;
+  children?: React.ReactNode;
 }
 
 export const SignInWithEmailButton = ({
   onClick,
   disabled,
+  children,
   ...props
 }: SignInWithEmailButtonProps) => {
   return (
@@ -23,7 +25,7 @@ export const SignInWithEmailButton = ({
       `}
       {...props}
     >
-      <span>Continue with Email</span>
+      <span>{children || 'Continue with Email'}</span>
     </button>
   )
 }
