@@ -1,4 +1,8 @@
 /* CSS Reset - 브라우저 기본 스타일 제거 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 *,
 *::before,
 *::after {
