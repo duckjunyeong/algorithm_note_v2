@@ -1,1 +1,3 @@
 rootProject.name = 'algorithm_note_v2'
+
+include 'backend'

@@ -1,5 +1,3 @@
-// libs/ui-components/src/components/sign-in-with-google-button/useSignInWithGoogleButton.ts
-
 import { useSignIn } from '@clerk/clerk-react'
 
 export const useSignInWithGoogleButton = () => {

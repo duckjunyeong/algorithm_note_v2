@@ -75,9 +75,7 @@ export function useSignUpWithEmail() {
     setError('');
   };
 
-  // Step 1: Email existence check
   const checkEmailAndProceed = async () => {
-    // Validate email with Zod
     const validation = emailSchema.safeParse({ email });
 
     if (!validation.success) {
@@ -89,12 +87,10 @@ export function useSignUpWithEmail() {
     setIsLoading(true);
 
     try {
-      // Try to create a signup attempt to check if email exists
       await signUp?.create({
         emailAddress: email,
       });
 
-      // If we reach here, email is available for signup
       setStep('password');
     } catch (err: any) {
       console.error('Email check error:', err);
@@ -113,9 +109,7 @@ export function useSignUpWithEmail() {
     }
   };
 
-  // Step 2: Password input and account creation
   const createAccount = async () => {
-    // Validate password with Zod
     const validation = passwordSchema.safeParse({ password });
 
     if (!validation.success) {
@@ -144,9 +138,7 @@ export function useSignUpWithEmail() {
     }
   };
 
-  // Step 3: Email verification
   const verifyEmailAndComplete = async () => {
-    // Validate verification code with Zod
     const validation = verificationCodeSchema.safeParse({ code: verificationCode });
 
     if (!validation.success) {
@@ -158,16 +150,14 @@ export function useSignUpWithEmail() {
     setIsLoading(true);
 
     try {
-      // Verify the email address
       const result = await signUp?.attemptEmailAddressVerification({
         code: verificationCode,
       });
 
       if (result?.status === 'complete') {
-        // Set the active session
+        console.log('reuslt', result);
         await setActive({ session: result.createdSessionId });
 
-        // Navigate to dashboard
         navigate('/dashboard');
       }
     } catch (err: any) {

@@ -7,9 +7,7 @@ export function useSignUp() {
   const navigate = useNavigate();
   const { signUp, isLoaded } = useClerkSignUp();
 
-  // Check if user previously used Google (mock implementation)
   useEffect(() => {
-    // In a real app, this would check cookies, localStorage, or session data
     const googleHistory = localStorage.getItem('previous-google-login');
     setHasGoogleHistory(!!googleHistory);
   }, []);
