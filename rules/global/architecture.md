@@ -81,6 +81,13 @@ graph TD
 - **기능 기반 모듈**: 사용자 인증, 문제 등록, AI 분석, 결제 처리 등 관련 기능을 함께 그룹화합니다.
 - **공유 컴포넌트**: 공통 유틸리티, 타입, 재사용 가능한 컴포넌트를 전용 공유 모듈에 배치합니다.
 
+**백엔드 Spring Boot 아키텍처 규칙**
+- **Package-by-Feature 구조**: 기능별로 패키지를 구성하여 관련 컴포넌트(controller, service, dto, repository, domain)를 함께 배치
+- **중앙집중식 예외 처리**: `@RestControllerAdvice`를 사용한 글로벌 예외 핸들러 구현, 비즈니스 로직에서는 `try-catch` 사용 금지
+- **DTO 사용 원칙**: Controller에서 Entity 객체 직접 사용 금지, 모든 Request/Response는 DTO를 통해 처리
+- **의존성 주입**: 필드 주입 금지, 생성자 주입만 사용 (`@RequiredArgsConstructor` + `final` 키워드 권장)
+- **RESTful API 설계**: 리소스 중심의 명사형 URI 사용, HTTP 메서드로 CRUD 작업 표현
+
 **범용 파일 및 폴더 구조**
 /
 ├── apps/
