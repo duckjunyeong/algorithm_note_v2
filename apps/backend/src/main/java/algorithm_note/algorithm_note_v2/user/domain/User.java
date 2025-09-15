@@ -1,0 +1,72 @@
+package algorithm_note.algorithm_note_v2.user.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+/**
+ * User entity representing application users linked to Clerk authentication.
+ */
+@Entity
+@Table(name = "users")
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false, name = "clerk_id")
+    private String clerkId;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Updates user information from JWT claims.
+     *
+     * @param email User's email address
+     * @param firstName User's first name
+     * @param lastName User's last name
+     * @return Updated User entity for method chaining
+     */
+    public User updateFromJwtClaims(String email, String firstName, String lastName) {
+        return User.builder()
+                .id(this.id)
+                .clerkId(this.clerkId)
+                .email(email != null ? email : this.email)
+                .firstName(firstName != null ? firstName : this.firstName)
+                .lastName(lastName != null ? lastName : this.lastName)
+                .createdAt(this.createdAt)
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+}

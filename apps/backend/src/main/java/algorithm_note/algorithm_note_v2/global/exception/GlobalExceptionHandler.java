@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Map;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -17,6 +19,17 @@ public class GlobalExceptionHandler {
         log.warn("Webhook verification failed: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ClerkWebhookResponseDto.failure("Invalid webhook signature"));
+    }
+
+    @ExceptionHandler(JwtVerificationException.class)
+    public ResponseEntity<Map<String, Object>> handleJwtVerificationException(JwtVerificationException ex) {
+        log.warn("JWT verification failed: {}", ex.getMessage());
+        Map<String, Object> errorResponse = Map.of(
+                "error", "Authentication failed",
+                "message", ex.getMessage(),
+                "status", HttpStatus.UNAUTHORIZED.value()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(UserProcessingException.class)
