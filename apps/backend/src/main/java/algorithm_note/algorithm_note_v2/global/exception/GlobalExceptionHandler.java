@@ -1,6 +1,8 @@
 package algorithm_note.algorithm_note_v2.global.exception;
 
 import algorithm_note.algorithm_note_v2.global.dto.ClerkWebhookResponseDto;
+import algorithm_note.algorithm_note_v2.user.dto.UserResponseDto;
+import algorithm_note.algorithm_note_v2.user.exception.UserNotFoundException;
 import com.svix.exceptions.WebhookVerificationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,13 @@ public class GlobalExceptionHandler {
         log.error("Error processing user: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ClerkWebhookResponseDto.failure(ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<UserResponseDto> handleUserNotFoundException(UserNotFoundException ex) {
+        log.warn("User not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(UserResponseDto.failure(ex.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

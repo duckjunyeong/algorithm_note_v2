@@ -154,11 +154,18 @@ export function useSignUpWithEmail() {
         code: verificationCode,
       });
 
-      if (result?.status === 'complete') {
-        console.log('reuslt', result);
-        await setActive({ session: result.createdSessionId });
 
-        navigate('/dashboard');
+      // 이메일인증에 성공했을 때
+      if (result?.status === 'complete' && result.createdSessionId) {
+        console.log('reuslt', result);
+
+        if (setActive) {
+          await setActive({ session: result.createdSessionId });
+          navigate('/setup-account');
+        } else {
+          console.error('setActive is not available');
+          setError('Authentication setup failed. Please try again.');
+        }
       }
     } catch (err: any) {
       console.error('Verification error:', err);
