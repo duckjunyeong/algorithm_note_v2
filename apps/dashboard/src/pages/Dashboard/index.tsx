@@ -1,7 +1,10 @@
 import { useAuthStore } from '../../store/useAuthStore';
+import { useIncorrectAnswerNoteStore } from '../../store/useIncorrectAnswerNoteStore';
+import { IncorrectAnswerNoteModal } from '../../components/IncorrectAnswerNoteModal';
 
 export default function DashboardPage() {
   const { user, role } = useAuthStore();
+  const { openModal } = useIncorrectAnswerNoteStore();
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -22,6 +25,17 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Generate Incorrect Answer Note</h3>
+            <p className="text-gray-600 mb-4">Register coding problems and analyze your solution code with AI</p>
+            <button
+              onClick={openModal}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200"
+            >
+              Generate Incorrect Answer Note
+            </button>
+          </div>
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Upload Problem</h3>
             <p className="text-gray-600 mb-4">Upload your algorithm problem for AI analysis</p>
@@ -47,6 +61,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <IncorrectAnswerNoteModal />
     </div>
   );
 }

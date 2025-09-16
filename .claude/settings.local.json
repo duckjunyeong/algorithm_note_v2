@@ -3,7 +3,8 @@
     "allow": [
       "Bash(pnpm dev:*)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(pnpm add:*)"
     ],
     "deny": [],
     "ask": []

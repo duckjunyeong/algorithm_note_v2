@@ -22,6 +22,7 @@ apiClient.interceptors.request.use(
     if (getTokenFn) {
       try {
         const token = await getTokenFn();
+        console.log('서버에 API요청하기 전 Token 넣기 Retrieved token:', token);
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
