@@ -1,0 +1,1 @@
+export { ComponentsView as Components } from './Components.view';

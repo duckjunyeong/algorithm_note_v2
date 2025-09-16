@@ -10,6 +10,7 @@ import SSOCallbackPage from "./pages/SSOCallback"
 import SetupAccountPage from "./pages/SetupAccount"
 import DashboardPage from "./pages/Dashboard"
 import UnauthorizedPage from "./pages/Unauthorized"
+import { Components } from "./pages/Components"
 
 function AppContent() {
   // Initialize API client with authentication
@@ -34,6 +35,8 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/components" element={<Components />} />
       </Routes>
   );
 }
