@@ -101,6 +101,7 @@ export function UserProfile({ userId }: UserProfileProps) {
 *   Use TypeScript for all code; prefer interfaces over types.
 *   Avoid enums; use maps instead.
 *   Use functional components with TypeScript interfaces.
+*   **Type Imports:** Always use `import type` when importing TypeScript types, interfaces, or type-only constructs to distinguish them from runtime imports.
 
 ### Syntax and Formatting
 *   Use the "function" keyword for pure functions.
