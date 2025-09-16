@@ -1,5 +1,6 @@
 import React from 'react';
-import { ButtonProps, useButton } from './useButton';
+import { useButton } from './useButton';
+import type { ButtonProps } from './useButton';
 
 export const ButtonView = (props: ButtonProps) => {
   const { buttonProps, isLoading } = useButton(props);

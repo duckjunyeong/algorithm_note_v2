@@ -1,5 +1,6 @@
 import React from 'react';
-import { CardProps, useCard } from './useCard';
+import { useCard } from './useCard';
+import type { CardProps } from './useCard';
 
 export const CardView = (props: CardProps) => {
   const { cardProps } = useCard(props);

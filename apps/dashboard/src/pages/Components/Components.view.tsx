@@ -1,6 +1,6 @@
 import React from 'react';
 import { useComponents } from './useComponents';
-import { Button, Card, Input, Typography } from 'ui-components/src/components';
+import { Button, Card, Footer, Input, Spinner, Typography } from 'ui-components/src/components';
 
 export const ComponentsView = () => {
   const { selectedComponent, components, handleComponentSelect } = useComponents();
@@ -161,14 +161,130 @@ export const ComponentsView = () => {
     </Card>
   );
 
+  const renderFooterDemo = () => (
+    <div className="space-y-6">
+      <Typography variant="h4">Footer Examples</Typography>
+
+      <div className="space-y-8">
+        <div>
+          <Typography variant="h6" className="mb-4">Basic Footer</Typography>
+          <Footer />
+        </div>
+
+        <div>
+          <Typography variant="h6" className="mb-4">Footer with Links</Typography>
+          <Footer
+            links={[
+              { label: 'About', href: '/about' },
+              { label: 'Contact', href: '/contact' },
+              { label: 'Privacy', href: '/privacy' },
+              { label: 'Terms', href: '/terms' }
+            ]}
+            socialLinks={[
+              { label: 'GitHub', href: 'https://github.com', icon: '🐙' },
+              { label: 'Twitter', href: 'https://twitter.com', icon: '🐦' },
+              { label: 'LinkedIn', href: 'https://linkedin.com', icon: '💼' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <Typography variant="h6" className="mb-4">Custom Company Footer</Typography>
+          <Footer
+            companyName="Custom Company"
+            copyrightYear={2024}
+            links={[
+              { label: 'Documentation', href: '/docs' },
+              { label: 'API', href: '/api' },
+              { label: 'Support', href: '/support' }
+            ]}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSpinnerDemo = () => (
+    <Card className="space-y-6">
+      <Typography variant="h4">Spinner Examples</Typography>
+      <div className="space-y-6">
+        <div>
+          <Typography variant="h6" className="mb-3">Sizes</Typography>
+          <div className="flex items-center gap-6">
+            <div className="text-center">
+              <Spinner size="sm" />
+              <Typography variant="caption" className="block mt-2">Small</Typography>
+            </div>
+            <div className="text-center">
+              <Spinner size="md" />
+              <Typography variant="caption" className="block mt-2">Medium</Typography>
+            </div>
+            <div className="text-center">
+              <Spinner size="lg" />
+              <Typography variant="caption" className="block mt-2">Large</Typography>
+            </div>
+            <div className="text-center">
+              <Spinner size="xl" />
+              <Typography variant="caption" className="block mt-2">Extra Large</Typography>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <Typography variant="h6" className="mb-3">Colors</Typography>
+          <div className="flex items-center gap-6">
+            <div className="text-center">
+              <Spinner color="brand" />
+              <Typography variant="caption" className="block mt-2">Brand</Typography>
+            </div>
+            <div className="text-center">
+              <Spinner color="neutral" />
+              <Typography variant="caption" className="block mt-2">Neutral</Typography>
+            </div>
+            <div className="text-center bg-neutral-800 p-4 rounded">
+              <Spinner color="white" />
+              <Typography variant="caption" className="block mt-2 text-white">White</Typography>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <Typography variant="h6" className="mb-3">Usage Examples</Typography>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <Spinner size="sm" />
+              <Typography variant="body2">Loading content...</Typography>
+            </div>
+
+            <Button isLoading disabled>
+              Submit Form
+            </Button>
+
+            <div className="flex items-center justify-center p-8 bg-background-secondary rounded-lg">
+              <div className="text-center">
+                <Spinner size="lg" className="mb-3" />
+                <Typography variant="body1">Processing your request</Typography>
+                <Typography variant="body2" color="secondary">Please wait a moment</Typography>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
   const renderSelectedDemo = () => {
     switch (selectedComponent) {
       case 'button':
         return renderButtonDemo();
       case 'card':
         return renderCardDemo();
+      case 'footer':
+        return renderFooterDemo();
       case 'input':
         return renderInputDemo();
+      case 'spinner':
+        return renderSpinnerDemo();
       case 'typography':
         return renderTypographyDemo();
       default:

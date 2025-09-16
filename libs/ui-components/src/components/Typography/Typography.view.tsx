@@ -1,11 +1,12 @@
 import React from 'react';
-import { TypographyProps, useTypography } from './useTypography';
+import { useTypography } from './useTypography';
+import type { TypographyProps } from './useTypography';
 
 export const TypographyView = (props: TypographyProps) => {
   const { elementType, typographyProps } = useTypography(props);
   const { children } = props;
 
-  const Element = elementType;
+  const Element = elementType as React.ElementType;
 
   return (
     <Element {...typographyProps}>

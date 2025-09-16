@@ -1,11 +1,11 @@
-import { HTMLAttributes } from 'react';
+import type { HTMLAttributes, ElementType } from 'react';
 
 export interface TypographyProps extends HTMLAttributes<HTMLElement> {
   variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body1' | 'body2' | 'caption' | 'overline';
   color?: 'primary' | 'secondary' | 'tertiary' | 'inverse' | 'success' | 'warning' | 'error' | 'info';
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
   align?: 'left' | 'center' | 'right';
-  as?: keyof JSX.IntrinsicElements;
+  as?: ElementType;
 }
 
 export const useTypography = (props: TypographyProps) => {
@@ -19,7 +19,7 @@ export const useTypography = (props: TypographyProps) => {
     ...rest
   } = props;
 
-  const getElementType = (): keyof JSX.IntrinsicElements => {
+  const getElementType = (): ElementType => {
     if (as) return as;
 
     switch (variant) {
