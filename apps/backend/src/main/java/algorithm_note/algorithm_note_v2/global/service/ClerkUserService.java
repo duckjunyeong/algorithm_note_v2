@@ -10,9 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Service for interacting with Clerk API to manage user metadata.
- */
 @Slf4j
 @Service
 public class ClerkUserService {

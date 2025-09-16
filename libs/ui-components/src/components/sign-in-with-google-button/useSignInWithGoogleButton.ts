@@ -13,7 +13,7 @@ export const useSignInWithGoogleButton = () => {
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
         redirectUrl: '/sso-callback',
-        redirectUrlComplete: '/dashboard',
+        redirectUrlComplete: '/setup-account',
       })
     } catch (error) {
       console.error('Error signing in with Google:', error)

@@ -1,6 +1,9 @@
 package algorithm_note.algorithm_note_v2.user.service;
 
 import algorithm_note.algorithm_note_v2.user.domain.User;
+import algorithm_note.algorithm_note_v2.user.dto.UserRegisterRequestDto;
+import algorithm_note.algorithm_note_v2.user.dto.UserUpdateRequestDto;
+import algorithm_note.algorithm_note_v2.user.exception.UserNotFoundException;
 import algorithm_note.algorithm_note_v2.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +22,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /**
-     * Finds or creates a user based on JWT claims.
-     * Implements Just-In-Time (JIT) provisioning.
-     *
-     * @param jwtClaims The verified JWT claims containing user information
-     * @return The existing or newly created User entity
-     */
     @Transactional
     public User findOrCreateUser(Map<String, Object> jwtClaims) {
         String clerkId = extractClerkId(jwtClaims);
@@ -80,5 +76,45 @@ public class UserService {
 
     private String extractLastName(Map<String, Object> jwtClaims) {
         return (String) jwtClaims.get("family_name");
+    }
+
+    @Transactional
+    public User registerUser(UserRegisterRequestDto requestDto) {
+        if (userRepository.existsByClerkId(requestDto.getClerkId())) {
+            throw new IllegalArgumentException("User already exists with Clerk ID: " + requestDto.getClerkId());
+        }
+
+        User newUser = User.builder()
+                .clerkId(requestDto.getClerkId())
+                .email(requestDto.getEmail())
+                .firstName(requestDto.getFirstName())
+                .lastName(requestDto.getLastName())
+                .build();
+
+        User savedUser = userRepository.save(newUser);
+        log.info("Registered new user via webhook with Clerk ID: {}", requestDto.getClerkId());
+        return savedUser;
+    }
+
+    @Transactional
+    public User updateUser(String clerkId, UserUpdateRequestDto requestDto) {
+        User existingUser = userRepository.findByClerkId(clerkId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with Clerk ID: " + clerkId));
+
+        User updatedUser = existingUser.updateFromJwtClaims(
+                requestDto.getEmail(),
+                requestDto.getFirstName(),
+                requestDto.getLastName()
+        );
+
+        User savedUser = userRepository.save(updatedUser);
+        log.info("Updated user with Clerk ID: {}", clerkId);
+        return savedUser;
+    }
+
+    @Transactional(readOnly = true)
+    public User getUserByClerkId(String clerkId) {
+        return userRepository.findByClerkId(clerkId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with Clerk ID: " + clerkId));
     }
 }
