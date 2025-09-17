@@ -17,7 +17,6 @@ const SignInPageView: React.FC<SignInPageViewProps> = ({ onEmailSignInClick, onS
         </div>
         
         <h1 className="text-xl font-normal mb-6">Log in to AlgorNote</h1>
-        
         <div className="w-full flex flex-col space-y-3">
           <SignInWithGoogleButton />
           <SignInWithEmailButton onClick={onEmailSignInClick} />

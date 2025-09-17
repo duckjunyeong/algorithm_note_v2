@@ -1,19 +1,10 @@
-import { createRequire } from 'module';
-import path from 'path';
-
-const require = createRequire(import.meta.url);
-
-const uiComponentsPackagePath = path.dirname(require.resolve('ui-components/package.json'));
-
-
 /** @type {import('tailwindcss').Config} */
-export default {
+
+module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "../../libs/ui-components/src/**/*.{js,jsx,ts,tsx}",
-    `${uiComponentsPackagePath}/src/**/*.{js,jsx,ts,tsx}`,
-  ],
-  theme: {
+     "../../libs/ui-components/src/**/*.{js,jsx,ts,tsx}",],
+   theme: {
     extend: {
       colors: {
         brand: {
