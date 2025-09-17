@@ -1,6 +1,5 @@
 import React from 'react';
-import { SignInWithGoogleButton } from '../../../../../libs/ui-components/src/components/sign-in-with-google-button'
-import { SignInWithEmailButton } from '../../../../../libs/ui-components/src/components/sign-in-with-email-button';
+import {  SignInWithGoogleButton, SignInWithEmailButton } from '../../../../../libs/ui-components/src/index.ts';
 
 interface SignInPageViewProps {
   onEmailSignInClick: () => void;

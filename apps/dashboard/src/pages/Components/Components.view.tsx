@@ -1,7 +1,7 @@
 import React from 'react';
 import { useComponents } from './useComponents';
-import { Button, Card, Footer, Input, Spinner, Typography } from 'ui-components/src/components';
-
+import { Button, Card, Footer, Input, Spinner, Typography } from '../../../../../libs/ui-components/src/index.ts';
+;
 export const ComponentsView = () => {
   const { selectedComponent, components, handleComponentSelect } = useComponents();
 

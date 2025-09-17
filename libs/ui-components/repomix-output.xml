@@ -1,0 +1,1071 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+package.json
+postcss.config.js
+src/components/Button/Button.view.tsx
+src/components/Button/index.tsx
+src/components/Button/useButton.ts
+src/components/Card/Card.view.tsx
+src/components/Card/index.tsx
+src/components/Card/useCard.ts
+src/components/Footer/Footer.view.tsx
+src/components/Footer/index.tsx
+src/components/Footer/useFooter.ts
+src/components/index.ts
+src/components/Input/index.tsx
+src/components/Input/Input.view.tsx
+src/components/Input/useInput.ts
+src/components/sign-in-with-email-button/index.tsx
+src/components/sign-in-with-google-button/index.tsx
+src/components/sign-in-with-google-button/SignInWithGoogleButton.view.tsx
+src/components/sign-in-with-google-button/useSignInWithGoogleButton.ts
+src/components/Spinner/index.tsx
+src/components/Spinner/Spinner.view.tsx
+src/components/Spinner/useSpinner.ts
+src/components/Typography/index.tsx
+src/components/Typography/Typography.view.tsx
+src/components/Typography/useTypography.ts
+src/images.d.ts
+src/index.css
+tailwind.config.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="package.json">
+{
+  "name": "ui-components",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/components/index.ts",
+  "module": "src/components/index.ts",
+  "types": "src/components/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@clerk/clerk-react": "^5.2.8",
+    "@clerk/types": "^4.86.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@tailwindcss/postcss": "^4.1.13",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.13"
+  },
+  "peerDependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.16.0"
+}
+</file>
+
+<file path="postcss.config.js">
+module.exports = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+    autoprefixer: {},
+  },
+}
+</file>
+
+<file path="src/components/Button/Button.view.tsx">
+import React from 'react';
+import { useButton } from './useButton';
+import type { ButtonProps } from './useButton';
+
+export const ButtonView = (props: ButtonProps) => {
+  const { buttonProps, isLoading } = useButton(props);
+  const { children, leftIcon, rightIcon } = props;
+
+  return (
+    <button {...buttonProps}>
+      {isLoading ? (
+        <div className="flex items-center">
+          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent mr-2" />
+          Loading...
+        </div>
+      ) : (
+        <div className="flex items-center">
+          {leftIcon && <span className="mr-2">{leftIcon}</span>}
+          {children}
+          {rightIcon && <span className="ml-2">{rightIcon}</span>}
+        </div>
+      )}
+    </button>
+  );
+};
+</file>
+
+<file path="src/components/Button/index.tsx">
+export { ButtonView as Button } from './Button.view';
+export type { ButtonProps } from './useButton';
+</file>
+
+<file path="src/components/Button/useButton.ts">
+import { ButtonHTMLAttributes, MouseEvent } from 'react';
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  isLoading?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+}
+
+export const useButton = (props: ButtonProps) => {
+  const {
+    variant = 'primary',
+    size = 'md',
+    isLoading = false,
+    disabled,
+    onClick,
+    ...rest
+  } = props;
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if (isLoading || disabled) return;
+    onClick?.(event);
+  };
+
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'primary':
+        return 'bg-brand text-white hover:bg-brand-dark focus:ring-brand/20';
+      case 'secondary':
+        return 'bg-background-secondary text-text-primary border border-neutral-100 hover:bg-neutral-50 focus:ring-brand/20';
+      case 'outline':
+        return 'bg-transparent text-brand border border-brand hover:bg-brand/5 focus:ring-brand/20';
+      case 'ghost':
+        return 'bg-transparent text-text-primary hover:bg-neutral-50 focus:ring-neutral-100/50';
+      default:
+        return 'bg-brand text-white hover:bg-brand-dark focus:ring-brand/20';
+    }
+  };
+
+  const getSizeClasses = () => {
+    switch (size) {
+      case 'sm':
+        return 'px-3 py-2 text-sm font-medium';
+      case 'md':
+        return 'px-6 py-3 text-sm font-medium';
+      case 'lg':
+        return 'px-8 py-4 text-base font-medium';
+      default:
+        return 'px-6 py-3 text-sm font-medium';
+    }
+  };
+
+  const baseClasses = 'inline-flex items-center justify-center rounded-md border-0 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+
+  const buttonClasses = `${baseClasses} ${getVariantClasses()} ${getSizeClasses()}`;
+
+  return {
+    buttonProps: {
+      ...rest,
+      disabled: disabled || isLoading,
+      onClick: handleClick,
+      className: buttonClasses,
+    },
+    isLoading,
+    variant,
+    size,
+  };
+};
+</file>
+
+<file path="src/components/Card/Card.view.tsx">
+import React from 'react';
+import { useCard } from './useCard';
+import type { CardProps } from './useCard';
+
+export const CardView = (props: CardProps) => {
+  const { cardProps } = useCard(props);
+  const { children } = props;
+
+  return (
+    <div {...cardProps}>
+      {children}
+    </div>
+  );
+};
+</file>
+
+<file path="src/components/Card/index.tsx">
+export { CardView as Card } from './Card.view';
+export type { CardProps } from './useCard';
+</file>
+
+<file path="src/components/Card/useCard.ts">
+import type { HTMLAttributes } from 'react';
+
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'elevated' | 'outlined';
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+}
+
+export const useCard = (props: CardProps) => {
+  const {
+    variant = 'default',
+    padding = 'md',
+    className = '',
+    ...rest
+  } = props;
+
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'default':
+        return 'bg-background-secondary border border-neutral-100';
+      case 'elevated':
+        return 'bg-background-secondary shadow-sm border border-neutral-50';
+      case 'outlined':
+        return 'bg-background-secondary border-2 border-neutral-100';
+      default:
+        return 'bg-background-secondary border border-neutral-100';
+    }
+  };
+
+  const getPaddingClasses = () => {
+    switch (padding) {
+      case 'none':
+        return 'p-0';
+      case 'sm':
+        return 'p-4';
+      case 'md':
+        return 'p-6';
+      case 'lg':
+        return 'p-8';
+      default:
+        return 'p-6';
+    }
+  };
+
+  const baseClasses = 'rounded-md';
+  const cardClasses = `${baseClasses} ${getVariantClasses()} ${getPaddingClasses()} ${className}`;
+
+  return {
+    cardProps: {
+      ...rest,
+      className: cardClasses,
+    },
+    variant,
+    padding,
+  };
+};
+</file>
+
+<file path="src/components/Footer/Footer.view.tsx">
+import React from 'react';
+import { useFooter } from './useFooter';
+import type { FooterProps } from './useFooter';
+
+export const FooterView = (props: FooterProps) => {
+  const {
+    footerClasses,
+    companyName,
+    links,
+    socialLinks,
+    showCopyright,
+    copyrightYear,
+  } = useFooter(props);
+
+  return (
+    <footer className={footerClasses}>
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Company Info */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-neutral-white">
+              {companyName}
+            </h3>
+            <p className="text-neutral-300 text-sm leading-relaxed">
+              AI-powered algorithm problem management platform for enhanced learning and practice.
+            </p>
+          </div>
+
+          {/* Links */}
+          {links.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="text-base font-medium text-neutral-white">
+                Quick Links
+              </h4>
+              <ul className="space-y-2">
+                {links.map((link, index) => (
+                  <li key={index}>
+                    <a
+                      href={link.href}
+                      className="text-neutral-300 hover:text-neutral-white transition-colors duration-200 text-sm"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Social Links */}
+          {socialLinks.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="text-base font-medium text-neutral-white">
+                Connect
+              </h4>
+              <div className="flex space-x-4">
+                {socialLinks.map((social, index) => (
+                  <a
+                    key={index}
+                    href={social.href}
+                    className="text-neutral-300 hover:text-neutral-white transition-colors duration-200"
+                    aria-label={social.label}
+                  >
+                    {social.icon || social.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Copyright */}
+        {showCopyright && (
+          <div className="mt-8 pt-8 border-t border-neutral-700">
+            <p className="text-center text-neutral-400 text-sm">
+              © {copyrightYear} {companyName}. All rights reserved.
+            </p>
+          </div>
+        )}
+      </div>
+    </footer>
+  );
+};
+</file>
+
+<file path="src/components/Footer/index.tsx">
+export { FooterView as Footer } from './Footer.view';
+export { useFooter } from './useFooter';
+export type { FooterProps } from './useFooter';
+</file>
+
+<file path="src/components/Footer/useFooter.ts">
+export interface FooterProps {
+  className?: string;
+  companyName?: string;
+  links?: Array<{
+    label: string;
+    href: string;
+  }>;
+  socialLinks?: Array<{
+    label: string;
+    href: string;
+    icon?: React.ReactNode;
+  }>;
+  showCopyright?: boolean;
+  copyrightYear?: number;
+}
+
+export const useFooter = (props: FooterProps) => {
+  const {
+    className = '',
+    companyName = 'AlgoRevise',
+    links = [],
+    socialLinks = [],
+    showCopyright = true,
+    copyrightYear = new Date().getFullYear(),
+  } = props;
+
+  const footerClasses = `bg-neutral-900 text-neutral-100 py-12 ${className}`;
+
+  return {
+    footerClasses,
+    companyName,
+    links,
+    socialLinks,
+    showCopyright,
+    copyrightYear,
+  };
+};
+</file>
+
+<file path="src/components/index.ts">
+// Import CSS to ensure Tailwind styles are available
+import '../index.css';
+export { Button } from './Button';
+export type { ButtonProps } from './Button';
+
+export { Card } from './Card';
+export type { CardProps } from './Card';
+
+export { Footer } from './Footer';
+export type { FooterProps } from './Footer';
+
+export { Input } from './Input';
+export type { InputProps } from './Input';
+
+export { Spinner } from './Spinner';
+export type { SpinnerProps } from './Spinner';
+
+export { Typography } from './Typography';
+export type { TypographyProps } from './Typography';
+
+export { SignInWithGoogleButton } from './sign-in-with-google-button';
+
+export { SignInWithEmailButton } from './sign-in-with-email-button';
+</file>
+
+<file path="src/components/Input/index.tsx">
+export { InputView as Input } from './Input.view';
+export type { InputProps } from './useInput';
+</file>
+
+<file path="src/components/Input/Input.view.tsx">
+import React from 'react';
+import { InputProps, useInput } from './useInput';
+
+export const InputView = (props: InputProps) => {
+  const { inputProps, labelClasses, helperTextClasses } = useInput(props);
+  const { label, error, helperText, leftIcon, rightIcon } = props;
+
+  return (
+    <div className="w-full">
+      {label && (
+        <label className={labelClasses}>
+          {label}
+        </label>
+      )}
+
+      <div className="relative">
+        {leftIcon && (
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-tertiary">
+            {leftIcon}
+          </div>
+        )}
+
+        <input
+          {...inputProps}
+          className={`${inputProps.className} ${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''}`}
+        />
+
+        {rightIcon && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-tertiary">
+            {rightIcon}
+          </div>
+        )}
+      </div>
+
+      {(error || helperText) && (
+        <div className={helperTextClasses}>
+          {error || helperText}
+        </div>
+      )}
+    </div>
+  );
+};
+</file>
+
+<file path="src/components/Input/useInput.ts">
+import { useState } from 'react';
+import type { InputHTMLAttributes, ChangeEvent } from 'react';
+
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+}
+
+export const useInput = (props: InputProps) => {
+  const {
+    label,
+    error,
+    helperText,
+    className = '',
+    onChange,
+    ...rest
+  } = props;
+
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onChange?.(event);
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
+  const getInputClasses = () => {
+    const baseClasses = 'w-full px-4 py-3 text-sm bg-background-secondary border rounded-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-1';
+
+    if (error) {
+      return `${baseClasses} border-semantic-error focus:border-semantic-error focus:ring-semantic-error/20 text-text-primary`;
+    }
+
+    if (isFocused) {
+      return `${baseClasses} border-brand focus:border-brand focus:ring-brand/20 text-text-primary`;
+    }
+
+    return `${baseClasses} border-neutral-100 hover:border-neutral-300 text-text-primary ${className}`;
+  };
+
+  const getLabelClasses = () => {
+    const baseClasses = 'block text-sm font-medium mb-2';
+    return error ? `${baseClasses} text-semantic-error` : `${baseClasses} text-text-primary`;
+  };
+
+  const getHelperTextClasses = () => {
+    const baseClasses = 'text-xs mt-1';
+    return error ? `${baseClasses} text-semantic-error` : `${baseClasses} text-text-secondary`;
+  };
+
+  return {
+    inputProps: {
+      ...rest,
+      onChange: handleChange,
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+      className: getInputClasses(),
+    },
+    labelClasses: getLabelClasses(),
+    helperTextClasses: getHelperTextClasses(),
+    isFocused,
+    hasError: !!error,
+  };
+};
+</file>
+
+<file path="src/components/sign-in-with-email-button/index.tsx">
+import React from 'react'
+
+interface SignInWithEmailButtonProps extends React.ComponentPropsWithoutRef<'button'> {
+  onClick: () => void;
+  children?: React.ReactNode;
+}
+
+export const SignInWithEmailButton = ({
+  onClick,
+  disabled,
+  children,
+  ...props
+}: SignInWithEmailButtonProps) => {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      type="button"
+      className={`
+        flex items-center justify-center gap-2 w-full px-4 py-2.5
+        bg-[#1E2025] text-[#E3E4E6] font-medium rounded-lg text-xs
+        transition-colors duration-200
+        hover:bg-[#2a2d33]
+        disabled:opacity-75 disabled:cursor-not-allowed
+      `}
+      {...props}
+    >
+      <span>{children || 'Continue with Email'}</span>
+    </button>
+  )
+}
+</file>
+
+<file path="src/components/sign-in-with-google-button/index.tsx">
+import { useSignInWithGoogleButton } from './useSignInWithGoogleButton'
+import { SignInWithGoogleButtonView } from './SignInWithGoogleButton.view'
+
+export const SignInWithGoogleButton = () => {
+  const { isLoaded, signInWithGoogle } = useSignInWithGoogleButton()
+
+  return (
+    <SignInWithGoogleButtonView
+      isLoading={!isLoaded}
+      onClick={signInWithGoogle}
+    />
+  )
+}
+</file>
+
+<file path="src/components/sign-in-with-google-button/SignInWithGoogleButton.view.tsx">
+interface SignInWithGoogleButtonViewProps {
+  isLoading: boolean
+  onClick: () => void
+}
+
+export const SignInWithGoogleButtonView = ({
+  isLoading,
+  onClick,
+}: SignInWithGoogleButtonViewProps) => {
+  return (
+    <button
+      onClick={onClick}
+      disabled={isLoading}
+      type="button"
+      className =" flex items-center justify-center gap-2 w-full px-4 py-2.5
+        bg-[#6E64E4] text-white font-medium rounded-lg text-xs
+        transition-colors duration-200
+        hover:bg-[#5C53C9]
+        disabled:opacity-70 disabled:cursor-not-allowed
+      "
+    >
+      <span>Continue with Google</span>
+    </button>
+  )
+}
+</file>
+
+<file path="src/components/sign-in-with-google-button/useSignInWithGoogleButton.ts">
+import { useSignIn } from '@clerk/clerk-react'
+
+export const useSignInWithGoogleButton = () => {
+  const { signIn, isLoaded } = useSignIn()
+
+  const signInWithGoogle = async () => {
+    if (!isLoaded || !signIn) {
+      console.error('Clerk is not loaded yet')
+      return
+    }
+
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: 'oauth_google',
+        redirectUrl: '/sso-callback',
+        redirectUrlComplete: '/setup-account',
+      })
+    } catch (error) {
+      console.error('Error signing in with Google:', error)
+    }
+  }
+
+  return {
+    isLoaded,
+    signInWithGoogle,
+  }
+}
+</file>
+
+<file path="src/components/Spinner/index.tsx">
+export { SpinnerView as Spinner } from './Spinner.view';
+export { useSpinner } from './useSpinner';
+export type { SpinnerProps } from './useSpinner';
+</file>
+
+<file path="src/components/Spinner/Spinner.view.tsx">
+import React from 'react';
+import { useSpinner } from './useSpinner';
+import type { SpinnerProps } from './useSpinner';
+
+export const SpinnerView = (props: SpinnerProps) => {
+  const { spinnerClasses, label } = useSpinner(props);
+
+  return (
+    <div className="inline-flex items-center" role="status" aria-label={label}>
+      <div className={spinnerClasses} />
+      <span className="sr-only">{label}</span>
+    </div>
+  );
+};
+</file>
+
+<file path="src/components/Spinner/useSpinner.ts">
+export interface SpinnerProps {
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  color?: 'brand' | 'neutral' | 'white';
+  className?: string;
+  label?: string;
+}
+
+export const useSpinner = (props: SpinnerProps) => {
+  const {
+    size = 'md',
+    color = 'brand',
+    className = '',
+    label = 'Loading...',
+  } = props;
+
+  const getSizeClasses = () => {
+    switch (size) {
+      case 'sm':
+        return 'h-4 w-4 border-2';
+      case 'md':
+        return 'h-6 w-6 border-2';
+      case 'lg':
+        return 'h-8 w-8 border-2';
+      case 'xl':
+        return 'h-12 w-12 border-4';
+      default:
+        return 'h-6 w-6 border-2';
+    }
+  };
+
+ const getColorClasses = () => {
+    switch (color) {
+      case 'brand':
+        return 'border-brand/30 border-t-brand';
+      case 'neutral':
+        return 'border-neutral-200 border-t-neutral-400';
+      case 'white':
+        return 'border-white/30 border-t-white';
+      default:
+        return 'border-brand/30 border-t-brand';
+    }
+  };
+
+  const spinnerClasses = `animate-spin rounded-full ${getSizeClasses()} ${getColorClasses()} ${className}`;
+
+  return {
+    spinnerClasses,
+    label,
+  };
+};
+</file>
+
+<file path="src/components/Typography/index.tsx">
+export { TypographyView as Typography } from './Typography.view';
+export type { TypographyProps } from './useTypography';
+</file>
+
+<file path="src/components/Typography/Typography.view.tsx">
+import React from 'react';
+import { useTypography } from './useTypography';
+import type { TypographyProps } from './useTypography';
+
+export const TypographyView = (props: TypographyProps) => {
+  const { elementType, typographyProps } = useTypography(props);
+  const { children } = props;
+
+  const Element = elementType as React.ElementType;
+
+  return (
+    <Element {...typographyProps}>
+      {children}
+    </Element>
+  );
+};
+</file>
+
+<file path="src/components/Typography/useTypography.ts">
+import type { HTMLAttributes, ElementType } from 'react';
+
+export interface TypographyProps extends HTMLAttributes<HTMLElement> {
+  variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body1' | 'body2' | 'caption' | 'overline';
+  color?: 'primary' | 'secondary' | 'tertiary' | 'inverse' | 'success' | 'warning' | 'error' | 'info';
+  weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
+  align?: 'left' | 'center' | 'right';
+  as?: ElementType;
+}
+
+export const useTypography = (props: TypographyProps) => {
+  const {
+    variant = 'body1',
+    color = 'primary',
+    weight,
+    align = 'left',
+    as,
+    className = '',
+    ...rest
+  } = props;
+
+  const getElementType = (): ElementType => {
+    if (as) return as;
+
+    switch (variant) {
+      case 'h1':
+      case 'h2':
+      case 'h3':
+      case 'h4':
+      case 'h5':
+      case 'h6':
+        return variant;
+      case 'caption':
+      case 'overline':
+        return 'span';
+      default:
+        return 'p';
+    }
+  };
+
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'h1':
+        return 'text-5xl font-bold leading-tight';
+      case 'h2':
+        return 'text-4xl font-bold leading-tight';
+      case 'h3':
+        return 'text-3xl font-semibold leading-snug';
+      case 'h4':
+        return 'text-2xl font-semibold leading-snug';
+      case 'h5':
+        return 'text-xl font-medium leading-normal';
+      case 'h6':
+        return 'text-lg font-medium leading-normal';
+      case 'body1':
+        return 'text-base leading-normal';
+      case 'body2':
+        return 'text-sm leading-normal';
+      case 'caption':
+        return 'text-xs leading-normal';
+      case 'overline':
+        return 'text-xs font-medium uppercase tracking-wide leading-normal';
+      default:
+        return 'text-base leading-normal';
+    }
+  };
+
+  const getColorClasses = () => {
+    switch (color) {
+      case 'primary':
+        return 'text-text-primary';
+      case 'secondary':
+        return 'text-text-secondary';
+      case 'tertiary':
+        return 'text-text-tertiary';
+      case 'inverse':
+        return 'text-text-inverse';
+      case 'success':
+        return 'text-semantic-success';
+      case 'warning':
+        return 'text-semantic-warning';
+      case 'error':
+        return 'text-semantic-error';
+      case 'info':
+        return 'text-semantic-info';
+      default:
+        return 'text-text-primary';
+    }
+  };
+
+  const getWeightClasses = () => {
+    if (!weight) return '';
+
+    switch (weight) {
+      case 'light':
+        return 'font-light';
+      case 'normal':
+        return 'font-normal';
+      case 'medium':
+        return 'font-medium';
+      case 'semibold':
+        return 'font-semibold';
+      case 'bold':
+        return 'font-bold';
+      default:
+        return '';
+    }
+  };
+
+  const getAlignClasses = () => {
+    switch (align) {
+      case 'left':
+        return 'text-left';
+      case 'center':
+        return 'text-center';
+      case 'right':
+        return 'text-right';
+      default:
+        return 'text-left';
+    }
+  };
+
+  const typographyClasses = `${getVariantClasses()} ${getColorClasses()} ${getWeightClasses()} ${getAlignClasses()} ${className}`.trim();
+
+  return {
+    elementType: getElementType(),
+    typographyProps: {
+      ...rest,
+      className: typographyClasses,
+    },
+    variant,
+    color,
+    weight,
+    align,
+  };
+};
+</file>
+
+<file path="src/images.d.ts">
+declare module '*.jpg' {
+  const value: string;
+  export default value;
+}
+
+declare module '*.png' {
+  const value: string;
+  export default value;
+}
+
+declare module '*.svg' {
+  const value: string;
+  export default value;
+}
+</file>
+
+<file path="src/index.css">
+@import "tailwindcss";
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          DEFAULT: "#5E6AD2",
+          light: "#7B83EB",
+          dark: "#4C5AA8"
+        },
+        neutral: {
+          black: "#0D0E10",
+          900: "#16181D",
+          800: "#1C1F26",
+          700: "#22252C",
+          600: "#2A2D34",
+          500: "#35393F",
+          400: "#4E5158",
+          300: "#6B7280",
+          100: "#D1D5DB",
+          50: "#F3F4F6",
+          white: "#FFFFFF"
+        },
+        semantic: {
+          success: "#10B981",
+          warning: "#F59E0B",
+          error: "#EF4444",
+          info: "#3B82F6"
+        },
+        background: {
+          primary: "#FAFBFC",
+          secondary: "#FFFFFF",
+          tertiary: "#F8F9FA"
+        },
+        text: {
+          primary: "#0D0E10",
+          secondary: "#6B7280",
+          tertiary: "#9CA3AF",
+          inverse: "#FFFFFF"
+        }
+      },
+      fontFamily: {
+        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "Roboto", "sans-serif"],
+        mono: ["'SF Mono'", "Monaco", "'Cascadia Code'", "'Roboto Mono'", "Consolas", "'Courier New'", "monospace"]
+      },
+      fontSize: {
+        xs: "12px",
+        sm: "14px",
+        base: "16px",
+        lg: "18px",
+        xl: "20px",
+        "2xl": "24px",
+        "3xl": "30px",
+        "4xl": "36px",
+        "5xl": "48px",
+        "6xl": "64px"
+      },
+      fontWeight: {
+        light: "300",
+        normal: "400",
+        medium: "500",
+        semibold: "600",
+        bold: "700"
+      },
+      lineHeight: {
+        tight: "1.25",
+        snug: "1.375",
+        normal: "1.5",
+        relaxed: "1.625",
+        loose: "2"
+      },
+      spacing: {
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "20px",
+        "6": "24px",
+        "8": "32px",
+        "10": "40px",
+        "12": "48px",
+        "16": "64px",
+        "20": "80px",
+        "24": "96px",
+        "32": "128px"
+      },
+      borderRadius: {
+        sm: "2px",
+        DEFAULT: "6px",
+        md: "8px",
+        lg: "12px",
+        xl: "16px"
+      },
+      boxShadow: {
+        xs: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        sm: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
+        md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
+        lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
+        xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+      }
+    },
+  },
+  plugins: [],
+}
+</file>
+
+</files>

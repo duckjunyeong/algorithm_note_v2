@@ -16,6 +16,7 @@ function AppContent() {
   // Initialize API client with authentication
   useApiClient();
 
+
   return (
     <Routes>
         <Route path="/" element={<SignInPage />} />
@@ -30,9 +31,9 @@ function AppContent() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute requiredRole="member">
+            //<ProtectedRoute requiredRole="member">
               <DashboardPage />
-            </ProtectedRoute>
+            //</ProtectedRoute>
           }
         />
 
