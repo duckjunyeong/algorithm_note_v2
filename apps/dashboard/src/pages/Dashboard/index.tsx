@@ -1,11 +1,4 @@
-import { useAuthStore } from '../../store/useAuthStore';
-import { useAiNoteModalStore } from '../../store/useAiNoteModalStore';
-import { AiNoteModal } from '../../components/AiNoteModal';
-
 export default function DashboardPage() {
-  const { user, role } = useAuthStore();
-  const { openModal } = useAiNoteModalStore();
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -14,13 +7,10 @@ export default function DashboardPage() {
             Welcome to AlgoRevise Dashboard
           </h1>
           <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-            <h2 className="text-lg font-semibold text-blue-900 mb-2">User Information</h2>
-            <div className="space-y-2 text-sm">
-              <p><span className="font-medium">Name:</span> {user?.firstName} {user?.lastName}</p>
-              <p><span className="font-medium">Email:</span> {user?.emailAddress}</p>
-              <p><span className="font-medium">Role:</span> {role || 'No role assigned'}</p>
-              <p><span className="font-medium">User ID:</span> {user?.id}</p>
-            </div>
+            <h2 className="text-lg font-semibold text-blue-900 mb-2">Dashboard Overview</h2>
+            <p className="text-sm text-gray-600">
+              This is your dashboard page. Originally this was the DashboardPage from the old dashboard app.
+            </p>
           </div>
         </div>
 
@@ -28,10 +18,7 @@ export default function DashboardPage() {
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">AI Incorrect Answer Note</h3>
             <p className="text-gray-600 mb-4">Generate AI-powered notes from your algorithm solutions</p>
-            <button
-              onClick={openModal}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200"
-            >
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
               Generate Incorrect Answer Note
             </button>
           </div>
@@ -53,9 +40,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-
-      {/* AI Note Modal */}
-      <AiNoteModal />
     </div>
   );
 }

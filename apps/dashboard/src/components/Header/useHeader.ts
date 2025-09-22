@@ -13,7 +13,9 @@ export const useHeader = () => {
   ];
 
   const handleSignIn = () => {
-    window.location.href = '/sign-in';
+    // TODO: 실제 로그인 로직 구현
+    console.log('Sign In clicked');
+    alert('Sign In clicked!');
   };
 
   const handleRequestDemo = () => {

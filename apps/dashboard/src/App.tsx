@@ -1,53 +1,15 @@
-import { Routes, Route } from "react-router-dom"
-import { AuthProvider } from "./components/AuthProvider"
-import { ProtectedRoute } from "./components/ProtectedRoute"
-import { useApiClient } from "./hooks/useApiClient"
-import SignInPage from "./pages/SignIn"
-import SignInWithEmailPage from "./pages/SignInWithEmail"
-import SignUpPage from "./pages/SignUp"
-import SignUpWithEmailPage from "./pages/SignUpWithEmail"
-import SSOCallbackPage from "./pages/SSOCallback"
-import SetupAccountPage from "./pages/SetupAccount"
-import DashboardPage from "./pages/Dashboard"
-import UnauthorizedPage from "./pages/Unauthorized"
-import { Components } from "./pages/Components"
-
-function AppContent() {
-  // Initialize API client with authentication
-  useApiClient();
-
-
-  return (
-    <Routes>
-        <Route path="/" element={<SignInPage />} />
-        <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/sign-in/email" element={<SignInWithEmailPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
-        <Route path="/sign-up/email" element={<SignUpWithEmailPage />} />
-        <Route path="/sso-callback" element={<SSOCallbackPage />} />
-        <Route path="/setup-account" element={<SetupAccountPage />} />
-        <Route path="/unauthorized" element={<UnauthorizedPage />} />
-
-        <Route
-          path="/dashboard"
-          element={
-            //<ProtectedRoute requiredRole="member">
-              <DashboardPage />
-            //</ProtectedRoute>
-          }
-        />
-
-        <Route path="/components" element={<Components />} />
-      </Routes>
-  );
-}
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import DashboardPage from './pages/Dashboard';
 
 function App() {
   return (
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+    <BrowserRouter>
+      <Routes>
+        {/* 루트 경로(/)로 접속 시 DashboardPage를 렌더링합니다. */}
+        <Route path="/" element={<DashboardPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;

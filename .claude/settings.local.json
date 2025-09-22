@@ -5,7 +5,8 @@
       "Bash(dir:*)",
       "Bash(findstr:*)",
       "Bash(mkdir:*)",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []

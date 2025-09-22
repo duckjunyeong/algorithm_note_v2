@@ -34,7 +34,7 @@ export function useSetupAccount() {
           isSignedIn: true,
         });
 
-        navigate('/dashboard');
+        window.location.href = 'http://localhost:5173';
         return;
       }
     }

@@ -22,7 +22,7 @@ export function useSignUp() {
       await signUp.authenticateWithRedirect({
         strategy: 'oauth_google',
         redirectUrl: '/sso-callback',
-        redirectUrlComplete: '/dashboard',
+        redirectUrlComplete: 'http://localhost:5173',
       });
 
       // Store Google login preference

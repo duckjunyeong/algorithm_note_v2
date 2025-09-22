@@ -1,20 +1,42 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import  LandingPage  from './pages/LandingPage';
-// import { PricingPage } from './pages/Pricing'; // 예시: 추후 다른 페이지 추가
+import { Routes, Route } from "react-router-dom"
+import { AuthProvider } from "./components/AuthProvider"
+import { useApiClient } from "./hooks/useApiClient"
+import LandingPage from "./pages/LandingPage"
+import SignInPage from "./pages/SignIn"
+import SignInWithEmailPage from "./pages/SignInWithEmail"
+import SignUpPage from "./pages/SignUp"
+import SignUpWithEmailPage from "./pages/SignUpWithEmail"
+import SSOCallbackPage from "./pages/SSOCallback"
+import SetupAccountPage from "./pages/SetupAccount"
+import UnauthorizedPage from "./pages/Unauthorized"
+import { Components } from "./pages/Components"
 
-function App() {
+function AppContent() {
+  // Initialize API client with authentication
+  useApiClient();
+
+
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* 루트 경로(/)로 접속 시 LandingPage를 렌더링합니다. */}
+    <Routes>
         <Route path="/" element={<LandingPage />} />
-
-        {/* 다른 페이지가 추가될 경우, 여기에 Route를 추가하면 됩니다.
-          예: <Route path="/pricing" element={<PricingPage />} /> 
-        */}
+        <Route path="/sign-in" element={<SignInPage />} />
+        <Route path="/sign-in/email" element={<SignInWithEmailPage />} />
+        <Route path="/sign-up" element={<SignUpPage />} />
+        <Route path="/sign-up/email" element={<SignUpWithEmailPage />} />
+        <Route path="/sso-callback" element={<SSOCallbackPage />} />
+        <Route path="/setup-account" element={<SetupAccountPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="/components" element={<Components />} />
       </Routes>
-    </BrowserRouter>
   );
 }
 
-export default App;
+function App() {
+  return (
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+  );
+}
+
+export default App

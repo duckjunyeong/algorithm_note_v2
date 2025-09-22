@@ -15,8 +15,8 @@ export default function SSOCallbackPage() {
     (async () => {
       try {
         await handleRedirectCallback({
-          afterSignInUrl: '/dashboard',
-          afterSignUpUrl: '/setup-account'
+          afterSignInUrl: 'http://localhost:5173',
+          afterSignUpUrl: 'http://localhost:5173'
         }) as RedirectResult;
       } catch (error) {
         console.error('SSO callback error:', error);
@@ -28,7 +28,7 @@ export default function SSOCallbackPage() {
   useEffect(() => {
     if (isLoaded && session) {
       console.log('Session is active, navigating...');
-      navigate('/setup-account');
+      window.location.href = 'http://localhost:5173';
     }
   }, [isLoaded, session, navigate]);
 
