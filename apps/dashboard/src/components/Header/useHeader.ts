@@ -1,39 +1,28 @@
-/** 네비게이션 링크의 구조를 정의하는 타입입니다. */
-export type NavLink = {
-  label: string;
-  href: string;
-};
+// Header/useHeader.ts
+import { FiFile } from 'react-icons/fi';
+import type { IconType } from 'react-icons';
 
+// 브레드크럼 아이템의 타입 정의
+export interface BreadcrumbItem {
+  icon: IconType;
+  label: string;
+}
+
+/**
+ * Header 컴포넌트에 필요한 정적 데이터를 제공하는 훅
+ */
 export const useHeader = () => {
-  const navLinks: NavLink[] = [
-    { label: 'Product', href: '#' },
-    { label: 'Solutions', href: '#' },
-    { label: 'Resources', href: '#' },
-    { label: 'Pricing', href: '#' },
+  // 예시를 위한 목업(mockup) 데이터
+  const appName = "Vercel AI";
+  const userName = "강준영";
+  const breadcrumbs: BreadcrumbItem[] = [
+    { icon: FiFile, label: "junyeongand's space" },
+    { icon: FiFile, label: "프로필과/비밀번호" },
   ];
 
-  const handleSignIn = () => {
-    // TODO: 실제 로그인 로직 구현
-    console.log('Sign In clicked');
-    alert('Sign In clicked!');
-  };
-
-  const handleRequestDemo = () => {
-    // TODO: 실제 데모 요청 로직 구현
-    console.log('Request a Demo clicked');
-    alert('Request a Demo clicked!');
-  };
-
-  const handleTryForFree = () => {
-    // TODO: 실제 무료 체험 로직 구현
-    console.log('Try for Free clicked');
-    alert('Try for Free clicked!');
-  };
-
   return {
-    navLinks,
-    handleSignIn,
-    handleRequestDemo,
-    handleTryForFree,
+    appName,
+    userName,
+    breadcrumbs,
   };
 };
