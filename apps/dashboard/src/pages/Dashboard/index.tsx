@@ -9,6 +9,12 @@ const DashboardPage: FC = () => {
     tasksByStatus, 
     progressStats,
     analysisStats,
+    isRegisterModalOpen,
+    isConfirmModalOpen,
+    openRegisterModal,
+    openConfirmModal,
+    closeConfirmModal,
+    handleConfirmStop,
     toggleSidebar 
   } = useDashboardPage();
 
@@ -18,6 +24,12 @@ const DashboardPage: FC = () => {
       tasksByStatus={tasksByStatus}
       progressStats={progressStats}
       analysisStats={analysisStats}
+      isRegisterModalOpen={isRegisterModalOpen}
+      isConfirmModalOpen={isConfirmModalOpen}
+      onOpenRegisterModal={openRegisterModal}
+      onOpenConfirmModal={openConfirmModal}
+      onCloseConfirmModal={closeConfirmModal}
+      onConfirmStop={handleConfirmStop}
       onToggleSidebar={toggleSidebar}
     />
   );

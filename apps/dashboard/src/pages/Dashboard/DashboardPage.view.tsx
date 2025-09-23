@@ -6,11 +6,14 @@ import {
   PieChart, Pie, Cell,
   LineChart, Line, CartesianGrid, Area
 } from 'recharts';
+// 🔥 수정: 제공해주신 import 경로로 변경
 import { SidebarNav } from '../../components/SidebarNav';
 import { Header } from '../../components/Header';
 import TaskCard from '../Dashboard/components/TaskCard';
 import { FiPlus, FiArrowDown } from 'react-icons/fi';
 import type { Task, TaskStatus } from './useDashboardPage';
+import RegisterProblemModal from '../Dashboard/components/RegisterProblemModal';
+import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
@@ -30,6 +33,12 @@ export interface DashboardPageViewProps {
     failCount: number;
   };
   onToggleSidebar: () => void;
+  isRegisterModalOpen: boolean;
+  isConfirmModalOpen: boolean;
+  onOpenRegisterModal: () => void;
+  onOpenConfirmModal: () => void;
+  onCloseConfirmModal: () => void;
+  onConfirmStop: () => void;
 }
 
 const columnStyles: Record<TaskStatus, { bg: string; text: string; dot: string }> = {
@@ -55,6 +64,12 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   progressStats,
   analysisStats,
   onToggleSidebar,
+  isRegisterModalOpen,
+  isConfirmModalOpen,
+  onOpenRegisterModal,
+  onOpenConfirmModal,
+  onCloseConfirmModal,
+  onConfirmStop,
 }) => {
   const PIE_COLORS = ['#5E6AD2', '#D1D5DB'];
 
@@ -69,16 +84,18 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
               <h1 className="text-2xl font-bold text-text-primary">알고리바 태스크 목록</h1>
               <p className="mt-1 text-text-secondary">태스크 진행 상황을 한눈에 확인하세요</p>
             </div>
-            <button className="flex items-center gap-2 rounded-md bg-brand p-2 px-4 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-dark">
+            <button 
+              onClick={onOpenRegisterModal}
+              className="flex items-center gap-2 rounded-md bg-brand p-2 px-4 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-dark"
+            >
               <FiPlus /> 추가 태스크 생성
             </button>
           </div>
 
           <div className="mt-6 flex flex-col gap-6 lg:flex-row">
-            {/* 🔥 수정: 섹션 높이 축소 (p-4), 내부 컨테이너 높이(h-24, w-24), 폰트 사이즈 축소 */}
             <div className="flex w-full flex-col justify-between rounded-lg bg-background-secondary p-4 lg:w-1/3">
               <h2 className="text-base font-semibold text-text-primary">전체 진행률</h2>
-              <div className="relative mx-auto h-40 w-40">  
+              <div className="relative mx-auto h-24 w-24">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadialBarChart innerRadius="70%" outerRadius="100%" data={progressStats.chartData} startAngle={180} endAngle={0} barSize={8}>
                     <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
@@ -92,7 +109,6 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
               </div>
             </div>
             
-            {/* 🔥 수정: 섹션 높이 축소 (p-4), 내부 컨테이너 높이(height={125}), 폰트 사이즈 축소 */}
             <div className="flex w-full flex-col gap-4 rounded-lg bg-background-secondary p-4 lg:w-2/3">
               <div className="flex items-center justify-between">
                  <h2 className="text-base font-semibold text-text-primary">주간 성공률</h2>
@@ -163,6 +179,19 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           </div>
         </main>
       </div>
+      
+      <RegisterProblemModal
+        isOpen={isRegisterModalOpen}
+        onAttemptClose={onOpenConfirmModal}
+      />
+
+      <ConfirmModal 
+        isOpen={isConfirmModalOpen}
+        title="정말 중단하시겠습니까?"
+        message="등록 과정이 저장되지 않습니다."
+        onConfirm={onConfirmStop}
+        onCancel={onCloseConfirmModal}
+      />
     </div>
   );
 };
