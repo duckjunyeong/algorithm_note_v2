@@ -32,6 +32,7 @@ interface UseRegisterProblemModal {
   handleLanguageChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleUrlSubmit: (e: React.FormEvent) => void;
   handleManualSubmit: (e: React.FormEvent) => void;
+  handleStartAnalysis: () => void;
 }
 export interface RegisterProblemModalViewProps {
   isOpen: boolean;
@@ -83,7 +84,7 @@ const UrlView: FC<Pick<UseRegisterProblemModal, 'url' | 'errors' | 'goToSelectio
   </>
 );
 
-const ManualView: FC<Omit<UseRegisterProblemModal, 'url' | 'goToUrlView' | 'goToManualView' | 'handleUrlChange' | 'handleUrlSubmit' | 'code' | 'language' | 'handleCodeChange' | 'handleLanguageChange'>> = (props) => (
+const ManualView: FC<Omit<UseRegisterProblemModal, 'url' | 'goToUrlView' | 'goToManualView' | 'handleUrlChange' | 'handleUrlSubmit' | 'code' | 'language' | 'handleCodeChange' | 'handleLanguageChange' | 'handleStartAnalysis'>> = (props) => (
     <>
       <div className="relative flex items-center justify-center">
         <button onClick={props.goToSelectionView} className="absolute left-0 text-neutral-500 hover:text-text-primary transition-colors" aria-label="뒤로 가기"><FiArrowLeft size={24} /></button>
@@ -120,7 +121,7 @@ const ManualView: FC<Omit<UseRegisterProblemModal, 'url' | 'goToUrlView' | 'goTo
     </>
 );
 
-const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'goToSelectionView' | 'handleCodeChange' | 'handleLanguageChange'>> = ({ code, language, goToSelectionView, handleCodeChange, handleLanguageChange }) => {
+const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'goToSelectionView' | 'handleCodeChange' | 'handleLanguageChange' | 'handleStartAnalysis'>> = ({ code, language, goToSelectionView, handleCodeChange, handleLanguageChange, handleStartAnalysis }) => {
   const languageExtensions = {
     javascript: [javascript({ jsx: true })],
     cpp: [cpp()],
@@ -146,7 +147,6 @@ const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'goToSe
             </select>
         </div>
         <div className="rounded-md border border-neutral-200 overflow-hidden">
-            {/* 🔥 수정: CodeMirror 높이를 800px로 변경 */}
             <CodeMirror
                 value={code}
                 height="800px"
@@ -156,7 +156,12 @@ const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'goToSe
             />
         </div>
       </div>
-       <button type="submit" className="mt-6 w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark">분석 시작하기</button>
+       <button 
+         onClick={handleStartAnalysis}
+         className="mt-6 w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark"
+       >
+         분석 시작하기
+       </button>
     </>
   );
 };
@@ -165,7 +170,6 @@ const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'goToSe
 export const RegisterProblemModalView: FC<RegisterProblemModalViewProps> = ({ isOpen, onAttemptClose, logic }) => {
   if (!isOpen) return null;
 
-  // 🔥 수정: Editor View일 때 모달 너비를 더 넓게 (max-w-4xl)
   const modalWidth = logic.view === 'editor' ? 'max-w-4xl' : 'max-w-2xl';
 
   return (

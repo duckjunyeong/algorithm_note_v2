@@ -40,6 +40,7 @@ export const useDashboardPage = () => {
       return acc;
     }, {} as Record<TaskStatus, Task[]>);
   }, [allTasks]);
+
   const progressStats = useMemo(() => {
     const totalCount = allTasks.length;
     const doneCount = tasksByStatus.done?.length || 0;
@@ -47,6 +48,7 @@ export const useDashboardPage = () => {
     const chartData = [{ name: 'Done', value: percentage, fill: '#5E6AD2' }];
     return { totalCount, doneCount, percentage, chartData };
   }, [allTasks, tasksByStatus]);
+
   const analysisStats = useMemo(() => {
     const doneCount = tasksByStatus.done?.length || 0;
     const failCount = tasksByStatus.failed?.length || 0;
@@ -56,6 +58,7 @@ export const useDashboardPage = () => {
       { name: '실패', value: failCount, fill: '#6B7280' },
       { name: '완료', value: doneCount, fill: '#5E6AD2' },
     ];
+    
     const pieChartData = [
       { name: '완료', value: doneCount },
       { name: '실패', value: failCount },
