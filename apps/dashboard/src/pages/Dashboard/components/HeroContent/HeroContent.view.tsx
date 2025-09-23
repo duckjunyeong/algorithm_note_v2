@@ -1,29 +1,16 @@
-// HeroContent/HeroContent.view.tsx
-import type { FC } from 'react';
-
 interface HeroContentViewProps {
-  /** 상단에 표시될 뱃지 텍스트입니다. */
-  badgeText: string;
-  /** 메인 제목 텍스트입니다. */
   title: string;
-  /** 부제목 텍스트입니다. 줄바꿈은 '\n'으로 처리됩니다. */
   description: string;
-  /** '무료로 시작하기' 버튼 클릭 핸들러입니다. */
   onStartClick: () => void;
-  /** '커뮤니티' 버튼 클릭 핸들러입니다. */
   onCommunityClick: () => void;
 }
 
-/**
- * 히어로 섹션의 UI를 렌더링하는 뷰 컴포넌트입니다.
- */
-export const HeroContentView: FC<HeroContentViewProps> = ({
-  badgeText,
+export const HeroContentView = ({
   title,
   description,
   onStartClick,
   onCommunityClick,
-}) => {
+}: HeroContentViewProps) => {
   return (
     <section className="relative isolate w-full bg-background-primary py-24 sm:py-32">
       {/* 배경 그라데이션 효과 */}

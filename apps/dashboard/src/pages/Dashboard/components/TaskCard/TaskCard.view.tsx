@@ -1,6 +1,4 @@
-// TaskCard/TaskCard.view.tsx
-import type { FC } from 'react';
-import { FiCircle } from 'react-icons/fi'; // react-icons 라이브러리 예시
+import { FiCircle } from 'react-icons/fi'; 
 
 interface Tag {
   label: string;
@@ -14,7 +12,7 @@ export interface TaskCardViewProps {
   type: string;
   title: string;
   description: string;
-  tags: Tag[];
+  tags?: Tag[];
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }
@@ -53,7 +51,7 @@ export const TaskCardView = ({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        {tags.map((tag) => (
+        {tags?.map((tag) => (
           <span
             key={tag.label}
             className={`rounded px-2 py-1 text-xs font-medium ${

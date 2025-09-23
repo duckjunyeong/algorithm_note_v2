@@ -1,47 +1,97 @@
 // DashboardPage/useDashboardPage.ts
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
-// TaskCard에 전달될 데이터 타입을 정의합니다.
+// 태스크의 상태를 나타내는 타입
+export type TaskStatus = 'backlog' | 'failed' | 'done';
+
+// Task 인터페이스에 status 속성 추가
 export interface Task {
   id: string;
   type: string;
   title: string;
   description: string;
+  status: TaskStatus;
 }
 
-/**
- * DashboardPage의 비즈니스 로직 및 상태 관리를 위한 커스텀 훅
- */
 export const useDashboardPage = () => {
-  // 사이드바 표시 여부 상태
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
-  // 사이드바 상태를 토글하는 함수
   const toggleSidebar = () => {
     setSidebarOpen(prev => !prev);
   };
-
-  // 실제 앱에서는 API 호출을 통해 이 데이터를 가져옵니다.
-  // 현재는 샘플 데이터를 사용합니다.
-  const tasks: Task[] = [
-    {
-      id: 'T-002',
-      type: '서브태스크',
-      title: '[backend] 문제 등록 및 AI 분석 파이프라인 구축',
-      description: '프론트엔드에서 코드 파일 및 문제 링크 업로드 UI 제공 업로드 된 파일을 Firebase Storage에 안전하게 저장하는 API 개발...',
-    },
-    {
-      id: 'T-001',
-      type: '서브태스크',
-      title: '[frontend] Clerk 기반 소셜 로그인/회원가입 기능 구현',
-      description: 'Clerk 라이브러리 초기 통합 및 환경 설정 프론트엔드 로그인/회원가입 UI 개발 및 인증 플로우 구현 백엔드 인증 토큰 검증...',
-    },
+  
+  // 샘플 데이터
+  const allTasks: Task[] = [
+    { id: 'T-001', type: '서브태스크', title: '[frontend] Clerk 기반 소셜 로그인/회원가입 기능 구현', description: '...', status: 'done' },
+    { id: 'T-002', type: '서브태스크', title: '[backend] 문제 등록 및 AI 분석 파이프라인 구축', description: '...', status: 'backlog' },
+    { id: 'T-003', type: '주요태스크', title: '[infra] CI/CD 파이프라인 개선', description: '...', status: 'backlog' },
+    { id: 'T-004', type: '서브태스크', title: '[frontend] 회원 프로필 페이지 UI 개발', description: '...', status: 'backlog' },
+    { id: 'T-005', type: '버그수정', title: '[backend] 로그인 시 간헐적 500 에러 수정', description: '...', status: 'failed' },
+    { id: 'T-006', type: '주요태스크', title: '[DB] 데이터베이스 스키마 최적화', description: '...', status: 'done' },
+    { id: 'T-007', type: '버그수정', title: '[frontend] 모바일에서 UI 깨짐 현상 수정', description: '...', status: 'failed' },
   ];
 
-  // 뷰 컴포넌트에서 사용할 상태와 함수들을 반환합니다.
+  const tasksByStatus = useMemo(() => {
+    return allTasks.reduce((acc, task) => {
+      if (!acc[task.status]) {
+        acc[task.status] = [];
+      }
+      acc[task.status].push(task);
+      return acc;
+    }, {} as Record<TaskStatus, Task[]>);
+  }, [allTasks]);
+
+  // '진행률' 그래프를 위한 통계
+  const progressStats = useMemo(() => {
+    const totalCount = allTasks.length;
+    const doneCount = tasksByStatus.done?.length || 0;
+    const percentage = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+    
+    const chartData = [{ name: 'Done', value: percentage, fill: '#5E6AD2' }];
+
+    return { totalCount, doneCount, percentage, chartData };
+  }, [allTasks, tasksByStatus]);
+
+  // '분석' 섹션을 위한 통계
+  const analysisStats = useMemo(() => {
+    const doneCount = tasksByStatus.done?.length || 0;
+    const failCount = tasksByStatus.failed?.length || 0;
+    const completedCount = doneCount + failCount;
+    const successRate = completedCount > 0 ? Math.round((doneCount / completedCount) * 100) : 0;
+
+    const barChartData = [
+      { name: '실패', value: failCount, fill: '#6B7280' },
+      { name: '완료', value: doneCount, fill: '#5E6AD2' },
+    ];
+
+    const pieChartData = [
+      { name: '완료', value: doneCount },
+      { name: '실패', value: failCount },
+    ];
+    
+    const today = new Date(); // 현재 날짜 (2025년 9월 23일)
+    const growthData = Array.from({ length: 7 }).map((_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (6 - i));
+      
+      const rate = (6 - i) > 0 
+        ? Math.floor(Math.random() * (75 - 40 + 1) + 40) // 40~75 사이 랜덤값
+        : successRate;
+
+      return {
+        date: `${date.getMonth() + 1}/${date.getDate()}`,
+        rate: rate,
+      };
+    });
+
+    return { successRate, barChartData, pieChartData, growthData, doneCount, failCount };
+  }, [tasksByStatus]);
+  
   return {
     isSidebarOpen,
-    tasks,
+    tasksByStatus,
+    progressStats,
+    analysisStats,
     toggleSidebar,
   };
 };
