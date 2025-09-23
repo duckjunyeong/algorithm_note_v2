@@ -2,7 +2,6 @@
 import React from 'react';
 import type { NavItem } from './useSidebarNavData';
 import { FiChevronDown } from 'react-icons/fi';
-import { CompanyLogo } from './icons';
 
 interface SidebarNavViewProps {
   isOpen: boolean;
@@ -10,7 +9,6 @@ interface SidebarNavViewProps {
   onItemClick: (id: string) => void;
   mainNavItems: NavItem[];
   workflowItems: NavItem[];
-  companyName: string;
 }
 
 export const SidebarNavView: React.FC<SidebarNavViewProps> = ({
@@ -19,7 +17,6 @@ export const SidebarNavView: React.FC<SidebarNavViewProps> = ({
   onItemClick,
   mainNavItems,
   workflowItems,
-  companyName,
 }) => {
   const renderNavItem = (item: NavItem) => {
     const isActive = activeItemId === item.id;

@@ -8,7 +8,7 @@ interface SidebarNavProps {
 }
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({ isOpen }) => {
-  const { mainNavItems, workflowItems, companyName } = useSidebarNavData();
+  const { mainNavItems, workflowItems } = useSidebarNavData();
   const [activeItemId, setActiveItemId] = useState('home');
 
   const handleItemClick = (id: string) => {
@@ -22,7 +22,6 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ isOpen }) => {
       onItemClick={handleItemClick}
       mainNavItems={mainNavItems}
       workflowItems={workflowItems}
-      companyName={companyName}
     />
   );
 };

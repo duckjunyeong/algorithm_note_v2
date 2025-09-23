@@ -46,6 +46,5 @@ export const useSidebarNavData = () => {
   return {
     mainNavItems,
     workflowItems,
-    companyName: 'Skyscape Systems',
-  };
+  };  
 };
