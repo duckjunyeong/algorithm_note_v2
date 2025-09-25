@@ -51,9 +51,7 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
   };
 
   return (
-    // 🔥 수정: 최상위 div에 그라데이션 배경 적용
     <div className="flex h-screen bg-gradient-to-br from-yellow-50 via-purple-50 to-sky-100">
-      {/* 🔥 수정: 왼쪽 영역에서 배경색 관련 클래스 제거 */}
       <div className="w-1/3 overflow-y-auto p-8">
         <h1 className="text-2xl font-bold text-text-primary">{analysisResult.problemTitle}</h1>
         <p className="mt-2 text-text-secondary">AI가 분석한 로직 흐름입니다.</p>
@@ -63,7 +61,6 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
             <div
               key={step.id}
               onClick={() => handleSelectStep(step)}
-              // 🔥 수정: 선택된 항목과 기본 항목의 배경을 투명하게 하거나 미세한 효과만 주도록 변경
               className={`cursor-pointer rounded-lg border p-4 transition-all ${selectedStep?.id === step.id ? 'border-brand/50 bg-white/50 shadow-md' : 'border-neutral-200/50 bg-white/30 hover:bg-white/50'}`}
             >
               <div className="flex items-start justify-between">
@@ -84,7 +81,6 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
         </div>
       </div>
 
-      {/* 🔥 수정: 오른쪽 영역에서 배경색 관련 클래스 제거 (부모로부터 상속) */}
       <div className="w-2/3 flex flex-col p-4">
         {selectedStep ? (
            <div className="h-full overflow-hidden rounded-lg">

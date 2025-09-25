@@ -1,4 +1,3 @@
-import { SignInWithGoogleButtonView } from '../../../../../libs/ui-components/src/components/sign-in-with-google-button/SignInWithGoogleButton.view';
 import { SignInWithEmailButton } from '../../../../../libs/ui-components/src/components/sign-in-with-email-button';
 
 interface SignUpPageViewProps {
@@ -10,9 +9,6 @@ interface SignUpPageViewProps {
 }
 
 export function SignUpPageView({
-  hasGoogleHistory,
-  isLoaded,
-  onGoogleSignUp,
   onEmailSignUp,
   onSignInClick
 }: SignUpPageViewProps) {

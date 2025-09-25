@@ -2,9 +2,7 @@ import { useEffect } from 'react'
 import { useClerk, useSession } from '@clerk/clerk-react'
 import { useNavigate } from 'react-router-dom'
 
-interface RedirectResult {
-  createdSessionId?: string;
-}
+
 
 export default function SSOCallbackPage() {
   const { handleRedirectCallback } = useClerk();
@@ -14,10 +12,10 @@ export default function SSOCallbackPage() {
   useEffect(() => {
     (async () => {
       try {
-        await handleRedirectCallback({
-          afterSignInUrl: 'http://localhost:5173',
-          afterSignUpUrl: 'http://localhost:5173'
-        }) as RedirectResult;
+        await handleRedirectCallback({ 
+          signInForceRedirectUrl: 'http://localhost:5173',
+          signUpForceRedirectUrl: 'http://localhost:5173',});
+
       } catch (error) {
         console.error('SSO callback error:', error);
         navigate('/error');
@@ -25,12 +23,12 @@ export default function SSOCallbackPage() {
     })();
   }, []); 
 
-  useEffect(() => {
-    if (isLoaded && session) {
-      console.log('Session is active, navigating...');
-      window.location.href = 'http://localhost:5173';
-    }
-  }, [isLoaded, session, navigate]);
+//  useEffect(() => {
+//   if (isLoaded && session) {
+//     console.log('Session is active, navigating...');
+//      window.location.href = 'http://localhost:5173';
+//    }
+//  }, [isLoaded, session, navigate]);
 
   if (!isLoaded) {
     return (

@@ -16,24 +16,23 @@ public class NgrokComponent {
   @Value("${server.port}")
   private int serverPort;
 
-  private NgrokClient ngrokClient;
+  final private NgrokClient ngrokClient = new NgrokClient.Builder().build();
+  private String publicUrl;
 
   @PostConstruct
   public void startNgrok() {
     log.info("Starting ngrok tunnel for port {}...", serverPort);
-    ngrokClient = new NgrokClient.Builder().build();
-
     // CreateTunnel 빌더를 사용해 포트를 명시적으로 지정하는 것이 더 안전합니다.
     final CreateTunnel createTunnel = new CreateTunnel.Builder()
         .withAddr(serverPort)
         .build();
 
     final Tunnel tunnel = ngrokClient.connect(createTunnel);
-    String publicUrl = tunnel.getPublicUrl();
+    this.publicUrl = tunnel.getPublicUrl();
 
     log.info("****************************************************************");
     log.info("  ngrok tunnel started successfully!");
-    log.info("  Public URL: {}", publicUrl);
+    log.info("  Public URL: {}", this.publicUrl);
     log.info("  Copy this URL to your Clerk Webhook endpoint configuration.");
     log.info("****************************************************************");
   }
@@ -41,7 +40,7 @@ public class NgrokComponent {
   @PreDestroy
   public void stopNgrok() {
     if (ngrokClient != null) {
-      ngrokClient.kill();
+      ngrokClient.disconnect(this.publicUrl);
       log.info("ngrok client closed.");
     }
   }
