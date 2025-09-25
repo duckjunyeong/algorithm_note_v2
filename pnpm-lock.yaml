@@ -26,6 +26,9 @@ importers:
 
   apps/dashboard:
     dependencies:
+      '@clerk/clerk-react':
+        specifier: ^5.2.8
+        version: 5.47.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@codemirror/lang-cpp':
         specifier: ^6.0.3
         version: 6.0.3

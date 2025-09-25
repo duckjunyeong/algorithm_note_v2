@@ -52,19 +52,17 @@ public class WebhookController {
 
     private ResponseEntity<ClerkWebhookResponseDto> handleUserCreatedEvent(ClerkWebhookEventDto webhookEvent) {
         ClerkUserDto clerkUser = webhookEvent.getData();
-        String userId = clerkUser.getId();
+            String userId = clerkUser.getId();
 
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("User ID is missing in webhook event");
         }
 
         try {
-            // 1. 사용자를 데이터베이스에 등록
             UserRegisterRequestDto userRegistrationData = createUserRegistrationData(clerkUser);
             User savedUser = userService.registerUser(userRegistrationData);
             log.info("Successfully saved user to database: {}", savedUser.getClerkId());
 
-            // 2. Clerk에서 사용자에게 역할 할당
             clerkUserService.assignDefaultRole(userId);
             log.info("Successfully assigned default role to user: {}", userId);
 
@@ -72,13 +70,11 @@ public class WebhookController {
                 ClerkWebhookResponseDto.success("User processed successfully", userId, "member")
             );
         } catch (IllegalArgumentException ex) {
-            // 사용자가 이미 존재하는 경우 등 비즈니스 예외
             log.warn("User registration failed: {}", ex.getMessage());
             return ResponseEntity.ok(
                 ClerkWebhookResponseDto.success("User already exists", userId, "member")
             );
         } catch (Exception ex) {
-            // 기타 예외는 UserProcessingException으로 변환하여 GlobalExceptionHandler에서 처리
             throw new UserProcessingException("Failed to process user creation for user: " + userId, ex);
         }
     }

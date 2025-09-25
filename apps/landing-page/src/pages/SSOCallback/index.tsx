@@ -1,26 +1,12 @@
 import { useEffect } from 'react'
 import { useClerk, useSession } from '@clerk/clerk-react'
-import { useNavigate } from 'react-router-dom'
-
-
 
 export default function SSOCallbackPage() {
   const { handleRedirectCallback } = useClerk();
   const { session, isLoaded } = useSession(); // isLoaded 추가
-  const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      try {
-        await handleRedirectCallback({ 
-          signInForceRedirectUrl: 'http://localhost:5173',
-          signUpForceRedirectUrl: 'http://localhost:5173',});
-
-      } catch (error) {
-        console.error('SSO callback error:', error);
-        navigate('/error');
-      }
-    })();
+    handleRedirectCallback({});
   }, []); 
 
 //  useEffect(() => {
