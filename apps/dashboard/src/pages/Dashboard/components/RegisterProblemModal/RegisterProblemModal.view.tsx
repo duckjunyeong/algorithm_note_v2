@@ -19,6 +19,8 @@ interface UseRegisterProblemModal {
   code: string;
   language: string;
   errors: { [key: string]: string | undefined };
+  isLoading: boolean;
+  apiError: string | null;
   goToUrlView: () => void;
   goToManualView: () => void;
   goToSelectionView: () => void;
@@ -66,7 +68,7 @@ const SelectionView: FC<Pick<UseRegisterProblemModal, 'goToUrlView' | 'goToManua
   </>
 );
 
-const UrlView: FC<Pick<UseRegisterProblemModal, 'url' | 'errors' | 'goToSelectionView' | 'handleUrlChange' | 'handleUrlSubmit'>> = ({ url, errors, goToSelectionView, handleUrlChange, handleUrlSubmit }) => (
+const UrlView: FC<Pick<UseRegisterProblemModal, 'url' | 'errors' | 'isLoading' | 'apiError' | 'goToSelectionView' | 'handleUrlChange' | 'handleUrlSubmit'>> = ({ url, errors, isLoading, apiError, goToSelectionView, handleUrlChange, handleUrlSubmit }) => (
   <>
     <div className="relative flex items-center justify-center">
       <button onClick={goToSelectionView} className="absolute left-0 text-neutral-500 hover:text-text-primary transition-colors" aria-label="뒤로 가기"><FiArrowLeft size={24} /></button>
@@ -76,10 +78,25 @@ const UrlView: FC<Pick<UseRegisterProblemModal, 'url' | 'errors' | 'goToSelectio
     <form onSubmit={handleUrlSubmit} className="mt-8">
       <div className="flex flex-col">
         <label htmlFor="problem-url" className="text-sm font-semibold text-text-primary">문제 링크</label>
-        <input id="problem-url" type="url" value={url} onChange={handleUrlChange} placeholder="문제 URL 입력 (예: https://www.acmicpc.net/problem/1000)" className={`mt-2 w-full rounded-md border bg-background-tertiary px-4 py-2 text-text-primary placeholder:text-text-placeholder focus:border-brand focus:ring-1 focus:ring-brand outline-none ${errors.url ? 'border-semantic-error' : 'border-neutral-300'}`} />
+        <input
+          id="problem-url"
+          type="url"
+          value={url}
+          onChange={handleUrlChange}
+          placeholder="문제 URL 입력 (예: https://www.acmicpc.net/problem/1000)"
+          disabled={isLoading}
+          className={`mt-2 w-full rounded-md border bg-background-tertiary px-4 py-2 text-text-primary placeholder:text-text-placeholder focus:border-brand focus:ring-1 focus:ring-brand outline-none transition-colors ${errors.url ? 'border-semantic-error' : 'border-neutral-300'} ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        />
         {errors.url && <p className="mt-1 text-xs text-semantic-error">{errors.url}</p>}
+        {apiError && <p className="mt-1 text-xs text-semantic-error">{apiError}</p>}
       </div>
-      <button type="submit" className="mt-6 w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark">계속하기</button>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="mt-6 w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isLoading ? '처리 중...' : '계속하기'}
+      </button>
     </form>
   </>
 );
@@ -94,7 +111,15 @@ const ManualView: FC<Omit<UseRegisterProblemModal, 'url' | 'goToUrlView' | 'goTo
       <form onSubmit={props.handleManualSubmit} className="mt-8 space-y-6">
         <div>
           <label htmlFor="problem-title" className="text-sm font-semibold text-text-primary">문제 제목*</label>
-          <input id="problem-title" type="text" value={props.title} onChange={props.handleTitleChange} placeholder="문제 제목" className={`mt-2 w-full rounded-md border bg-background-tertiary px-4 py-2 text-text-primary placeholder:text-text-placeholder focus:border-brand focus:ring-1 focus:ring-brand outline-none ${props.errors.title ? 'border-semantic-error' : 'border-neutral-300'}`} />
+          <input
+            id="problem-title"
+            type="text"
+            value={props.title}
+            onChange={props.handleTitleChange}
+            placeholder="문제 제목"
+            disabled={props.isLoading}
+            className={`mt-2 w-full rounded-md border bg-background-tertiary px-4 py-2 text-text-primary placeholder:text-text-placeholder focus:border-brand focus:ring-1 focus:ring-brand outline-none transition-colors ${props.errors.title ? 'border-semantic-error' : 'border-neutral-300'} ${props.isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          />
           {props.errors.title && <p className="mt-1 text-xs text-semantic-error">{props.errors.title}</p>}
         </div>
         <div>
@@ -116,12 +141,23 @@ const ManualView: FC<Omit<UseRegisterProblemModal, 'url' | 'goToUrlView' | 'goTo
           <label htmlFor="constraints" className="text-sm font-semibold text-text-primary">제한 조건</label>
           <textarea id="constraints" value={props.constraints} onChange={props.handleConstraintsChange} placeholder="제한 조건을 붙여넣어주세요 (선택)" rows={3} className="mt-2 w-full rounded-md border border-neutral-300 bg-background-tertiary px-4 py-2 text-text-primary placeholder:text-text-placeholder focus:border-brand focus:ring-1 focus:ring-brand outline-none resize-none" />
         </div>
-        <button type="submit" className="w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark">등록하기</button>
+        {props.apiError && (
+          <div className="p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-md">
+            <p className="text-sm text-semantic-error">{props.apiError}</p>
+          </div>
+        )}
+        <button
+          type="submit"
+          disabled={props.isLoading}
+          className="w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {props.isLoading ? '등록 중...' : '등록하기'}
+        </button>
       </form>
     </>
 );
 
-const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'goToSelectionView' | 'handleCodeChange' | 'handleLanguageChange' | 'handleStartAnalysis'>> = ({ code, language, goToSelectionView, handleCodeChange, handleLanguageChange, handleStartAnalysis }) => {
+const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'isLoading' | 'apiError' | 'goToSelectionView' | 'handleCodeChange' | 'handleLanguageChange' | 'handleStartAnalysis'>> = ({ code, language, isLoading, apiError, goToSelectionView, handleCodeChange, handleLanguageChange, handleStartAnalysis }) => {
   const languageExtensions = {
     javascript: [javascript({ jsx: true })],
     cpp: [cpp()],
@@ -156,11 +192,17 @@ const EditorView: FC<Pick<UseRegisterProblemModal, 'code' | 'language' | 'goToSe
             />
         </div>
       </div>
-       <button 
+       {apiError && (
+         <div className="mt-4 p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-md">
+           <p className="text-sm text-semantic-error">{apiError}</p>
+         </div>
+       )}
+       <button
          onClick={handleStartAnalysis}
-         className="mt-6 w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark"
+         disabled={isLoading}
+         className="mt-6 w-full rounded-md bg-brand py-3 text-base font-semibold text-text-inverse transition-colors hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed"
        >
-         분석 시작하기
+         {isLoading ? '분석 중...' : '분석 시작하기'}
        </button>
     </>
   );

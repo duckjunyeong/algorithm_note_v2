@@ -22,37 +22,15 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public User findOrCreateUser(Map<String, Object> jwtClaims) {
         String clerkId = extractClerkId(jwtClaims);
-        String email = extractEmail(jwtClaims);
-        String firstName = extractFirstName(jwtClaims);
-        String lastName = extractLastName(jwtClaims);
 
         return userRepository.findByClerkId(clerkId)
-                .map(existingUser -> updateExistingUser(existingUser, email, firstName, lastName))
-                .orElseGet(() -> createNewUser(clerkId, email, firstName, lastName));
+                .orElseThrow(() -> new UserNotFoundException("User not found with Clerk ID: " + clerkId +
+                    ". Please ensure the user is registered through the application."));
     }
 
-    private User updateExistingUser(User existingUser, String email, String firstName, String lastName) {
-        User updatedUser = existingUser.updateFromJwtClaims(email, firstName, lastName);
-        User savedUser = userRepository.save(updatedUser);
-        log.info("Updated existing user with Clerk ID: {}", existingUser.getClerkId());
-        return savedUser;
-    }
-
-    private User createNewUser(String clerkId, String email, String firstName, String lastName) {
-        User newUser = User.builder()
-                .clerkId(clerkId)
-                .email(email)
-                .firstName(firstName)
-                .lastName(lastName)
-                .build();
-
-        User savedUser = userRepository.save(newUser);
-        log.info("Created new user with Clerk ID: {}", clerkId);
-        return savedUser;
-    }
 
     private String extractClerkId(Map<String, Object> jwtClaims) {
         String clerkId = (String) jwtClaims.get("sub");
@@ -62,21 +40,6 @@ public class UserService {
         return clerkId;
     }
 
-    private String extractEmail(Map<String, Object> jwtClaims) {
-        String email = (String) jwtClaims.get("email");
-        if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("Missing or empty email in JWT claims");
-        }
-        return email;
-    }
-
-    private String extractFirstName(Map<String, Object> jwtClaims) {
-        return (String) jwtClaims.get("given_name");
-    }
-
-    private String extractLastName(Map<String, Object> jwtClaims) {
-        return (String) jwtClaims.get("family_name");
-    }
 
     @Transactional
     public User registerUser(UserRegisterRequestDto requestDto) {

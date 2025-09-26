@@ -1,6 +1,8 @@
 // RegisterProblemModal/useRegisterProblemModal.ts
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useProblemService } from '../../../../services/problemService';
+import type { ApiError, ProblemManualRequest, ProblemUrlRequest } from '../../../../services/problemService';
 
 // 모달이 보여줄 수 있는 화면들의 타입을 정의합니다.
 type ModalView = 'selection' | 'url' | 'manual' | 'editor';
@@ -16,6 +18,7 @@ type Errors = {
 
 export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   const navigate = useNavigate();
+  const problemService = useProblemService();
   const [view, setView] = useState<ModalView>('selection');
   
   // 폼 상태
@@ -33,6 +36,10 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   // 유효성 검사 에러 상태
   const [errors, setErrors] = useState<Errors>({});
 
+  // API 상태 관리
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
   // 모달이 열릴 때 모든 상태 초기화
   useEffect(() => {
     if (isOpen) {
@@ -46,6 +53,8 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
       setCode('// 여기에 코드를 입력하세요.');
       setLanguage('javascript');
       setErrors({});
+      setIsLoading(false);
+      setApiError(null);
     }
   }, [isOpen]);
 
@@ -59,22 +68,27 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
     if (errors.url) setErrors(prev => ({ ...prev, url: undefined }));
+    if (apiError) setApiError(null);
   };
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     if (errors.title) setErrors(prev => ({ ...prev, title: undefined }));
+    if (apiError) setApiError(null);
   };
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
     if (errors.description) setErrors(prev => ({ ...prev, description: undefined }));
+    if (apiError) setApiError(null);
   };
   const handleInputConditionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputCondition(e.target.value);
     if (errors.inputCondition) setErrors(prev => ({ ...prev, inputCondition: undefined }));
+    if (apiError) setApiError(null);
   };
   const handleOutputConditionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setOutputCondition(e.target.value);
     if (errors.outputCondition) setErrors(prev => ({ ...prev, outputCondition: undefined }));
+    if (apiError) setApiError(null);
   };
   const handleConstraintsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setConstraints(e.target.value);
   
@@ -82,48 +96,84 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   const handleCodeChange = (value: string) => setCode(value);
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => setLanguage(e.target.value);
 
-  // 제출 핸들러 (유효성 검사 후 View 전환)
-  const handleUrlSubmit = (e: React.FormEvent) => {
+  // 제출 핸들러 (유효성 검사 후 API 호출)
+  const handleUrlSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url.trim()) {
-      setErrors({ url: '문제 링크(URL)를 입력하세요.' });
+    setApiError(null);
+    setErrors({});
+
+    // 클라이언트 사이드 검증
+    const validation = problemService.validateUrl(url);
+    if (!validation.isValid) {
+      setErrors({ url: validation.error! });
       return;
     }
-    console.log(`URL 등록: ${url}`);
-    goToEditorView();
+
+    setIsLoading(true);
+
+    try {
+      const request: ProblemUrlRequest = { url: url.trim() };
+      await problemService.registerFromUrl(request);
+
+      console.log(`URL 등록 성공: ${url}`);
+      goToEditorView();
+    } catch (error) {
+      const apiErr = error as ApiError;
+      setApiError(apiErr.message);
+      console.error('URL 등록 실패:', apiErr);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleManualSubmit = (e: React.FormEvent) => {
+  const handleManualSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: Errors = {};
-    if (!title.trim()) newErrors.title = '문제 제목을 입력하세요.';
-    if (!description.trim()) newErrors.description = '문제 설명을 입력하세요.';
-    if (!inputCondition.trim()) newErrors.inputCondition = '입력 조건을 입력하세요.';
-    if (!outputCondition.trim()) newErrors.outputCondition = '출력 조건을 입력하세요.';
+    setApiError(null);
+    setErrors({});
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    // 클라이언트 사이드 검증
+    const requestData: ProblemManualRequest = {
+      title: title.trim(),
+      description: description.trim(),
+      inputCondition: inputCondition.trim(),
+      outputCondition: outputCondition.trim(),
+      constraints: constraints?.trim() || undefined,
+    };
+
+    const validation = problemService.validateManualInput(requestData);
+    if (!validation.isValid) {
+      setErrors(validation.errors);
       return;
     }
-    console.log(`수동 등록: ${title}`);
-    goToEditorView();
+
+    setIsLoading(true);
+
+    try {
+      await problemService.registerFromManualInput(requestData);
+
+      console.log(`수동 등록 성공: ${title}`);
+      goToEditorView();
+    } catch (error) {
+      const apiErr = error as ApiError;
+      setApiError(apiErr.message);
+      console.error('수동 등록 실패:', apiErr);
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   // 분석 시작 및 페이지 이동을 처리하는 함수
   const handleStartAnalysis = async () => {
-    const requestData = {
-      problem: { title, description, inputCondition, outputCondition, constraints },
-      solution: { code, language },
-    };
+    setIsLoading(true);
+    setApiError(null);
 
     try {
-      // --- Axios 요청 의사코드 ---
-      // const response = await axios.post('/api/analyze', requestData);
-      // const analysisResult = response.data;
-      
-      // Mock 응답 데이터 생성
+      // 먼저 캐시된 문제 데이터를 영구 저장
+      await problemService.saveProblemFromCache();
+
+      // Mock 분석 결과 생성 (향후 실제 AI 분석 API로 교체 예정)
       const mockAnalysisResult = {
-        problemTitle: title || '문제 제목(URL로부터 추출됨)',
+        problemTitle: title || 'URL로부터 추출된 문제',
         language: language,
         analysis: [
           { id: 'step1', title: '초기 변수 선언 및 입력값 처리', code: `const fs = require('fs');\nconst input = fs.readFileSync('/dev/stdin').toString().split(' ');` },
@@ -137,13 +187,17 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
       navigate(`/algorithm-logic-flow-analysis?data=${queryString}`);
 
     } catch (error) {
-      console.error("Analysis request failed:", error);
-      alert("분석 요청에 실패했습니다. 다시 시도해주세요.");
+      const apiErr = error as ApiError;
+      setApiError(apiErr.message);
+      console.error("분석 시작 실패:", apiErr);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return {
     view, url, title, description, inputCondition, outputCondition, constraints, code, language, errors,
+    isLoading, apiError,
     goToUrlView, goToManualView, goToSelectionView,
     handleUrlChange, handleTitleChange, handleDescriptionChange, handleInputConditionChange, handleOutputConditionChange, handleConstraintsChange,
     handleCodeChange, handleLanguageChange,

@@ -1,9 +1,13 @@
 package algorithm_note.algorithm_note_v2.user.domain;
 
+import algorithm_note.algorithm_note_v2.problem.domain.Problem;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User entity representing application users linked to Clerk authentication.
@@ -37,6 +41,11 @@ public class User {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @Builder.Default
+    private List<Problem> problems = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

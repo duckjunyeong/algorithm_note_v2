@@ -19,9 +19,9 @@ clerk:
     key: sk_test_jUI4CUHszXOVagbbIS28dSg7FIvLd2mS0t36iYRUh5
   api-secret: ${clerk.secret.key} # Corrected to reference the defined key
   jwt:
-    instance-domain: ${CLERK_INSTANCE_DOMAIN:your-clerk-instance.clerk.dev}
-    issuer: ${CLERK_JWT_ISSUER:https://your-clerk-instance.clerk.dev}
-    audience: ${CLERK_JWT_AUDIENCE:}
+    instance-domain: ${CLERK_INSTANCE_DOMAIN:stable-yeti-70.clerk.accounts.dev}
+    issuer: ${CLERK_JWT_ISSUER:https://stable-yeti-70.clerk.accounts.dev}
+    #audience: ${CLERK_JWT_AUDIENCE:}
     jwks-cache-expiration-seconds: ${CLERK_JWKS_CACHE_EXPIRATION:3600}
 
 ai:

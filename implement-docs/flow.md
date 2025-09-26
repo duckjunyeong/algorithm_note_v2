@@ -13,6 +13,7 @@
         *   (Edge Case: 형식이 올바르지 않은 경우) 검증에 실패하면, API 요청을 보내지 않고 '출력'의 'URL 형식 오류' 단계로 이동합니다.
     *   **[Frontend]** URL 형식이 올바르다면, 로딩 상태를 활성화하고, JWT 인터셉터가 적용된 Axios 인스턴스를 통해 백엔드 API로 문제 등록 요청을 보냅니다. (Request Body: `{ "url": "입력된 URL" }`)
     *   **[Backend]** API 엔드포인트는 요청 헤더의 JWT를 검증하여 사용자를 인증합니다.
+        *   backend에서 JWT을 파싱할 때 com.clerk:backend-api:3.2.0 라이브러리를 이용해서 파싱할 것
         *   (Edge Case: 인증 실패) 유효하지 않은 토큰일 경우, 401 Unauthorized 또는 403 Forbidden 응답을 반환합니다.
     *   **[Backend]** Jsoup 라이브러리를 사용하여 요청받은 URL의 HTML 문서를 가져옵니다.
         *   (Edge Case: 외부 사이트 연결 실패) 해당 URL에 접속할 수 없거나 페이지가 존재하지 않을 경우, 실패 응답을 반환합니다.
