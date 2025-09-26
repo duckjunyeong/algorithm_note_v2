@@ -7,6 +7,7 @@ interface AuthProviderViewProps {
 
 export function AuthProviderView({ children, isLoaded }: AuthProviderViewProps) {
   // Show loading indicator while Clerk initializes
+  console.log("In AuthProvider.view.tsx : isLoaded " + isLoaded);
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen">

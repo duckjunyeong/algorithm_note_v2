@@ -11,7 +11,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({
   children,
   requiredRole = 'member',
-  redirectTo = '/sign-in'
+  redirectTo = 'http://localhost:5174/sign-in'
 }: ProtectedRouteProps) {
   const { shouldShowContent, shouldShowLoading } = useProtectedRoute({
     requiredRole,

@@ -8,9 +8,10 @@ import type { User } from '../../store/useAuthStore';
 export function useAuthProvider() {
   const { isLoaded: clerkIsLoaded, isSignedIn: clerkIsSignedIn } = useAuth();
   const { user: clerkUser } = useUser();
-  const { setAuthState, setUser, clearAuth } = useAuthStore();
+  const { setAuthState, setUser, clearAuth, isLoaded } = useAuthStore();
 
   useEffect(() => {
+    console.log("In useAuthProvider: isLoaded " + isLoaded);
     setAuthState({
       isLoaded: clerkIsLoaded,
       isSignedIn: clerkIsSignedIn,
@@ -30,7 +31,10 @@ export function useAuthProvider() {
         };
         setUser(user);
       } else {
-        clearAuth();
+          setAuthState({
+            isLoaded: true,
+            isSignedIn: false,
+          });
       }
     }
   }, [clerkIsLoaded, clerkIsSignedIn, clerkUser, setAuthState, setUser, clearAuth]);

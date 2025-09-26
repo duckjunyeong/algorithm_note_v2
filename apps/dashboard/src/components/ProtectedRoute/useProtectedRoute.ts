@@ -15,10 +15,12 @@ export function useProtectedRoute({
   const { isLoaded, isSignedIn, role } = useAuthStore();
   
   useEffect(() => {
+
+    console.log("isLoaded: " + isLoaded);
     if (!isLoaded) return;
 
     if (!isSignedIn) {
-      navigate(redirectTo);
+      window.location.replace(redirectTo);
       return;
     }
 
