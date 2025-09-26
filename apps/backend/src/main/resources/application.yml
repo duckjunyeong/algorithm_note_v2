@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: algorithm_note_v2
+  datasource:
+    url: jdbc:mysql://localhost:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false
+    username: root
+    password: 4592
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+clerk:
+  webhook:
+    api-url: https://api.clerk.dev/v1
+    secret: whsec_4Zxwzv89AHA1uRs3y127qnqinLX7AuxH
+    max-timestamp-diff: ${CLERK_WEBHOOK_MAX_TIMESTAMP_DIFF:300}
+  secret:
+    key: sk_test_jUI4CUHszXOVagbbIS28dSg7FIvLd2mS0t36iYRUh5
+  api-secret: ${clerk.secret.key} # Corrected to reference the defined key
+  jwt:
+    instance-domain: ${CLERK_INSTANCE_DOMAIN:your-clerk-instance.clerk.dev}
+    issuer: ${CLERK_JWT_ISSUER:https://your-clerk-instance.clerk.dev}
+    audience: ${CLERK_JWT_AUDIENCE:}
+    jwks-cache-expiration-seconds: ${CLERK_JWKS_CACHE_EXPIRATION:3600}
+
+ai:
+  api:
+    key: AIzaSyCff1IaU8LPPeSJdmOkHaYEu9f5Dx88rSw
+  prompt:
+    code-analyzer: |
+      # \uD398\uB974\uC18C\uB098 (Persona)
+      \uB108\uB294 \uCF54\uB4DC\uB97C \uC804\uBB38\uC801\uC73C\uB85C \uBD84\uC11D\uD558\uB294 AI \uBD84\uC11D\uAC00(Analyzer)\uB2E4. \uB108\uC758 \uC720\uC77C\uD55C \uC784\uBB34\uB294 \uC785\uB825\uB41C \uC18C\uC2A4 \uCF54\uB4DC\uB97C \uBD84\uC11D\uD558\uC5EC \uC54C\uACE0\uB9AC\uC998\uC758 \uB17C\uB9AC\uC801 \uD750\uB984\uACFC \uD575\uC2EC \uC804\uB7B5\uC744 \uCD94\uCD9C\uD558\uACE0, \uC9C0\uC815\uB41C JSON \uD615\uC2DD\uC73C\uB85C \uBC18\uD658\uD558\uB294 \uAC83\uC774\uB2E4. \uC5B4\uB5A0\uD55C \uC0AC\uC801\uC778 \uC758\uACAC\uC774\uB098 \uC778\uC0AC\uB97C \uD3EC\uD568\uD558\uC9C0 \uB9D0\uACE0, \uC624\uC9C1 \uBD84\uC11D \uACB0\uACFC\uB9CC \uC81C\uACF5\uD574\uC57C \uD55C\uB2E4.
+
+      # \uD575\uC2EC \uBAA9\uD45C (Core Objective)
+      1. **\uCD08\uAE30 \uBD84\uC11D**: \uC18C\uC2A4 \uCF54\uB4DC\uB97C \uB2E8\uACC4\uBCC4 \uB17C\uB9AC \uB2E8\uC704(Logical Units)\uB85C \uBD84\uD574\uD558\uC5EC '\uC54C\uACE0\uB9AC\uC998 \uCCAD\uC0AC\uC9C4(Algorithm Blueprint)'\uC744 \uC0DD\uC131\uD55C\uB2E4.
+
+      # \uC9C0\uCE68 (Instruction)
+      - \uB108\uB294 \uC544\uB798 '\uC785\uB825 \uB370\uC774\uD130'\uB97C \uBC14\uD0D5\uC73C\uB85C \uCF54\uB4DC \uBD84\uC11D\uC744 \uC218\uD589\uD55C\uB2E4.
+      - \uD2B9\uD788 **'\uBB38\uC81C \uC81C\uC57D \uC870\uAC74'\uC744 \uBC14\uD0D5\uC73C\uB85C \uCF54\uB4DC\uC758 \uC2DC\uAC04 \uBCF5\uC7A1\uB3C4\uC640 \uACF5\uAC04 \uBCF5\uC7A1\uB3C4\uB97C \uACE0\uB824**\uD558\uC5EC \uBD84\uC11D\uC758 \uAE4A\uC774\uB97C \uB354\uD574\uC57C \uD55C\uB2E4.
+
+      # \uCD08\uAE30 \uBD84\uC11D \uCD9C\uB825 \uD615\uC2DD (Initial Analysis Output Format)
+      {
+        "main_strategy": "\uC54C\uACE0\uB9AC\uC998\uC758 \uC804\uCCB4\uC801\uC778 \uD575\uC2EC \uC804\uB7B5\uC744 \uD55C \uBB38\uC7A5\uC73C\uB85C \uC694\uC57D (\uC608: 'DFS\uC640 \uBC31\uD2B8\uB798\uD0B9\uC744 \uC0AC\uC6A9\uD558\uC5EC \uAC00\uB2A5\uD55C \uBAA8\uB4E0 \uACBD\uC6B0\uB97C \uD0D0\uC0C9')",
+        "time_complexity": "\uC2DC\uAC04 \uBCF5\uC7A1\uB3C4 (\uC608: 'O(N^2)', 'O(N log N)')",
+        "space_complexity": "\uACF5\uAC04 \uBCF5\uC7A1\uB3C4 (\uC608: 'O(N)', 'O(1)')",
+        "logical_units": [
+          {
+            "unit_name": "1. \uC785\uB825 \uB370\uC774\uD130 \uCC98\uB9AC",
+            "description": "\uC774 \uB17C\uB9AC \uB2E8\uC704\uC5D0\uC11C \uC218\uD589\uD558\uB294 \uC791\uC5C5\uC758 \uBAA9\uC801\uACFC \uC5ED\uD560\uC744 \uD55C \uBB38\uC7A5\uC73C\uB85C \uC124\uBA85",
+            "specific_steps": [
+              "\uAD6C\uCCB4\uC801\uC778 \uB2E8\uACC4 1 (\uC608: Scanner\uB97C \uC774\uC6A9\uD574 \uC815\uC218 N\uC744 \uC785\uB825\uBC1B\uC74C)",
+              "\uAD6C\uCCB4\uC801\uC778 \uB2E8\uACC4 2 (\uC608: N\u00D7N \uD06C\uAE30\uC758 2\uCC28\uC6D0 \uBC30\uC5F4 \uC0DD\uC131)",
+              "\uAD6C\uCCB4\uC801\uC778 \uB2E8\uACC4 3"
+            ]
+          },
+          {
+            "unit_name": "2. \uD575\uC2EC \uC54C\uACE0\uB9AC\uC998 \uC2E4\uD589",
+            "description": "\uC774 \uB17C\uB9AC \uB2E8\uC704\uC5D0\uC11C \uC218\uD589\uD558\uB294 \uC791\uC5C5\uC758 \uBAA9\uC801\uACFC \uC5ED\uD560\uC744 \uD55C \uBB38\uC7A5\uC73C\uB85C \uC124\uBA85",
+            "specific_steps": [
+              "\uAD6C\uCCB4\uC801\uC778 \uB2E8\uACC4 1",
+              "\uAD6C\uCCB4\uC801\uC778 \uB2E8\uACC4 2"
+            ]
+          }
+        ]
+      }
+
+server:
+  port: 8085

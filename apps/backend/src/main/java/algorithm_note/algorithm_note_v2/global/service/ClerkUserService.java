@@ -19,7 +19,7 @@ public class ClerkUserService {
     public ClerkUserService(@Value("${clerk.secret.key}") String clerkSecretKey) {
         log.info("Loaded Clerk Secret Key: '{}'", clerkSecretKey);
         if (clerkSecretKey == null || clerkSecretKey.isBlank()) {
-            throw new IllegalArgumentException("Clerk Secret Key is NULL or EMPTY. Check application.properties.");
+            throw new IllegalArgumentException("Clerk Secret Key is NULL or EMPTY. Check application.yml.");
         }
 
         this.webClient = WebClient.builder()
