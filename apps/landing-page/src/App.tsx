@@ -9,6 +9,7 @@ import SignUpWithEmailPage from "./pages/SignUpWithEmail"
 import SSOCallbackPage from "./pages/SSOCallback"
 import SetupAccountPage from "./pages/SetupAccount"
 import UnauthorizedPage from "./pages/Unauthorized"
+import RedirectHelperPage from "./pages/RedirectHelper/RedirectHelperPage"
 import { Components } from "./pages/Components"
 
 function AppContent() {
@@ -27,6 +28,7 @@ function AppContent() {
         <Route path="/setup-account" element={<SetupAccountPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/components" element={<Components />} />
+         <Route path="/redirect-helper" element={<RedirectHelperPage />} />
       </Routes>
   );
 }
