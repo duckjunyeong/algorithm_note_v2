@@ -32,7 +32,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'com.google.genai:google-genai:1.0.0'
-
+	implementation 'com.clerk:backend-api:3.2.0'
 
 	implementation 'com.github.alexdlaird:java-ngrok:2.3.16'
 	implementation "com.svix:svix:1.76.1"
