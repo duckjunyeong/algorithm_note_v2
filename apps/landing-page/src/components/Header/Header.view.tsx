@@ -3,8 +3,10 @@ import type { NavLink } from './useHeader';
 interface HeaderViewProps {
   /** 네비게이션에 표시될 링크 객체의 배열입니다. */
   navLinks: NavLink[];
-  /** 'Sign in' 버튼 클릭 시 호출될 함수입니다. */
-  onSignInClick: () => void;
+  /** 인증 버튼에 표시될 텍스트입니다. */
+  authButtonText: string;
+  /** 인증 버튼(Sign in/Logout) 클릭 시 호출될 함수입니다. */
+  onAuthClick: () => void;
   /** 'Request a demo' 버튼 클릭 시 호출될 함수입니다. */
   onRequestDemoClick: () => void;
   /** 'Try for free' 버튼 클릭 시 호출될 함수입니다. */
@@ -13,7 +15,8 @@ interface HeaderViewProps {
 
 export const HeaderView = ({
   navLinks,
-  onSignInClick,
+  authButtonText,
+  onAuthClick,
   onRequestDemoClick,
   onTryForFreeClick,
 }: HeaderViewProps) => {
@@ -60,10 +63,10 @@ export const HeaderView = ({
         <div className="flex items-center gap-6">
           <button
             type="button"
-            onClick={onSignInClick}
+            onClick={onAuthClick}
             className="text-sm font-medium text-text-secondary transition-colors duration-200 hover:text-text-primary"
           >
-            Sign in
+            {authButtonText}
           </button>
         </div>
       </nav>

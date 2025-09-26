@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSignUp as useClerkSignUp } from '@clerk/clerk-react';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export function useSignUp() {
   const [hasGoogleHistory, setHasGoogleHistory] = useState(false);
   const navigate = useNavigate();
   const { signUp, isLoaded } = useClerkSignUp();
+  const { isSignedIn } = useAuthStore();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      window.location.href = 'http://localhost:5173';
+    }
+  }, [isSignedIn]);
 
   useEffect(() => {
     const googleHistory = localStorage.getItem('previous-google-login');

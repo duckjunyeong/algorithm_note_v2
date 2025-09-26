@@ -6,7 +6,11 @@ export default function SSOCallbackPage() {
   const { session, isLoaded } = useSession(); // isLoaded 추가
 
   useEffect(() => {
-    handleRedirectCallback({});
+    // 이 함수에 의해서 reidrect되는 것을 기대
+    handleRedirectCallback({
+       signInForceRedirectUrl: 'http://localhost:5173',
+       signUpForceRedirectUrl: 'http://localhost:5173',
+    });
   }, []); 
 
 //  useEffect(() => {

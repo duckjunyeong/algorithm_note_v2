@@ -6,13 +6,14 @@ import { HeaderView } from './Header.view';
  * 로고, 네비게이션 링크, 사용자 액션 버튼을 포함합니다.
  */
 export const Header = () => {
-  const { navLinks, handleSignIn, handleRequestDemo, handleTryForFree } =
+  const { navLinks, authButtonText, handleAuthClick, handleRequestDemo, handleTryForFree } =
     useHeader();
 
   return (
     <HeaderView
       navLinks={navLinks}
-      onSignInClick={handleSignIn}
+      authButtonText={authButtonText}
+      onAuthClick={handleAuthClick}
       onRequestDemoClick={handleRequestDemo}
       onTryForFreeClick={handleTryForFree}
     />

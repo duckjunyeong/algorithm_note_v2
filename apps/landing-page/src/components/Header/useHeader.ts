@@ -1,3 +1,6 @@
+import { useClerk } from '@clerk/clerk-react';
+import { useAuthStore } from '../../store/useAuthStore';
+
 /** 네비게이션 링크의 구조를 정의하는 타입입니다. */
 export type NavLink = {
   label: string;
@@ -5,6 +8,9 @@ export type NavLink = {
 };
 
 export const useHeader = () => {
+  const { signOut } = useClerk();
+  const { isSignedIn } = useAuthStore();
+
   const navLinks: NavLink[] = [
     { label: 'Product', href: '#' },
     { label: 'Solutions', href: '#' },
@@ -12,8 +18,12 @@ export const useHeader = () => {
     { label: 'Pricing', href: '#' },
   ];
 
-  const handleSignIn = () => {
-    window.location.href = '/sign-in';
+  const handleAuthClick = async () => {
+    if (isSignedIn) {
+      await signOut();
+    } else {
+      window.location.href = '/sign-in';
+    }
   };
 
   const handleRequestDemo = () => {
@@ -30,7 +40,8 @@ export const useHeader = () => {
 
   return {
     navLinks,
-    handleSignIn,
+    authButtonText: isSignedIn ? 'Logout' : 'Sign in',
+    handleAuthClick,
     handleRequestDemo,
     handleTryForFree,
   };
