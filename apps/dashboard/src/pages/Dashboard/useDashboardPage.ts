@@ -1,25 +1,43 @@
 // DashboardPage/useDashboardPage.ts
 import { useState, useMemo } from 'react';
+import { useProblemService } from '../../services/problemService';
 
 export type TaskStatus = 'backlog' | 'failed' | 'done';
 export interface Task { id: string; type: string; title: string; description: string; status: TaskStatus; }
 
 export const useDashboardPage = () => {
+  const problemService = useProblemService();
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
+  const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
 
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
-  
+
   const openRegisterModal = () => setIsRegisterModalOpen(true);
   const closeRegisterModal = () => setIsRegisterModalOpen(false);
-  
+
   const openConfirmModal = () => setIsConfirmModalOpen(true);
   const closeConfirmModal = () => setIsConfirmModalOpen(false);
 
-  const handleConfirmStop = () => {
-    closeConfirmModal();
-    closeRegisterModal();
+  const handleConfirmStop = async () => {
+    // 중복 클릭 방지
+    if (isConfirmLoading) return;
+
+    setIsConfirmLoading(true);
+
+    try {
+      // 임시 데이터 정리 시도
+      await problemService.clearTemporaryData();
+      console.log('임시 데이터 정리 완료');
+    } catch (error) {
+      // API 실패 시에도 모달을 닫습니다 (사용자 경험 우선)
+      console.warn('임시 데이터 정리 실패, 모달 닫기 계속 진행:', error);
+    } finally {
+      setIsConfirmLoading(false);
+      closeConfirmModal();
+      closeRegisterModal();
+    }
   };
 
   const allTasks: Task[] = [
@@ -85,6 +103,7 @@ export const useDashboardPage = () => {
     analysisStats,
     isRegisterModalOpen,
     isConfirmModalOpen,
+    isConfirmLoading,
     openRegisterModal,
     openConfirmModal,
     closeConfirmModal,

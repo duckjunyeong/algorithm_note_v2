@@ -70,6 +70,24 @@ class ProblemService extends ApiClient {
   }
 
   /**
+   * Clears temporary problem data for the current user.
+   * This method is designed to fail gracefully - it won't throw errors
+   * even if the API call fails, to ensure user experience is not disrupted.
+   */
+  public async clearTemporaryData(): Promise<void> {
+    try {
+      await this.axiosInstance.delete('/cleanup', {
+        timeout: 5000, // 5 second timeout
+      });
+      console.log('임시 데이터 정리 성공');
+    } catch (error) {
+      // Graceful failure - log the error but don't throw
+      console.warn('임시 데이터 정리 실패 (무시됨):', error);
+      // 사용자 경험을 방해하지 않기 위해 예외를 throw하지 않습니다
+    }
+  }
+
+  /**
    * Validates URL format client-side before sending to server.
    */
   public validateUrl(url: string): { isValid: boolean; error?: string } {

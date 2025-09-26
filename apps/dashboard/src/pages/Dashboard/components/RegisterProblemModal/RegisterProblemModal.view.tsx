@@ -216,11 +216,11 @@ export const RegisterProblemModalView: FC<RegisterProblemModalViewProps> = ({ is
 
   return (
     <div onClick={(e) => { if (e.target === e.currentTarget) onAttemptClose(); }} className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/50 p-4">
-      <div 
-        onClick={(e) => e.stopPropagation()} 
-        className={`relative w-full rounded-xl bg-background-secondary p-8 shadow-xl max-h-[90vh] overflow-y-auto transition-all duration-300 
-                   ${modalWidth} 
-                   [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-neutral-100 
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full rounded-xl bg-background-secondary p-8 shadow-xl max-h-[90vh] overflow-y-auto transition-all duration-300
+                   ${modalWidth}
+                   [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-neutral-100
                    [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full
                    hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400`}
       >

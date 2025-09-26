@@ -35,6 +35,7 @@ export interface DashboardPageViewProps {
   onToggleSidebar: () => void;
   isRegisterModalOpen: boolean;
   isConfirmModalOpen: boolean;
+  isConfirmLoading: boolean;
   onOpenRegisterModal: () => void;
   onOpenConfirmModal: () => void;
   onCloseConfirmModal: () => void;
@@ -66,6 +67,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onToggleSidebar,
   isRegisterModalOpen,
   isConfirmModalOpen,
+  isConfirmLoading,
   onOpenRegisterModal,
   onOpenConfirmModal,
   onCloseConfirmModal,
@@ -185,12 +187,15 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         onAttemptClose={onOpenConfirmModal}
       />
 
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={isConfirmModalOpen}
-        title="정말 중단하시겠습니까?"
-        message="등록 과정이 저장되지 않습니다."
+        title="작업을 중단하시겠습니까?"
+        message="진행 중인 문제 등록이 취소되고 입력한 내용이 사라집니다."
         onConfirm={onConfirmStop}
         onCancel={onCloseConfirmModal}
+        isLoading={isConfirmLoading}
+        confirmText="중단하기"
+        cancelText="취소"
       />
     </div>
   );

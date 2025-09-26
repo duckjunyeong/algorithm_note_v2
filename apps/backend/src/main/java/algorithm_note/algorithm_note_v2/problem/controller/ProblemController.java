@@ -100,4 +100,26 @@ public class ProblemController {
                 ProblemResponseDto.success("문제가 성공적으로 저장되었습니다.")
         );
     }
+
+    /**
+     * Clears temporarily cached problem data for the authenticated user.
+     * This endpoint is called when the user cancels problem registration process.
+     *
+     * @param authentication Spring Security authentication containing authenticated user
+     * @return Success/failure response
+     */
+    @DeleteMapping("/cleanup")
+    public ResponseEntity<Void> clearTemporaryData(Authentication authentication) {
+
+        // Extract user from authentication principal (set by ClerkJwtAuthenticationFilter)
+        User user = (User) authentication.getPrincipal();
+        String userId = user.getClerkId();
+
+        log.info("Clearing temporary data for user: {}", userId);
+
+        problemService.clearUserTemporaryData(userId);
+
+        // Return 204 No Content - operation completed successfully
+        return ResponseEntity.noContent().build();
+    }
 }

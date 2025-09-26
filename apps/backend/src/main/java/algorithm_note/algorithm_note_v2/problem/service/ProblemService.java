@@ -170,6 +170,31 @@ public class ProblemService {
     }
 
     /**
+     * Clears temporarily cached problem data for a user.
+     * This method is designed to handle failures gracefully without throwing exceptions,
+     * as it's called during modal close operations where user experience is prioritized.
+     *
+     * @param userId The user ID
+     */
+    public void clearUserTemporaryData(String userId) {
+        try {
+            String key = REDIS_KEY_PREFIX + userId;
+            Boolean deleted = redisTemplate.delete(key);
+
+            if (Boolean.TRUE.equals(deleted)) {
+                log.info("Successfully cleared temporary data for user: {}", userId);
+            } else {
+                log.info("No temporary data found to clear for user: {}", userId);
+            }
+
+        } catch (Exception e) {
+            // Log the error but don't throw exception to avoid disrupting user flow
+            log.warn("Failed to clear temporary data for user: {} - Error: {}", userId, e.getMessage());
+            // The temporary data will eventually expire due to TTL, so this is not critical
+        }
+    }
+
+    /**
      * Scrapes problem data from Baekjoon URL.
      */
     private ProblemDto scrapeProblemData(String url) throws IOException {

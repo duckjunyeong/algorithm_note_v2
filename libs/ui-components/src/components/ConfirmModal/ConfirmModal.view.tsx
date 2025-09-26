@@ -8,6 +8,9 @@ export interface ConfirmModalViewProps {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
+  isLoading?: boolean;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 export const ConfirmModalView: FC<ConfirmModalViewProps> = ({
@@ -16,6 +19,9 @@ export const ConfirmModalView: FC<ConfirmModalViewProps> = ({
   message,
   onConfirm,
   onCancel,
+  isLoading = false,
+  confirmText = "중단하기",
+  cancelText = "취소",
 }) => {
   if (!isOpen) {
     return null;
@@ -38,15 +44,20 @@ export const ConfirmModalView: FC<ConfirmModalViewProps> = ({
         <div className="mt-6 flex justify-end gap-4">
           <button
             onClick={onCancel}
-            className="rounded-lg border border-neutral-200 px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:bg-neutral-50 hover:border-neutral-300"
+            disabled={isLoading}
+            className="rounded-lg border border-neutral-200 px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            채팅 계속하기
+            {cancelText}
           </button>
           <button
             onClick={onConfirm}
-            className="rounded-lg bg-semantic-error px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-semantic-error/90"
+            disabled={isLoading}
+            className="rounded-lg bg-semantic-error px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-semantic-error/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            중단하기
+            {isLoading && (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            )}
+            {confirmText}
           </button>
         </div>
       </div>

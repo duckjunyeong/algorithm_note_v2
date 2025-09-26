@@ -4,18 +4,19 @@ import { useDashboardPage } from './useDashboardPage';
 import { DashboardPageView } from './DashboardPage.view';
 
 const DashboardPage: FC = () => {
-  const { 
-    isSidebarOpen, 
-    tasksByStatus, 
+  const {
+    isSidebarOpen,
+    tasksByStatus,
     progressStats,
     analysisStats,
     isRegisterModalOpen,
     isConfirmModalOpen,
+    isConfirmLoading,
     openRegisterModal,
     openConfirmModal,
     closeConfirmModal,
     handleConfirmStop,
-    toggleSidebar 
+    toggleSidebar
   } = useDashboardPage();
 
   return (
@@ -26,6 +27,7 @@ const DashboardPage: FC = () => {
       analysisStats={analysisStats}
       isRegisterModalOpen={isRegisterModalOpen}
       isConfirmModalOpen={isConfirmModalOpen}
+      isConfirmLoading={isConfirmLoading}
       onOpenRegisterModal={openRegisterModal}
       onOpenConfirmModal={openConfirmModal}
       onCloseConfirmModal={closeConfirmModal}

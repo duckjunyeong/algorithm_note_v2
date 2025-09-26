@@ -21,7 +21,7 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   const navigate = useNavigate();
   const problemService = useProblemService();
   const [view, setView] = useState<ModalView>('selection');
-  
+
   // 폼 상태
   const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
@@ -29,11 +29,11 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   const [inputCondition, setInputCondition] = useState('');
   const [outputCondition, setOutputCondition] = useState('');
   const [constraints, setConstraints] = useState('');
-  
+
   // 코드 에디터 상태
   const [code, setCode] = useState('// 여기에 코드를 입력하세요.');
   const [language, setLanguage] = useState('javascript');
-  
+
   // 유효성 검사 에러 상태
   const [errors, setErrors] = useState<Errors>({});
 
