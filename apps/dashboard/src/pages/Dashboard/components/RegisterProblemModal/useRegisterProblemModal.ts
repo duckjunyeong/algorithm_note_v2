@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProblemService } from '../../../../services/problemService';
-import type { ApiError, ProblemManualRequest, ProblemUrlRequest } from '../../../../services/problemService';
+import type { ProblemManualRequest, ProblemUrlRequest } from '../../../../services/problemService';
+import type { ApiError } from '../../../../types/api';
 
 // 모달이 보여줄 수 있는 화면들의 타입을 정의합니다.
 type ModalView = 'selection' | 'url' | 'manual' | 'editor';
