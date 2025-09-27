@@ -1,12 +1,15 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../store/useAuthStore';
+import { API_CONFIG, HTTP_HEADERS } from '../constants/api';
+import { ERROR_MESSAGES } from '../constants/messages';
+import { PATHS } from '../constants/paths';
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
-  timeout: 10000,
+  baseURL: import.meta.env.VITE_API_BASE_URL || API_CONFIG.DEFAULT_BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
   headers: {
-    'Content-Type': 'application/json',
+    [HTTP_HEADERS.CONTENT_TYPE]: API_CONFIG.HEADERS.CONTENT_TYPE,
   },
 });
 
@@ -23,10 +26,10 @@ apiClient.interceptors.request.use(
       try {
         const token = await getTokenFn();
         if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers[HTTP_HEADERS.AUTHORIZATION] = `${HTTP_HEADERS.BEARER_PREFIX} ${token}`;
         }
       } catch (error) {
-        console.warn('Failed to get authentication token:', error);
+        console.warn(ERROR_MESSAGES.AUTH_TOKEN_FAILED, error);
       }
     }
     return config;
@@ -48,7 +51,7 @@ apiClient.interceptors.response.use(
       clearAuth();
 
       // Redirect to sign-in page
-      window.location.href = '/sign-in';
+      window.location.href = PATHS.SIGN_IN;
     }
     return Promise.reject(error);
   }

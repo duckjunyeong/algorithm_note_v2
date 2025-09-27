@@ -1,12 +1,13 @@
 import apiClient from './apiClient';
 import { userProfileSchema, updateUserProfileSchema } from '../schemas/user.schema';
 import type { UserProfile, UpdateUserProfileRequest } from '../schemas/user.schema';
+import { API_ENDPOINTS } from '../constants/api';
 
 /**
  * Get current user's profile information
  */
 export async function getUserProfile(): Promise<UserProfile> {
-  const response = await apiClient.get('/users/profile');
+  const response = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
   return userProfileSchema.parse(response.data);
 }
 
@@ -17,7 +18,7 @@ export async function updateUserProfile(data: UpdateUserProfileRequest): Promise
   // Validate request data
   const validatedData = updateUserProfileSchema.parse(data);
 
-  const response = await apiClient.put('/users/profile', validatedData);
+  const response = await apiClient.put(API_ENDPOINTS.USERS.PROFILE, validatedData);
   return userProfileSchema.parse(response.data);
 }
 
@@ -25,7 +26,7 @@ export async function updateUserProfile(data: UpdateUserProfileRequest): Promise
  * Delete current user's account
  */
 export async function deleteUserAccount(): Promise<void> {
-  await apiClient.delete('/users/profile');
+  await apiClient.delete(API_ENDPOINTS.USERS.PROFILE);
 }
 
 /**
@@ -37,6 +38,6 @@ export async function getUserStats(): Promise<{
   streakDays: number;
   totalTimeSpent: number;
 }> {
-  const response = await apiClient.get('/users/stats');
+  const response = await apiClient.get(API_ENDPOINTS.USERS.STATS);
   return response.data;
 }

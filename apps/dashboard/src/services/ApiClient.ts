@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 import type { ApiError, ApiClientConfig } from '../types/api';
+import { API_CONFIG, HTTP_HEADERS } from '../constants/api';
+import { ERROR_MESSAGES } from '../constants/messages';
 
 export class ApiClient {
   protected axiosInstance: AxiosInstance;
@@ -9,9 +11,9 @@ export class ApiClient {
   constructor(config: ApiClientConfig) {
     this.axiosInstance = axios.create({
       baseURL: config.baseURL,
-      timeout: config.timeout || 10000,
+      timeout: config.timeout || API_CONFIG.TIMEOUT,
       headers: {
-        'Content-Type': 'application/json',
+        [HTTP_HEADERS.CONTENT_TYPE]: API_CONFIG.HEADERS.CONTENT_TYPE,
         ...config.headers,
       },
     });
@@ -33,10 +35,10 @@ export class ApiClient {
         try {
           const token = await getToken();
           if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            config.headers[HTTP_HEADERS.AUTHORIZATION] = `${HTTP_HEADERS.BEARER_PREFIX} ${token}`;
           }
         } catch (error) {
-          console.warn('Failed to get auth token:', error);
+          console.warn(ERROR_MESSAGES.AUTH_TOKEN_FAILED, error);
         }
         return config;
       },

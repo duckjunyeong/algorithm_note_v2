@@ -15,8 +15,7 @@ import { Components } from "./pages/Components"
 function AppContent() {
   // Initialize API client with authentication
   useApiClient();
-
-
+  
   return (
     <Routes>
         <Route path="/" element={<LandingPage />} />

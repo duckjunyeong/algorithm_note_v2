@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { ClerkProvider } from '@clerk/clerk-react';
+import { ERROR_MESSAGES } from './constants/messages';
 
 import './index.css'
 import App from './App.tsx'

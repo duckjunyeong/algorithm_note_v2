@@ -8,6 +8,22 @@ You are an expert in TypeScript, React, Shadcn UI, Radix UI, and Tailwind.
 *   Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`).
 *   Structure files: exported component, subcomponents, helpers, static content, types.
 
+## Variable and Constant Management
+
+**Principle:** Strictly separate environment-dependent/sensitive data from application-wide, fixed constants to improve security and maintainability.
+
+### `.env` File Usage (Environment-Dependent & Sensitive Data)
+
+*   **Responsibility:** Manages variables that change between environments (development, production) or are sensitive.
+*   **Criteria:** Use for API keys, external URLs, OAuth credentials, and any other secrets.
+*   **Implementation:** Define variables in the `.env` file (e.g., `VITE_API_BASE_URL`). Access them in code via `import.meta.env.VITE_....` These files **MUST** be included in `.gitignore`.
+
+### `constants` File Usage (Environment-Independent & Public Data)
+
+*   **Responsibility:** Manages fixed values that are consistent across all environments. The primary goal is to avoid "magic strings".
+*   **Criteria:** Use for internal application paths, UI labels, fixed numerical values, etc.
+*   **Implementation:** Define constants in dedicated files (e.g., `src/constants/paths.ts`) and export them. These files **MUST** be committed to version control.
+
 ### Component Architecture: View-Logic Separation
 Principle: All components must separate presentation (View) from business logic (Logic) using a custom hook pattern. This enhances reusability, testability, and maintainability.
 
@@ -108,11 +124,6 @@ export function UserProfile({ userId }: UserProfileProps) {
 *   Use the "function" keyword for pure functions.
 *   Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
 *   Use declarative JSX.
-
-### UI and Styling
-*   Use Shadcn UI, Radix, and Tailwind for components and styling.
-*   **Single Source of Truth:** Always reference the `/theme/theme.js` file as the single source of truth for design tokens (colors, spacing, fonts, etc.) when applying styles with Tailwind.
-*   Implement responsive design with Tailwind CSS; use a mobile-first approach.
 
 ### Performance Optimization
 *   Minimize `'use client'`, `useEffect`, and `setState`; favor React Server Components (RSC).

@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { ApiClient } from './ApiClient';
 import type { ApiResponse } from '../types/api';
+import { API_ENDPOINTS } from '../constants/api';
 
 // API Response Types
 export interface ProblemApiResponse extends ApiResponse {}
@@ -33,7 +34,7 @@ class ProblemService extends ApiClient {
   public async registerFromUrl(request: ProblemUrlRequest): Promise<ProblemApiResponse> {
     try {
       const response = await this.axiosInstance.post<ProblemApiResponse>(
-        '/register/url',
+        API_ENDPOINTS.PROBLEMS.REGISTER_URL,
         request
       );
       return response.data;
@@ -48,7 +49,7 @@ class ProblemService extends ApiClient {
   public async registerFromManualInput(request: ProblemManualRequest): Promise<ProblemApiResponse> {
     try {
       const response = await this.axiosInstance.post<ProblemApiResponse>(
-        '/register/manual',
+        API_ENDPOINTS.PROBLEMS.REGISTER_MANUAL,
         request
       );
       return response.data;
@@ -62,7 +63,7 @@ class ProblemService extends ApiClient {
    */
   public async saveProblemFromCache(): Promise<ProblemApiResponse> {
     try {
-      const response = await this.axiosInstance.post<ProblemApiResponse>('/save');
+      const response = await this.axiosInstance.post<ProblemApiResponse>(API_ENDPOINTS.PROBLEMS.SAVE);
       return response.data;
     } catch (error) {
       throw error; // Re-throw as it's already transformed by interceptor
@@ -76,7 +77,7 @@ class ProblemService extends ApiClient {
    */
   public async clearTemporaryData(): Promise<void> {
     try {
-      await this.axiosInstance.delete('/cleanup', {
+      await this.axiosInstance.delete(API_ENDPOINTS.PROBLEMS.CLEANUP, {
         timeout: 5000, // 5 second timeout
       });
       console.log('임시 데이터 정리 성공');
