@@ -15,6 +15,7 @@ export const useAlgorithmLogicFlowAnalysisPage = () => {
   const [selectedStep, setSelectedStep] = useState<AnalysisStep | null>(null);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [chatModalStep, setChatModalStep] = useState<AnalysisStep | null>(null);
+  const [chatSessionKey, setChatSessionKey] = useState<string>('');
 
   useEffect(() => {
     // 분석 결과가 있을 때 첫 번째 단계를 기본 선택
@@ -44,12 +45,14 @@ export const useAlgorithmLogicFlowAnalysisPage = () => {
 
   const handleOpenChatModal = (step: AnalysisStep) => {
     setChatModalStep(step);
+    setChatSessionKey(Date.now().toString()); // 새로운 세션 키 생성
     setIsChatModalOpen(true);
   };
 
   const handleCloseChatModal = () => {
     setIsChatModalOpen(false);
     setChatModalStep(null);
+    setChatSessionKey(''); // 세션 키 초기화
   };
 
   return {
@@ -57,6 +60,7 @@ export const useAlgorithmLogicFlowAnalysisPage = () => {
     selectedStep,
     isChatModalOpen,
     chatModalStep,
+    chatSessionKey,
     handleSelectStep,
     handleOpenChatModal,
     handleCloseChatModal,

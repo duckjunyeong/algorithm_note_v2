@@ -18,6 +18,7 @@ export interface AlgorithmLogicFlowAnalysisPageViewProps {
   selectedStep: AnalysisStep | null;
   isChatModalOpen: boolean;
   chatModalStep: AnalysisStep | null;
+  chatSessionKey: string;
   handleSelectStep: (step: AnalysisStep) => void;
   handleOpenChatModal: (step: AnalysisStep) => void;
   handleCloseChatModal: () => void;
@@ -44,6 +45,7 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
   selectedStep,
   isChatModalOpen,
   chatModalStep,
+  chatSessionKey,
   handleSelectStep,
   handleOpenChatModal,
   handleCloseChatModal,
@@ -121,6 +123,7 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
         onClose={handleCloseChatModal}
         title="오답노트 만들기"
         selectedStep={chatModalStep}
+        chatSessionKey={chatSessionKey}
       />
     </div>
   );

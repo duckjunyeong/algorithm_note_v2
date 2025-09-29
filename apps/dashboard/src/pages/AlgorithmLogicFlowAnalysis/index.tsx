@@ -9,6 +9,7 @@ const AlgorithmLogicFlowAnalysisPage: FC = () => {
     selectedStep,
     isChatModalOpen,
     chatModalStep,
+    chatSessionKey,
     handleSelectStep,
     handleOpenChatModal,
     handleCloseChatModal,
@@ -20,6 +21,7 @@ const AlgorithmLogicFlowAnalysisPage: FC = () => {
       selectedStep={selectedStep}
       isChatModalOpen={isChatModalOpen}
       chatModalStep={chatModalStep}
+      chatSessionKey={chatSessionKey}
       handleSelectStep={handleSelectStep}
       handleOpenChatModal={handleOpenChatModal}
       handleCloseChatModal={handleCloseChatModal}

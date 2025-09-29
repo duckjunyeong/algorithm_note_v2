@@ -21,6 +21,7 @@ interface UseChatModalProps {
   scrapedInfo?: { confirmationKey?: string; confirmKey?: string };
   block?: { id?: string | number };
   selectedStep?: AnalysisStep | null;
+  chatSessionKey?: string;
 }
 
 const recommendedQuestions = [
@@ -29,20 +30,27 @@ const recommendedQuestions = [
   "기술적 기반 구축(인프라, 보안 등)"
 ];
 
-export const useChatModal = ({ isOpen, scrapedInfo, block, selectedStep }: UseChatModalProps) => {
+export const useChatModal = ({ isOpen, scrapedInfo, block, selectedStep, chatSessionKey }: UseChatModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [showSaveButton, setShowSaveButton] = useState(false);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
+    if (isOpen && chatSessionKey) {
+      // 메시지 초기화 후 새로운 채팅 시작
+      setMessages([]);
+      setLoading(false);
+      setShowSaveButton(false);
+      setInputValue('');
+
       if (selectedStep) {
         initiateNoteCreation();
       } else if (block?.id) {
+        // 기존 block 로직 유지
       }
     }
-  }, [isOpen, block, selectedStep]);
+  }, [isOpen, chatSessionKey, selectedStep, block]);
 
   
 

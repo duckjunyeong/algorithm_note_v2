@@ -1,6 +1,6 @@
 // src/components/ChatModal/index.tsx
 import React from 'react';
-import { useChatModal } from './UseChatModal'
+import { useChatModal } from './useChatModal'
 import { ChatModalView } from './ChatModal.view';
 
 interface AnalysisStep {
@@ -17,6 +17,7 @@ interface ChatModalProps {
   scrapedInfo?: { confirmationKey?: string; confirmKey?: string };
   block?: { id?: string | number };
   selectedStep?: AnalysisStep | null;
+  chatSessionKey?: string;
 }
 
 const ChatModal: React.FC<ChatModalProps> = ({
@@ -26,7 +27,8 @@ const ChatModal: React.FC<ChatModalProps> = ({
   title = "추가 태스크 생성",
   scrapedInfo,
   block,
-  selectedStep
+  selectedStep,
+  chatSessionKey
 }) => {
   const {
     messages,
@@ -40,7 +42,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
     handleRecommendationClick,
     handleTypingComplete,
     handleSaveNote
-  } = useChatModal({ isOpen, scrapedInfo, block, selectedStep });
+  } = useChatModal({ isOpen, scrapedInfo, block, selectedStep, chatSessionKey });
 
   return (
     <ChatModalView

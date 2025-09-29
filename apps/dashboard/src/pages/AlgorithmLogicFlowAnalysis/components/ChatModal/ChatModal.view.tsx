@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Info, Maximize, X, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Message } from './UseChatModal';
+import type { Message } from './useChatModal';
 
 // Constants
 const TYPING_SPEED_MS = 15;
