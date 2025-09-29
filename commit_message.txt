@@ -1,8 +1,0 @@
-feat: Add interview chatbot and refactor Redis service
-
-- Introduced an interview chatbot feature with a detailed prompt in `application.yml`.
-- Refactored Redis operations by creating a generic `RedisService` for hash-based storage, improving code structure and reusability.
-- Updated `ProblemService` to use the new `RedisService`.
-- Enhanced the `GeminiClient` to be more flexible by accepting code directly instead of a URL.
-- Aligned frontend API configurations with backend changes.
-- Updated the code analysis flow documentation.
