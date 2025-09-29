@@ -1,6 +1,6 @@
 // AlgorithmLogicFlowAnalysisPage/useAlgorithmLogicFlowAnalysisPage.ts
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useAnalysisStore } from '../../store/useAnalysisStore';
 
 interface AnalysisStep {
   id: string;
@@ -15,24 +15,30 @@ interface AnalysisResult {
 }
 
 export const useAlgorithmLogicFlowAnalysisPage = () => {
-  const [searchParams] = useSearchParams();
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const { analysisResult, clearAnalysisResult } = useAnalysisStore();
   const [selectedStep, setSelectedStep] = useState<AnalysisStep | null>(null);
 
   useEffect(() => {
-    const dataParam = searchParams.get('data');
-    if (dataParam) {
-      try {
-        const parsedData: AnalysisResult = JSON.parse(decodeURIComponent(dataParam));
-        setAnalysisResult(parsedData);
-        if (parsedData.analysis && parsedData.analysis.length > 0) {
-          setSelectedStep(parsedData.analysis[0]);
-        }
-      } catch (error) {
-        console.error("Failed to parse analysis data from URL:", error);
-      }
+    // 분석 결과가 있을 때 첫 번째 단계를 기본 선택
+    if (analysisResult?.analysis && analysisResult.analysis.length > 0) {
+      setSelectedStep(analysisResult.analysis[0]);
     }
-  }, [searchParams]);
+  }, [analysisResult]);
+
+  // 페이지 이탈 시 데이터 정리
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      clearAnalysisResult();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // 컴포넌트 언마운트 시에도 정리
+      clearAnalysisResult();
+    };
+  }, [clearAnalysisResult]);
 
   const handleSelectStep = (step: AnalysisStep) => {
     setSelectedStep(step);

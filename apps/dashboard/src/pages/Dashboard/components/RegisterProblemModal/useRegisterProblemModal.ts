@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProblemService } from '../../../../services/problemService';
 import { useCodeAnalysisService } from '../../../../services/codeAnalysisService';
+import { useAnalysisStore } from '../../../../store/useAnalysisStore';
 import type { ProblemManualRequest, ProblemUrlRequest } from '../../../../services/problemService';
 import type { ApiError } from '../../../../types/api';
 
@@ -22,6 +23,7 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   const navigate = useNavigate();
   const problemService = useProblemService();
   const codeAnalysisService = useCodeAnalysisService();
+  const { setAnalysisResult } = useAnalysisStore();
   const [view, setView] = useState<ModalView>('selection');
 
   // 폼 상태
@@ -200,8 +202,11 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
         }))
       };
 
-      const queryString = encodeURIComponent(JSON.stringify(analysisResult));
-      navigate(`/algorithm-logic-flow-analysis?data=${queryString}`);
+      // Zustand store에 분석 결과 저장
+      setAnalysisResult(analysisResult);
+
+      // 분석 페이지로 네비게이션 (쿼리 파라미터 없이)
+      navigate('/algorithm-logic-flow-analysis');
 
     } catch (error) {
       const apiErr = error as ApiError;
