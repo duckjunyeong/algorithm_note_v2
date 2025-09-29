@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProblemService } from '../../../../services/problemService';
+import { useCodeAnalysisService } from '../../../../services/codeAnalysisService';
 import type { ProblemManualRequest, ProblemUrlRequest } from '../../../../services/problemService';
 import type { ApiError } from '../../../../types/api';
 
@@ -20,6 +21,7 @@ type Errors = {
 export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
   const navigate = useNavigate();
   const problemService = useProblemService();
+  const codeAnalysisService = useCodeAnalysisService();
   const [view, setView] = useState<ModalView>('selection');
 
   // 폼 상태
@@ -169,27 +171,41 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
     setApiError(null);
 
     try {
-      // 먼저 캐시된 문제 데이터를 영구 저장
-      await problemService.saveProblemFromCache();
+      // 클라이언트 사이드 검증
+      const validation = codeAnalysisService.validateCodeAnalysisRequest({
+        code,
+        language
+      });
 
-      // Mock 분석 결과 생성 (향후 실제 AI 분석 API로 교체 예정)
-      const mockAnalysisResult = {
+      if (!validation.isValid) {
+        setApiError(validation.error!);
+        return;
+      }
+
+      const analysisResponse = await codeAnalysisService.analyzeCode({
+        code,
+        language
+      });
+
+      console.log("분석 시작 성공:", analysisResponse);
+
+      // 응답 데이터를 AlgorithmLogicFlowAnalysis 페이지 형식으로 변환
+      const analysisResult = {
         problemTitle: title || 'URL로부터 추출된 문제',
         language: language,
-        analysis: [
-          { id: 'step1', title: '초기 변수 선언 및 입력값 처리', code: `const fs = require('fs');\nconst input = fs.readFileSync('/dev/stdin').toString().split(' ');` },
-          { id: 'step2', title: '알고리즘 핵심 로직: 합계 계산', code: `const a = parseInt(input[0]);\nconst b = parseInt(input[1]);\nconst sum = a + b;` },
-          { id: 'step3', title: '결과 출력', code: `console.log(sum);` },
-          { id: 'step4', title: '시간 복잡도 분석', code: `// 이 로직의 시간 복잡도는 O(1)입니다.\n// 입력 크기에 관계없이 일정한 수의 연산만 수행합니다.` },
-        ]
+        analysis: analysisResponse.logicalUnits.map((unit, index) => ({
+          id: `step${index + 1}`,
+          title: unit.unitName,
+          code: unit.code
+        }))
       };
 
-      const queryString = encodeURIComponent(JSON.stringify(mockAnalysisResult));
+      const queryString = encodeURIComponent(JSON.stringify(analysisResult));
       navigate(`/algorithm-logic-flow-analysis?data=${queryString}`);
 
     } catch (error) {
       const apiErr = error as ApiError;
-      setApiError(apiErr.message);
+      setApiError(apiErr.message || '코드 분석 중 오류가 발생했습니다.');
       console.error("분석 시작 실패:", apiErr);
     } finally {
       setIsLoading(false);

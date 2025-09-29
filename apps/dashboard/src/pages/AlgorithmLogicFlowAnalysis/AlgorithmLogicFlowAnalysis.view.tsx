@@ -66,7 +66,7 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className={`font-semibold ${selectedStep?.id === step.id ? 'text-brand-dark' : 'text-text-primary'}`}>
-                    {index + 1}. {step.title}
+                    {step.title}
                   </h3>
                   <span className="text-sm text-text-tertiary">Logic Step</span>
                 </div>

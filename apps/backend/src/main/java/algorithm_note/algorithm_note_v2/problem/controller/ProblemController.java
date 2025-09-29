@@ -1,16 +1,18 @@
 package algorithm_note.algorithm_note_v2.problem.controller;
 
-import algorithm_note.algorithm_note_v2.problem.dto.ProblemManualRequestDto;
-import algorithm_note.algorithm_note_v2.problem.dto.ProblemResponseDto;
-import algorithm_note.algorithm_note_v2.problem.dto.ProblemUrlRequestDto;
+import algorithm_note.algorithm_note_v2.problem.dto.*;
+import algorithm_note.algorithm_note_v2.problem.service.CodeAnalysisService;
 import algorithm_note.algorithm_note_v2.problem.service.ProblemService;
 import algorithm_note.algorithm_note_v2.user.domain.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * REST Controller for problem registration operations.
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProblemController {
 
     private final ProblemService problemService;
+    private final CodeAnalysisService codeAnalysisService;
 
     /**
      * Registers a problem by scraping from Baekjoon URL.
@@ -121,5 +124,29 @@ public class ProblemController {
 
         // Return 204 No Content - operation completed successfully
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Analyzes algorithm code and extracts logical flow.
+     * Retrieves problem data from Redis and sends to AI for analysis.
+     *
+     * @param request The code analysis request containing language and code
+     * @param authentication Spring Security authentication containing authenticated user
+     * @return Analysis result with logical units
+     */
+    @PostMapping("/code/analyze")
+    public ResponseEntity<CodeAnalysisResponseDto> analyzeCode(
+            @Valid @RequestBody CodeAnalysisRequestDto request,
+            Authentication authentication) throws JsonProcessingException {
+
+        log.info("Received code analysis request for language: {}", request.getLanguage());
+
+        // Extract user from authentication principal (set by ClerkJwtAuthenticationFilter)
+        User user = (User) authentication.getPrincipal();
+        String userId = user.getClerkId();
+
+        CodeAnalysisResponseDto result = codeAnalysisService.analyzeCode(request, userId);
+
+        return ResponseEntity.ok(result);
     }
 }

@@ -1,6 +1,6 @@
 export const API_CONFIG = {
   DEFAULT_BASE_URL: 'http://localhost:8085/api',
-  TIMEOUT: 10000,
+  TIMEOUT: 3000000,
   HEADERS: {
     CONTENT_TYPE: 'application/json',
   },
@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     REGISTER_MANUAL: '/problems/register/manual',
     SAVE: '/problems/save',
     CLEANUP: '/problems/cleanup',
+    CODE_ANALYZE: '/problems/code/analyze',
   },
 } as const;
 

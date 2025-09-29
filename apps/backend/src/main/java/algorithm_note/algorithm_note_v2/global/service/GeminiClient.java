@@ -1,6 +1,9 @@
 package algorithm_note.algorithm_note_v2.global.service;
 
 import algorithm_note.algorithm_note_v2.global.dto.CoreLogicsResponseDto;
+import algorithm_note.algorithm_note_v2.problem.dto.CodeAnalysisResponseDto;
+import algorithm_note.algorithm_note_v2.problem.dto.LogicAnalyzeRequestDto;
+import algorithm_note.algorithm_note_v2.problem.dto.LogicalUnitDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +44,7 @@ public class GeminiClient {
     this.redisTemplate = redisTemplate;
   }
 
-  public CoreLogicsResponseDto getCoreLogics(LogicAnalyzeRequestDto analyzeRequestDto) throws JsonProcessingException {
+  public CodeAnalysisResponseDto getCoreLogics(LogicAnalyzeRequestDto analyzeRequestDto) throws JsonProcessingException {
     Client client = Client.builder().apiKey(apiKey).build();
 
     String prompt = String.format(
@@ -59,8 +62,9 @@ public class GeminiClient {
         .trim();
 
     log.info("AI로부터 핵심로직 추출결과 (JSON): {}", jsonResponse);
-    List<String> coreLogics = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+
+    return objectMapper.readValue(jsonResponse, new TypeReference<>() {
     });
-    return CoreLogicsResponseDto.success(coreLogics);
+
   }
 }
