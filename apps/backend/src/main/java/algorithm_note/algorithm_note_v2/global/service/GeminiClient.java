@@ -41,13 +41,15 @@ public class GeminiClient {
     this.redisTemplate = redisTemplate;
   }
 
-  public CoreLogicsResponseDto getCoreLogics(String code) throws JsonProcessingException {
+  public CoreLogicsResponseDto getCoreLogics(LogicAnalyzeRequestDto analyzeRequestDto) throws JsonProcessingException {
     Client client = Client.builder().apiKey(apiKey).build();
 
     String prompt = String.format(
-        "%s\n\n---\n\n위의 지시에 따라, 다음 코드를 분석해줘.: %s",
         codeAnalyzePrompt,
-        code
+        analyzeRequestDto.getDescription(),
+        analyzeRequestDto.getInput(),
+        analyzeRequestDto.getOutput(),
+        analyzeRequestDto.getCode()
     );
 
     GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", prompt, null);

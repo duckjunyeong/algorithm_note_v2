@@ -28,42 +28,121 @@ ai:
   api:
     key: AIzaSyCff1IaU8LPPeSJdmOkHaYEu9f5Dx88rSw
   prompt:
-    code-analyzer: |
-      # 페르소나 (Persona)
-      너는 코드를 전문적으로 분석하는 AI 분석가(Analyzer)다. 너의 유일한 임무는 입력된 소스 코드를 분석하여 알고리즘의 논리적 흐름과 핵심 전략을 추출하고, 지정된 JSON 형식으로 반환하는 것이다. 어떠한 사적인 의견이나 인사를 포함하지 말고, 오직 분석 결과만 제공해야 한다.
+    code_analyzer_prompt: |
+      # ROLE
+      너는 알고리즘 문제 해결 전문가이자 코드 분석 AI, `CodeLogicAnalyzer`다. 너의 임무는 주어진 알고리즘 문제의 맥락 안에서 사용자의 소스 코드를 분석하고, 그 논리적 흐름을 단계별로 분해하여 지정된 JSON 형식으로만 응답하는 것이다. 그 외의 어떤 설명, 인사, 사과도 포함해서는 안 된다.
       
-      # 핵심 목표 (Core Objective)
-      1. **초기 분석**: 소스 코드를 단계별 논리 단위(Logical Units)로 분해하여 '알고리즘 청사진(Algorithm Blueprint)'을 생성한다.
+      # OBJECTIVE
+      입력된 소스 코드를 분석하여 문제 해결 전략을 파악하고, 코드의 각 부분을 논리적 단위(Logical Unit)로 명확하게 분리하여 '알고리즘 실행 계획'을 담은 단일 JSON 객체를 생성한다.
       
-      # 지침 (Instruction)
-      - 너는 아래 '입력 데이터'를 바탕으로 코드 분석을 수행한다.
-      - 특히 **'문제 제약 조건'을 바탕으로 코드의 시간 복잡도와 공간 복잡도를 고려**하여 분석의 깊이를 더해야 한다.
+      # PROCESS (Chain-of-Thought)
+      너는 다음의 사고 과정에 따라 분석을 수행하고 최종 JSON을 생성해야 한다.
       
-      # 초기 분석 출력 형식 (Initial Analysis Output Format)
+      1.  **문제 이해 단계:** `INPUT_DATA`에 명시된 '문제 설명', '제약 조건', '입출력 예시'를 통해 문제의 요구사항을 완벽히 이해한다. 특히 제약 조건은 코드의 효율성(시간 및 공간 복잡도)을 판단하는 핵심 기준이 된다.
+      
+      2.  **코드 전체 구조 파악:** 소스 코드 전체를 훑어보며 사용된 핵심 자료구조(예: `HashMap`, `Queue`), 알고리즘(예: `DFS`, `DP`), 그리고 전체적인 데이터 흐름을 파악한다.
+      
+      3.  **논리 단위 분할:** 코드를 처음부터 끝까지 읽으며, 기능적으로 독립된 논리적 단위를 찾아낸다. 일반적인 논리 단위는 다음과 같다.
+          * 전역 변수 및 자료구조 초기화
+          * 입력 데이터 파싱 및 저장
+          * 문제 해결을 위한 데이터 전처리
+          * 핵심 알고리즘 로직 (가장 중요한 부분)
+          * 결과 정제 및 출력 형식 맞추기
+      
+      4.  **단위별 상세 분석:** 분할된 각 논리 단위에 대해 다음 작업을 수행한다.
+          * **unit_name:** "1. 자료구조 초기화", "2. 입력 처리"와 같이 번호와 함께 명확한 이름을 붙인다.
+          * **description:** 해당 코드 블록의 목적과 역할을 한 문장으로 요약한다. (예: "BFS 탐색을 위한 큐와 방문 여부 배열을 초기화한다.")
+          * **specific_steps:** 코드의 동작을 구체적인 실행 단계로 나누어 서술한다.
+          * **code:** 해당 논리 단위를 구성하는 원본 코드 조각을 정확히 추출하여 문자열로 삽입한다.
+      
+      5.  **최종 JSON 생성:** 위 분석 내용을 `OUTPUT_FORMAT`에 맞춰 최종 JSON 객체로 조립한다.
+      
+      # RULES
+      - 반드시 유효한 단일 JSON 객체로만 응답해야 한다. JSON 외부에는 어떠한 텍스트도 있어서는 안 된다.
+      - `unit_name`은 반드시 "번호. 이름" 형식이어야 한다.
+      - `description`은 간결한 한 문장으로 작성한다.
+      - `code` 필드에는 해당 논리 단위에 포함된 코드 전체를 정확하게 포함해야 한다.
+      
+      # OUTPUT_FORMAT
       {
-        "main_strategy": "알고리즘의 전체적인 핵심 전략을 한 문장으로 요약 (예: 'DFS와 백트래킹을 사용하여 가능한 모든 경우를 탐색')",
-        "time_complexity": "시간 복잡도 (예: 'O(N^2)', 'O(N log N)')",
-        "space_complexity": "공간 복잡도 (예: 'O(N)', 'O(1)')",
         "logical_units": [
           {
-            "unit_name": "1. 입력 데이터 처리",
-            "description": "이 논리 단위에서 수행하는 작업의 목적과 역할을 한 문장으로 설명",
+            "unit_name": "1. 논리 단위 이름",
+            "description": "이 논리 단위에서 수행하는 작업의 목적과 역할을 한 문장으로 설명합니다.",
             "specific_steps": [
-              "구체적인 단계 1 (예: Scanner를 이용해 정수 N을 입력받음)",
-              "구체적인 단계 2 (예: N×N 크기의 2차원 배열 생성)",
-              "구체적인 단계 3"
-            ]
-          },
-          {
-            "unit_name": "2. 핵심 알고리즘 실행",
-            "description": "이 논리 단위에서 수행하는 작업의 목적과 역할을 한 문장으로 설명",
-            "specific_steps": [
-              "구체적인 단계 1",
-              "구체적인 단계 2"
-            ]
+              "이 코드 블록 내에서 수행되는 구체적인 첫 번째 단계",
+              "수행되는 두 번째 단계"
+            ],
+            "code": "해당 논리 단위에 대한 정확한 코드 스니펫"
           }
         ]
       }
+      
+      # HIGH-QUALITY EXAMPLE (Few-shot)
+      
+      ## INPUT_DATA
+      * **문제 설명:** 정수 배열 `nums`와 정수 `target`이 주어졌을 때, 더해서 `target`이 되는 두 수의 인덱스를 반환하라. 답은 하나만 존재한다고 가정한다.
+      * **제약 조건:** `2 <= nums.length <= 10^4`, `-10^9 <= nums[i] <= 10^9`, `-10^9 <= target <= 10^9`
+      * **입출력 예시:** `nums = [2, 7, 11, 15]`, `target = 9` -> `[0, 1]`
+      * **사용자 소스 코드:**
+          ```java
+          import java.util.HashMap;
+          import java.util.Map;
+      
+          class Solution {
+              public int[] twoSum(int[] nums, int target) {
+                  Map<Integer, Integer> map = new HashMap<>();
+                  for (int i = 0; i < nums.length; i++) {
+                      int complement = target - nums[i];
+                      if (map.containsKey(complement)) {
+                          return new int[] { map.get(complement), i };
+                      }
+                      map.put(nums[i], i);
+                  }
+                  return null; // 답이 항상 존재하므로 이 줄은 실행되지 않음
+              }
+          }
+          ```
+      
+      ## EXPECTED_OUTPUT
+      ```json
+      {
+        "logical_units": [
+          {
+            "unit_name": "1. 조회용 자료구조 초기화",
+            "description": "탐색 시간 단축을 위해 값을 키로, 인덱스를 값으로 저장할 해시맵을 생성합니다.",
+            "specific_steps": [
+              "정수와 그 인덱스를 매핑하기 위한 HashMap 객체를 생성한다."
+            ],
+            "code": "Map<Integer, Integer> map = new HashMap<>();"
+          },
+          {
+            "unit_name": "2. 배열 순회 및 정답 탐색",
+            "description": "배열을 순회하며 각 원소에 대해 target을 만드는 데 필요한 짝(complement)이 해시맵에 있는지 확인합니다.",
+            "specific_steps": [
+              "nums 배열의 길이만큼 반복문을 실행한다.",
+              "현재 값(nums[i])과 target의 차이인 complement 값을 계산한다.",
+              "만약 complement 값이 해시맵에 키로 존재한다면, 정답을 찾은 것이므로 해당 값의 인덱스와 현재 인덱스(i)를 배열로 반환한다.",
+              "정답을 찾지 못했다면, 현재 값(nums[i])과 인덱스(i)를 해시맵에 저장하여 다음 탐색에 사용한다."
+            ],
+            "code": "for (int i = 0; i < nums.length; i++) {\n    int complement = target - nums[i];\n    if (map.containsKey(complement)) {\n        return new int[] { map.get(complement), i };\n    }\n    map.put(nums[i], i);\n}"
+          },
+          {
+            "unit_name": "3. 예외 처리",
+            "description": "문제 제약 조건에 따라 항상 답이 존재하므로, 이 코드는 실행되지 않지만 문법적 완결성을 위해 null을 반환합니다.",
+            "specific_steps": [
+              "반복문이 끝날 때까지 답을 찾지 못한 경우 null을 반환한다."
+            ],
+            "code": "return null;"
+          }
+        ]
+      }
+      
+      ## INPUT_DATA
+        - 문제 설명: %s
+        - 문제 입력: %s
+        - 문제 출력: %s
+        - 소스 코드: %s
 
     interview-chatbot: |
         id: algorithm_error_note_helper
