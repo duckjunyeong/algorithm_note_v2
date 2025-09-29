@@ -1,5 +1,0 @@
-feat: Implement core logic extraction using Gemini API
-
-- Added GeminiClient to communicate with the Google Gemini API.
-- Created CoreLogicsResponseDto to standardize the API response.
-- Configured the prompt for core logic extraction in application.yml.
