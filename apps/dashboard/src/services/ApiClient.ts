@@ -1,97 +1,60 @@
 import axios from 'axios';
-import type { AxiosInstance, AxiosError } from 'axios';
-import type { ApiError, ApiClientConfig } from '../types/api';
+import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '../store/useAuthStore';
 import { API_CONFIG, HTTP_HEADERS } from '../constants/api';
 import { ERROR_MESSAGES } from '../constants/messages';
+import { PATHS } from '../constants/paths';
 
-export class ApiClient {
-  protected axiosInstance: AxiosInstance;
-  private isAuthInterceptorSet = false;
+const apiClient: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || API_CONFIG.DEFAULT_BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
+  headers: {
+    [HTTP_HEADERS.CONTENT_TYPE]: API_CONFIG.HEADERS.CONTENT_TYPE,
+  },
+});
 
-  constructor(config: ApiClientConfig) {
-    this.axiosInstance = axios.create({
-      baseURL: config.baseURL,
-      timeout: config.timeout || API_CONFIG.TIMEOUT,
-      headers: {
-        [HTTP_HEADERS.CONTENT_TYPE]: API_CONFIG.HEADERS.CONTENT_TYPE,
-        ...config.headers,
-      },
-    });
-  }
+let getTokenFn: (() => Promise<string | null>) | null = null;
 
-  /**
-   * Sets up JWT token interceptor for authentication.
-   * This should be called from a component that has access to authentication.
-   */
-  public setupAuthInterceptor(getToken: () => Promise<string | null>) {
-    // Prevent duplicate interceptor setup
-    if (this.isAuthInterceptorSet) {
-      return;
-    }
-
-    // Request interceptor to add JWT token
-    this.axiosInstance.interceptors.request.use(
-      async (config) => {
-        try {
-          const token = await getToken();
-          if (token) {
-            config.headers[HTTP_HEADERS.AUTHORIZATION] = `${HTTP_HEADERS.BEARER_PREFIX} ${token}`;
-          }
-        } catch (error) {
-          console.warn(ERROR_MESSAGES.AUTH_TOKEN_FAILED, error);
-        }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-
-    // Response interceptor for error handling
-    this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      (error: AxiosError) => {
-        const apiError = this.transformError(error);
-        return Promise.reject(apiError);
-      }
-    );
-
-    this.isAuthInterceptorSet = true;
-  }
-
-  /**
-   * Transforms axios errors into a consistent API error format.
-   */
-  protected transformError(error: AxiosError): ApiError {
-    if (error.response) {
-      // Server responded with error status
-      const responseData = error.response.data as any;
-      return {
-        message: responseData?.message || 'An error occurred',
-        status: responseData?.status || 'error',
-        statusCode: error.response.status,
-      };
-    } else if (error.request) {
-      // Network error or no response
-      return {
-        message: 'Network error. Please check your connection and try again.',
-        status: 'error',
-        statusCode: 0,
-      };
-    } else {
-      // Request setup error
-      return {
-        message: error.message || 'An unexpected error occurred',
-        status: 'error',
-        statusCode: -1,
-      };
-    }
-  }
-
-  /**
-   * Gets the underlying axios instance for advanced usage.
-   */
-  protected getAxiosInstance(): AxiosInstance {
-    return this.axiosInstance;
-  }
+export function initializeApiClient(getToken: () => Promise<string | null>) {
+  getTokenFn = getToken;
 }
+
+// Request interceptor to add authentication token
+apiClient.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    if (getTokenFn) {
+      try {
+        const token = await getTokenFn();
+        if (token) {
+          config.headers[HTTP_HEADERS.AUTHORIZATION] = `${HTTP_HEADERS.BEARER_PREFIX} ${token}`;
+        }
+      } catch (error) {
+        console.warn(ERROR_MESSAGES.AUTH_TOKEN_FAILED, error);
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle authentication errors
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      // Clear auth state when authentication fails
+      const { clearAuth } = useAuthStore.getState();
+      clearAuth();
+
+      // Redirect to sign-in page
+      window.location.href = PATHS.SIGN_IN;
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default apiClient;

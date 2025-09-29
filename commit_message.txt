@@ -1,0 +1,6 @@
+refactor: Refactor API client to use global instance
+
+- Replaced ApiClient class with a global axios instance to simplify the architecture.
+- Centralized authentication token injection and error handling using Axios interceptors.
+- Introduced a `useApiClient` hook to initialize the global API client with the authentication token provider.
+- Simplified `problemService` by removing the class-based implementation and using the global API client.

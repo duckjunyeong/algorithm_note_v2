@@ -11,10 +11,3 @@ export interface ApiError {
   status: string;
   statusCode: number;
 }
-
-// Configuration Types
-export interface ApiClientConfig {
-  baseURL: string;
-  timeout?: number;
-  headers?: Record<string, string>;
-}
