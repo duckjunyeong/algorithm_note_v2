@@ -4,13 +4,25 @@ import { useAlgorithmLogicFlowAnalysisPage } from './useAlgorithmLogicFlowAnalys
 import { AlgorithmLogicFlowAnalysisPageView } from './AlgorithmLogicFlowAnalysis.view';
 
 const AlgorithmLogicFlowAnalysisPage: FC = () => {
-  const { analysisResult, selectedStep, handleSelectStep } = useAlgorithmLogicFlowAnalysisPage();
+  const {
+    analysisResult,
+    selectedStep,
+    isChatModalOpen,
+    chatModalStep,
+    handleSelectStep,
+    handleOpenChatModal,
+    handleCloseChatModal,
+  } = useAlgorithmLogicFlowAnalysisPage();
 
   return (
     <AlgorithmLogicFlowAnalysisPageView
       analysisResult={analysisResult}
       selectedStep={selectedStep}
+      isChatModalOpen={isChatModalOpen}
+      chatModalStep={chatModalStep}
       handleSelectStep={handleSelectStep}
+      handleOpenChatModal={handleOpenChatModal}
+      handleCloseChatModal={handleCloseChatModal}
     />
   );
 };

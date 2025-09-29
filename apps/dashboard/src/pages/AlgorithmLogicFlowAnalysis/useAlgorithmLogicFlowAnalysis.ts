@@ -13,6 +13,8 @@ interface AnalysisStep {
 export const useAlgorithmLogicFlowAnalysisPage = () => {
   const { analysisResult, clearAnalysisResult } = useAnalysisStore();
   const [selectedStep, setSelectedStep] = useState<AnalysisStep | null>(null);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const [chatModalStep, setChatModalStep] = useState<AnalysisStep | null>(null);
 
   useEffect(() => {
     // 분석 결과가 있을 때 첫 번째 단계를 기본 선택
@@ -40,9 +42,23 @@ export const useAlgorithmLogicFlowAnalysisPage = () => {
     setSelectedStep(step);
   };
 
+  const handleOpenChatModal = (step: AnalysisStep) => {
+    setChatModalStep(step);
+    setIsChatModalOpen(true);
+  };
+
+  const handleCloseChatModal = () => {
+    setIsChatModalOpen(false);
+    setChatModalStep(null);
+  };
+
   return {
     analysisResult,
     selectedStep,
+    isChatModalOpen,
+    chatModalStep,
     handleSelectStep,
+    handleOpenChatModal,
+    handleCloseChatModal,
   };
 };

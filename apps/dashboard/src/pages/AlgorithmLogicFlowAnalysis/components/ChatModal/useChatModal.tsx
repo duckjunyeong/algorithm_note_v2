@@ -9,10 +9,18 @@ export interface Message {
   isTyping?: boolean;
 }
 
+interface AnalysisStep {
+  id: string;
+  title: string;
+  description?: string;
+  code: string;
+}
+
 interface UseChatModalProps {
   isOpen: boolean;
   scrapedInfo?: { confirmationKey?: string; confirmKey?: string };
   block?: { id?: string | number };
+  selectedStep?: AnalysisStep | null;
 }
 
 const recommendedQuestions = [
@@ -21,24 +29,36 @@ const recommendedQuestions = [
   "기술적 기반 구축(인프라, 보안 등)"
 ];
 
-export const useChatModal = ({ isOpen, scrapedInfo, block }: UseChatModalProps) => {
+export const useChatModal = ({ isOpen, scrapedInfo, block, selectedStep }: UseChatModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [showSaveButton, setShowSaveButton] = useState(false);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0 && block?.id) {
-      initiateNoteCreation();
+    if (isOpen && messages.length === 0) {
+      if (selectedStep) {
+        initiateNoteCreation();
+      } else if (block?.id) {
+      }
     }
-  }, [isOpen, block]);
+  }, [isOpen, block, selectedStep]);
+
+  
 
   const initiateNoteCreation = async () => {
     setLoading(true);
     try {
       // apiClient 사용
-      const response = await apiClient.post('/api/problems/chat', {
-        messages: null, unitName: 
+      const response = await apiClient.post('/problems/chat', {
+        messages: null,
+
+        logicalUnit: {
+          unitName: selectedStep?.title,
+          description: selectedStep?.description,
+          specificSteps: [], 
+          code: selectedStep?.code
+        }
       });
 
       const botMessage: Message = {

@@ -8,6 +8,7 @@ import { java } from '@codemirror/lang-java';
 import { python } from '@codemirror/lang-python';
 import { FiEdit, FiTrash2, FiMoreVertical } from 'react-icons/fi';
 import { EditorView } from '@codemirror/view';
+import ChatModal from './components/ChatModal';
 
 interface AnalysisStep { id: string; title: string; code: string; }
 interface AnalysisResult { problemTitle: string; language: string; analysis: AnalysisStep[]; }
@@ -15,7 +16,11 @@ interface AnalysisResult { problemTitle: string; language: string; analysis: Ana
 export interface AlgorithmLogicFlowAnalysisPageViewProps {
   analysisResult: AnalysisResult | null;
   selectedStep: AnalysisStep | null;
+  isChatModalOpen: boolean;
+  chatModalStep: AnalysisStep | null;
   handleSelectStep: (step: AnalysisStep) => void;
+  handleOpenChatModal: (step: AnalysisStep) => void;
+  handleCloseChatModal: () => void;
 }
 
 const transparentTheme = EditorView.theme({
@@ -37,7 +42,11 @@ const transparentTheme = EditorView.theme({
 export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPageViewProps> = ({
   analysisResult,
   selectedStep,
+  isChatModalOpen,
+  chatModalStep,
   handleSelectStep,
+  handleOpenChatModal,
+  handleCloseChatModal,
 }) => {
   if (!analysisResult) {
     return <div>Loading analysis...</div>;
@@ -71,6 +80,15 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
                   <span className="text-sm text-text-tertiary">Logic Step</span>
                 </div>
               </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenChatModal(step);
+                }}
+                className="mt-3 w-full px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                오답노트 만들기
+              </button>
             </div>
           ))}
         </div>
@@ -97,6 +115,13 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
             </div>
         )}
       </div>
+
+      <ChatModal
+        isOpen={isChatModalOpen}
+        onClose={handleCloseChatModal}
+        title="오답노트 만들기"
+        selectedStep={chatModalStep}
+      />
     </div>
   );
 };

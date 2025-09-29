@@ -1,6 +1,5 @@
 package algorithm_note.algorithm_note_v2.global.service;
 
-import algorithm_note.algorithm_note_v2.global.dto.CoreLogicsResponseDto;
 import algorithm_note.algorithm_note_v2.problem.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,10 +8,8 @@ import com.google.genai.Client;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@RequiredArgsConstructor
 @Component
 @Slf4j
 public class GeminiClient {
@@ -30,9 +26,21 @@ public class GeminiClient {
   private final String chatbotPrompt;
   private final ObjectMapper objectMapper;
   private final RedisService redisService;
+
   private static final String REDIS_KEY_PREFIX = "problem:temp:";
 
   private final Map<String, List<Content>> conversationSessions = new ConcurrentHashMap<>();
+
+  public GeminiClient(ObjectMapper objectMapper, RedisService redisService,
+                      @Value("${ai.api.key}") String apiKey,
+                      @Value("${ai.prompt.code_analyzer}") String codeAnalyzePrompt,
+                      @Value("${ai.prompt.interview-chatbot}") String chatbotPrompt) {
+    this.objectMapper = objectMapper;
+    this.redisService = redisService;
+    this.apiKey = apiKey;
+    this.codeAnalyzePrompt = codeAnalyzePrompt;
+    this.chatbotPrompt = chatbotPrompt;
+  }
 
 
   public CodeAnalysisResponseDto getCoreLogics(LogicAnalyzeRequestDto analyzeRequestDto) throws JsonProcessingException {
@@ -107,7 +115,7 @@ public class GeminiClient {
     }
   }
 
-  public void startChatSession(String sessionId, ProblemDto problem, String username, CodeAnalysisResponseDto.LogicalBlock selectedBlock) {
+  public void startChatSession(String sessionId, ProblemDto problem, String username, LogicalUnitDto logic) {
     List<Content> history = new ArrayList<>();
 
     if (chatbotPrompt != null && !chatbotPrompt.trim().isEmpty()) {
@@ -115,8 +123,8 @@ public class GeminiClient {
       String enhancedPrompt = String.format(chatbotPrompt,
           username,
           problem.getTitle(),
-          selectedBlock.getDescription(),
-          selectedBlock.getCode(),
+          logic.getDescription(),
+          logic.getCode(),
           problem.getInputCondition() + problem.getOutputCondition(),
           problem.getConstraints());
 
@@ -134,7 +142,7 @@ public class GeminiClient {
     }
 
     conversationSessions.put(sessionId, history);
-    log.info("블록 정보 포함 챗봇 세션이 시작되었습니다. 세션 ID: {}, 문제: {}, 블록: {}", sessionId, problem.getTitle(), selectedBlock.getTitle());
+    log.info("블록 정보 포함 챗봇 세션이 시작되었습니다. 세션 ID: {}, 문제: {}, 블록: {}", sessionId, problem.getTitle(), logic.getUnitName());
   }
 
   private boolean isFinalizationResponse(String response) {

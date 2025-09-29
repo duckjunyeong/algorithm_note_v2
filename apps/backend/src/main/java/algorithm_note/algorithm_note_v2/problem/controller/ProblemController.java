@@ -33,14 +33,6 @@ public class ProblemController {
     private final CodeAnalysisService codeAnalysisService;
     private final GeminiClient geminiClient;
 
-    /**
-     * Registers a problem by scraping from Baekjoon URL.
-     * The scraped data is temporarily stored in Redis.
-     *
-     * @param request The URL registration request
-     * @param authentication Spring Security authentication containing authenticated user
-     * @return Success/failure response
-     */
     @PostMapping("/register/url")
     public ResponseEntity<ProblemResponseDto> registerProblemFromUrl(
             @Valid @RequestBody ProblemUrlRequestDto request,
@@ -59,14 +51,6 @@ public class ProblemController {
         );
     }
 
-    /**
-     * Registers a problem from manually entered data.
-     * The problem data is temporarily stored in Redis.
-     *
-     * @param request The manual registration request
-     * @param authentication Spring Security authentication containing authenticated user
-     * @return Success/failure response
-     */
     @PostMapping("/register/manual")
     public ResponseEntity<ProblemResponseDto> registerProblemFromManualInput(
             @Valid @RequestBody ProblemManualRequestDto request,
@@ -85,13 +69,6 @@ public class ProblemController {
         );
     }
 
-    /**
-     * Saves the temporarily cached problem to permanent storage.
-     * This endpoint is called after the user completes code analysis.
-     *
-     * @param authentication Spring Security authentication containing authenticated user
-     * @return Success/failure response
-     */
     @PostMapping("/save")
     public ResponseEntity<ProblemResponseDto> saveProblemFromCache(
             Authentication authentication) {
@@ -109,13 +86,6 @@ public class ProblemController {
         );
     }
 
-    /**
-     * Clears temporarily cached problem data for the authenticated user.
-     * This endpoint is called when the user cancels problem registration process.
-     *
-     * @param authentication Spring Security authentication containing authenticated user
-     * @return Success/failure response
-     */
     @DeleteMapping("/cleanup")
     public ResponseEntity<Void> clearTemporaryData(Authentication authentication) {
 
@@ -131,14 +101,6 @@ public class ProblemController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Analyzes algorithm code and extracts logical flow.
-     * Retrieves problem data from Redis and sends to AI for analysis.
-     *
-     * @param request The code analysis request containing language and code
-     * @param authentication Spring Security authentication containing authenticated user
-     * @return Analysis result with logical units
-     */
     @PostMapping("/code/analyze")
     public ResponseEntity<CodeAnalysisResponseDto> analyzeCode(
             @Valid @RequestBody CodeAnalysisRequestDto request,
@@ -157,18 +119,18 @@ public class ProblemController {
 
     @PostMapping("/chat")
     public ResponseEntity<?> sendChatMessage(@Valid @RequestBody ChatMessageRequestDto request, @AuthenticationPrincipal User user) throws JsonProcessingException {
-        String sessionId = request.getSessionId();
+        String sessionId = user.getClerkId();
         String message = request.getMessage();
-        String blockId = request.getBlockId();
 
-        if (message == null && blockId != null) {
-            String initialMessage = chatService.createInitialChatMessage(blockId, sessionId, user);
+        if (message == null && request.getLogicalUnit() != null) {
+            chatService.connectChatSession(sessionId, user, request.getLogicalUnit());
+            String initialMessage = chatService.createInitialMessage(user, request.getLogicalUnit());
 
             ChatMessageResponseDto response = ChatMessageResponseDto.of(
                 sessionId,
-                null,  // 첫 요청은 사용자 메시지가 없음
+                null,
                 initialMessage,
-                false  // 첫 메시지는 final response가 아님
+                false
             );
 
             return ResponseEntity.ok(response);
