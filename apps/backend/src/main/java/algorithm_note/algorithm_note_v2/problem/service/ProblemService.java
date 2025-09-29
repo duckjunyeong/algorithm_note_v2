@@ -9,13 +9,12 @@ import algorithm_note.algorithm_note_v2.problem.exception.RedisOperationExceptio
 import algorithm_note.algorithm_note_v2.problem.repository.ProblemRepository;
 import algorithm_note.algorithm_note_v2.user.domain.User;
 import algorithm_note.algorithm_note_v2.user.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.data.redis.core.RedisTemplate;
+import algorithm_note.algorithm_note_v2.global.service.RedisService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +32,7 @@ public class ProblemService {
 
     private final ProblemRepository problemRepository;
     private final UserRepository userRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final ObjectMapper objectMapper;
+    private final RedisService redisService;
 
     private static final String REDIS_KEY_PREFIX = "problem:temp:";
     private static final long REDIS_TTL_HOURS = 24;
@@ -108,15 +106,14 @@ public class ProblemService {
      */
     public ProblemDto getFromRedis(String userId) {
         try {
-            String key = REDIS_KEY_PREFIX + userId;
-            Object cachedData = redisTemplate.opsForValue().get(key);
+            ProblemDto problemDto = redisService.getFromHash(REDIS_KEY_PREFIX, userId, ProblemDto.class);
 
-            if (cachedData == null) {
+            if (problemDto == null) {
                 log.warn("No cached problem data found for user: {}", userId);
                 return null;
             }
 
-            return objectMapper.convertValue(cachedData, ProblemDto.class);
+            return problemDto;
 
         } catch (Exception e) {
             log.error("Failed to retrieve problem data from Redis for user: {}", userId, e);
@@ -178,10 +175,9 @@ public class ProblemService {
      */
     public void clearUserTemporaryData(String userId) {
         try {
-            String key = REDIS_KEY_PREFIX + userId;
-            Boolean deleted = redisTemplate.delete(key);
+            boolean deleted = redisService.deleteFromHash(REDIS_KEY_PREFIX, userId);
 
-            if (Boolean.TRUE.equals(deleted)) {
+            if (deleted) {
                 log.info("Successfully cleared temporary data for user: {}", userId);
             } else {
                 log.info("No temporary data found to clear for user: {}", userId);
@@ -274,10 +270,9 @@ public class ProblemService {
      */
     private void storeInRedis(String userId, ProblemDto problemDto) {
         try {
-            String key = REDIS_KEY_PREFIX + userId;
-            redisTemplate.opsForValue().set(key, problemDto, REDIS_TTL_HOURS, TimeUnit.HOURS);
+            redisService.saveToHash(REDIS_KEY_PREFIX, userId, problemDto, REDIS_TTL_HOURS, TimeUnit.HOURS);
 
-            log.debug("Stored problem data in Redis with key: {}", key);
+            log.debug("Stored problem data in Redis hash for user: {}", userId);
         } catch (Exception e) {
             log.error("Failed to store problem data in Redis: {}", e.getMessage(), e);
             throw new RedisOperationException("Failed to cache problem data");
@@ -289,10 +284,9 @@ public class ProblemService {
      */
     private void removeFromRedis(String userId) {
         try {
-            String key = REDIS_KEY_PREFIX + userId;
-            redisTemplate.delete(key);
+            redisService.deleteFromHash(REDIS_KEY_PREFIX, userId);
 
-            log.debug("Removed problem data from Redis with key: {}", key);
+            log.debug("Removed problem data from Redis hash for user: {}", userId);
         } catch (Exception e) {
             log.warn("Failed to remove problem data from Redis: {}", e.getMessage());
             // Don't throw exception here as the main operation succeeded

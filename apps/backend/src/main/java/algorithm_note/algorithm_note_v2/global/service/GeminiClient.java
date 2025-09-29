@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GeminiClient {
 
   private final String apiKey;
-  private final String coreLogicExtractorPrompt;
+  private final String codeAnalyzePrompt;
   private final String chatbotPrompt;
   private final ObjectMapper objectMapper;
   private final RedisTemplate<String, Object> redisTemplate;
@@ -29,25 +29,25 @@ public class GeminiClient {
   private final Map<String, List<Content>> conversationSessions = new ConcurrentHashMap<>();
 
   public GeminiClient(@Value("${ai.api.key}") String apiKey,
-                      @Value("${ai.prompt.core-logic-extractor}") String coreLogicExtractorPrompt,
+                      @Value("${ai.prompt.code-analyzer}") String codeAnalyzePrompt,
                       @Value("${ai.prompt.interview-chatbot}") String chatbotPrompt,
                       ObjectMapper objectMapper,
                       RedisTemplate<String, Object> redisTemplate
   ) {
     this.apiKey = apiKey;
-    this.coreLogicExtractorPrompt = coreLogicExtractorPrompt;
+    this.codeAnalyzePrompt = codeAnalyzePrompt;
     this.chatbotPrompt = chatbotPrompt;
     this.objectMapper = objectMapper;
     this.redisTemplate = redisTemplate;
   }
 
-  public CoreLogicsResponseDto getCoreLogics(String url) throws JsonProcessingException {
+  public CoreLogicsResponseDto getCoreLogics(String code) throws JsonProcessingException {
     Client client = Client.builder().apiKey(apiKey).build();
 
     String prompt = String.format(
-        "%s\n\n---\n\n위의 지시에 따라, 다음 URL의 핵심 로직을 JSON 배열 형식으로 추출해줘: %s",
-        coreLogicExtractorPrompt,
-        url
+        "%s\n\n---\n\n위의 지시에 따라, 다음 코드를 분석해줘.: %s",
+        codeAnalyzePrompt,
+        code
     );
 
     GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", prompt, null);

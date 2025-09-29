@@ -18,17 +18,12 @@ export interface ProblemManualRequest {
   constraints?: string;
 }
 
-// Create specialized problem API client with different base URL and timeout
-const problemApiClient = apiClient.create({
-  baseURL: 'http://localhost:8085/api/problems',
-  timeout: 30000, // 30 seconds for scraping operations
-});
 
 /**
  * Registers a problem by URL scraping from Baekjoon.
  */
 export async function registerFromUrl(request: ProblemUrlRequest): Promise<ProblemApiResponse> {
-  const response = await problemApiClient.post<ProblemApiResponse>(
+  const response = await apiClient.post<ProblemApiResponse>(
     API_ENDPOINTS.PROBLEMS.REGISTER_URL,
     request
   );
@@ -39,7 +34,7 @@ export async function registerFromUrl(request: ProblemUrlRequest): Promise<Probl
  * Registers a problem from manual input.
  */
 export async function registerFromManualInput(request: ProblemManualRequest): Promise<ProblemApiResponse> {
-  const response = await problemApiClient.post<ProblemApiResponse>(
+  const response = await apiClient.post<ProblemApiResponse>(
     API_ENDPOINTS.PROBLEMS.REGISTER_MANUAL,
     request
   );
@@ -50,7 +45,7 @@ export async function registerFromManualInput(request: ProblemManualRequest): Pr
  * Saves the cached problem to permanent storage.
  */
 export async function saveProblemFromCache(): Promise<ProblemApiResponse> {
-  const response = await problemApiClient.post<ProblemApiResponse>(API_ENDPOINTS.PROBLEMS.SAVE);
+  const response = await apiClient.post<ProblemApiResponse>(API_ENDPOINTS.PROBLEMS.SAVE);
   return response.data;
 }
 
@@ -61,7 +56,7 @@ export async function saveProblemFromCache(): Promise<ProblemApiResponse> {
  */
 export async function clearTemporaryData(): Promise<void> {
   try {
-    await problemApiClient.delete(API_ENDPOINTS.PROBLEMS.CLEANUP, {
+    await apiClient.delete(API_ENDPOINTS.PROBLEMS.CLEANUP, {
       timeout: 5000, // 5 second timeout
     });
     console.log('임시 데이터 정리 성공');

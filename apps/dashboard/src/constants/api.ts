@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  DEFAULT_BASE_URL: 'http://localhost:8080/api',
+  DEFAULT_BASE_URL: 'http://localhost:8085/api',
   TIMEOUT: 10000,
   HEADERS: {
     CONTENT_TYPE: 'application/json',
@@ -8,10 +8,10 @@ export const API_CONFIG = {
 
 export const API_ENDPOINTS = {
   PROBLEMS: {
-    REGISTER_URL: '/register/url',
-    REGISTER_MANUAL: '/register/manual',
-    SAVE: '/save',
-    CLEANUP: '/cleanup',
+    REGISTER_URL: '/problems/register/url',
+    REGISTER_MANUAL: '/problems/register/manual',
+    SAVE: '/problems/save',
+    CLEANUP: '/problems/cleanup',
   },
 } as const;
 
