@@ -70,11 +70,6 @@ export const AlgorithmLogicFlowAnalysisPageView: FC<AlgorithmLogicFlowAnalysisPa
                   </h3>
                   <span className="text-sm text-text-tertiary">Logic Step</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button className="text-text-secondary hover:text-text-primary"><FiEdit size={16}/></button>
-                  <button className="text-semantic-error/70 hover:text-semantic-error"><FiTrash2 size={16}/></button>
-                  <button className="text-text-secondary hover:text-text-primary"><FiMoreVertical size={16}/></button>
-                </div>
               </div>
             </div>
           ))}

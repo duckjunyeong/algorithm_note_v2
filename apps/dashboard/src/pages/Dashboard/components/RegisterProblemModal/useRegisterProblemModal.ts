@@ -198,6 +198,7 @@ export const useRegisterProblemModal = ({ isOpen }: { isOpen: boolean }) => {
         analysis: analysisResponse.logicalUnits.map((unit, index) => ({
           id: `step${index + 1}`,
           title: unit.unitName,
+          description: unit.description,
           code: unit.code
         }))
       };

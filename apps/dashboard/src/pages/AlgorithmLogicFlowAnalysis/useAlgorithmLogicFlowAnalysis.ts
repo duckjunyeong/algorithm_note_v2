@@ -5,14 +5,10 @@ import { useAnalysisStore } from '../../store/useAnalysisStore';
 interface AnalysisStep {
   id: string;
   title: string;
+  description?: string;
   code: string;
 }
 
-interface AnalysisResult {
-  problemTitle: string;
-  language: string;
-  analysis: AnalysisStep[];
-}
 
 export const useAlgorithmLogicFlowAnalysisPage = () => {
   const { analysisResult, clearAnalysisResult } = useAnalysisStore();

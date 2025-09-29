@@ -1,6 +1,8 @@
 package algorithm_note.algorithm_note_v2.problem.controller;
 
+import algorithm_note.algorithm_note_v2.global.service.GeminiClient;
 import algorithm_note.algorithm_note_v2.problem.dto.*;
+import algorithm_note.algorithm_note_v2.problem.service.ChatService;
 import algorithm_note.algorithm_note_v2.problem.service.CodeAnalysisService;
 import algorithm_note.algorithm_note_v2.problem.service.ProblemService;
 import algorithm_note.algorithm_note_v2.user.domain.User;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +29,9 @@ import java.util.List;
 public class ProblemController {
 
     private final ProblemService problemService;
+    private final ChatService chatService;
     private final CodeAnalysisService codeAnalysisService;
+    private final GeminiClient geminiClient;
 
     /**
      * Registers a problem by scraping from Baekjoon URL.
@@ -148,5 +153,36 @@ public class ProblemController {
         CodeAnalysisResponseDto result = codeAnalysisService.analyzeCode(request, userId);
 
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/chat")
+    public ResponseEntity<?> sendChatMessage(@Valid @RequestBody ChatMessageRequestDto request, @AuthenticationPrincipal User user) throws JsonProcessingException {
+        String sessionId = request.getSessionId();
+        String message = request.getMessage();
+        String blockId = request.getBlockId();
+
+        if (message == null && blockId != null) {
+            String initialMessage = chatService.createInitialChatMessage(blockId, sessionId, user);
+
+            ChatMessageResponseDto response = ChatMessageResponseDto.of(
+                sessionId,
+                null,  // 첫 요청은 사용자 메시지가 없음
+                initialMessage,
+                false  // 첫 메시지는 final response가 아님
+            );
+
+            return ResponseEntity.ok(response);
+        }
+
+        GeminiResponseDto geminiResponse = geminiClient.sendMessage(sessionId, message);
+
+        ChatMessageResponseDto response = ChatMessageResponseDto.of(
+            sessionId,
+            message,
+            geminiResponse.getResponse(),
+            geminiResponse.isFinalResponse()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
