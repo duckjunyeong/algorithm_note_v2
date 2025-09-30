@@ -3,18 +3,17 @@ import type { ToastOptions } from 'react-toastify';
 
 const defaultOptions: ToastOptions = {
   position: 'top-center',
-  autoClose: 300,
+  autoClose: 1000,
   hideProgressBar: true,
   closeOnClick: true,
   pauseOnHover: false,
   draggable: false,
   className: 'custom-toast',
   style: {
-    backgroundColor: 'var(--background)',
-    color: 'var(--foreground)',
-    border: '1px solid var(--border)',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
     borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
     fontFamily: 'system-ui, -apple-system, sans-serif',
     fontSize: '14px',
     minHeight: '48px',
@@ -28,8 +27,7 @@ export const showSuccessToast = (message: string, options?: Partial<ToastOptions
     ...options,
     style: {
       ...defaultOptions.style,
-      borderColor: '#22c55e',
-      backgroundColor: '#f0fdf4'
+      borderLeft: '4px solid #22c55e'
     }
   });
 };
@@ -40,8 +38,7 @@ export const showErrorToast = (message: string, options?: Partial<ToastOptions>)
     ...options,
     style: {
       ...defaultOptions.style,
-      borderColor: '#ef4444',
-      backgroundColor: '#fef2f2'
+      borderLeft: '4px solid #ef4444'
     }
   });
 };
@@ -52,8 +49,7 @@ export const showInfoToast = (message: string, options?: Partial<ToastOptions>) 
     ...options,
     style: {
       ...defaultOptions.style,
-      borderColor: '#3b82f6',
-      backgroundColor: '#eff6ff'
+      borderLeft: '4px solid #3b82f6'
     }
   });
 };
@@ -64,8 +60,7 @@ export const showWarningToast = (message: string, options?: Partial<ToastOptions
     ...options,
     style: {
       ...defaultOptions.style,
-      borderColor: '#f59e0b',
-      backgroundColor: '#fffbeb'
+      borderLeft: '4px solid #f59e0b'
     }
   });
 };

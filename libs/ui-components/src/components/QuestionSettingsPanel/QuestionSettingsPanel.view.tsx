@@ -20,7 +20,7 @@ export function QuestionSettingsPanelView({
   onCategoryColorChange
 }: QuestionSettingsPanelViewProps) {
   return (
-    <div className="absolute top-0 right-0 w-64 bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm h-fit sticky top-0">
       <h4 className="text-sm font-semibold text-gray-900 mb-4">질문 설정</h4>
 
       <div className="space-y-4">

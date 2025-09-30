@@ -145,7 +145,7 @@ interface InputViewProps {
 
 function InputView({ value, onChange, errorMessage, isLoading, onContinue }: InputViewProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && e.ctrlKey) {
       e.preventDefault();
       onContinue();
     }
@@ -161,7 +161,7 @@ function InputView({ value, onChange, errorMessage, isLoading, onContinue }: Inp
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="예: React Hook의 useEffect 사용법에 대해 학습했습니다..."
+          placeholder="예: React Hook의 useEffect 사용법에 대해 학습했습니다... (Ctrl+Enter로 제출)"
           rows={6}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
           disabled={isLoading}
@@ -170,7 +170,8 @@ function InputView({ value, onChange, errorMessage, isLoading, onContinue }: Inp
           <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
         )}
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-between items-end">
+        <span className="text-xs text-gray-500">Ctrl + Enter</span>
         <Button
           onClick={onContinue}
           disabled={isLoading || !value.trim()}
@@ -221,56 +222,67 @@ function SelectView({
   errorMessage
 }: SelectViewProps) {
   return (
-    <div className="relative space-y-4">
-      {/* 설정 패널 - 우상단 고정 */}
-      <QuestionSettingsPanel
-        repetitionCycle={repetitionCycle}
-        setRepetitionCycle={setRepetitionCycle}
-        importance={importance}
-        setImportance={setImportance}
-        category={category}
-        setCategory={setCategory}
-        categoryColor={categoryColor}
-        setCategoryColor={setCategoryColor}
-      />
-
-      <div>
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="mb-4">
         <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          생성된 질문을 수정하거나 삭제할 수 있습니다. 체크박스로 선택 후 하단 등록 버튼을 클릭해주세요.
+        <p className="text-sm text-gray-600">
+          생성된 질문을 클릭하여 선택하거나 수정/삭제할 수 있습니다.
         </p>
       </div>
 
-      <div className="max-h-96 overflow-y-auto space-y-3 mr-72">
-        {questions.map((question) => (
-          <div key={question.id} className="flex items-start gap-3">
-            <input
-              type="checkbox"
-              id={`question-${question.id}`}
-              checked={selectedQuestions.has(question.id)}
-              onChange={() => onQuestionToggle(question.id)}
-              className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-            />
-            <div className="flex-1">
-              <QuestionCard
-                questionId={question.id}
-                question={question.text}
-                onEdit={onQuestionEdit}
-                onDelete={onQuestionDelete}
+      {/* Main Content Area - Flex Layout */}
+      <div className="flex gap-4 flex-1 min-h-[400px]">
+        {/* Questions List */}
+        <div className="flex-1 overflow-y-auto pr-2 space-y-3">
+          {questions.map((question) => (
+            <div
+              key={question.id}
+              className="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              onClick={() => onQuestionToggle(question.id)}
+            >
+              <input
+                type="checkbox"
+                id={`question-${question.id}`}
+                checked={selectedQuestions.has(question.id)}
+                onChange={() => onQuestionToggle(question.id)}
+                onClick={(e) => e.stopPropagation()}
+                className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
               />
+              <div className="flex-1" onClick={(e) => e.stopPropagation()}>
+                <QuestionCard
+                  questionId={question.id}
+                  question={question.text}
+                  onEdit={onQuestionEdit}
+                  onDelete={onQuestionDelete}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+          {questions.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              표시할 질문이 없습니다.
+            </div>
+          )}
+        </div>
+
+        {/* Settings Panel */}
+        <div className="w-64 flex-shrink-0">
+          <QuestionSettingsPanel
+            repetitionCycle={repetitionCycle}
+            setRepetitionCycle={setRepetitionCycle}
+            importance={importance}
+            setImportance={setImportance}
+            category={category}
+            setCategory={setCategory}
+            categoryColor={categoryColor}
+            setCategoryColor={setCategoryColor}
+          />
+        </div>
       </div>
 
-      {questions.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          표시할 질문이 없습니다.
-        </div>
-      )}
-
-      {/* Bottom Action Bar */}
-      <div className="border-t pt-4 bg-gray-50 -mx-6 -mb-6 px-6 pb-6">
+      {/* Bottom Action Bar - Sticky */}
+      <div className="border-t mt-4 pt-4 pb-4 bg-white sticky bottom-0">
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-600">
             {selectedQuestions.size}개 질문 선택됨
