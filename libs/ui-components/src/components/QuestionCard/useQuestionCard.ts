@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 
 interface UseQuestionCardProps {
-  questionId: string;
-  onEdit?: (questionId: string) => void;
-  onDelete?: (questionId: string) => void;
+  questionId: number;
+  onEdit?: (questionId: number) => void;
+  onDelete?: (questionId: number) => void;
 }
 
 export function useQuestionCard({ questionId, onEdit, onDelete }: UseQuestionCardProps) {
@@ -27,8 +27,8 @@ export function useQuestionCard({ questionId, onEdit, onDelete }: UseQuestionCar
 }
 
 export interface QuestionCardProps {
-  questionId: string;
+  questionId: number;
   question: string;
-  onEdit?: (questionId: string) => void;
-  onDelete?: (questionId: string) => void;
+  onEdit?: (questionId: number) => void;
+  onDelete?: (questionId: number) => void;
 }

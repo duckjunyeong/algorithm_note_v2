@@ -1,6 +1,6 @@
 // DashboardPage/DashboardPage.view.tsx
 import type { FC } from 'react';
-import type { ReviewCard } from '../../../../libs/api-types/src';
+import type { ReviewCard } from '../../../../../libs/api-types/src';
 import { 
   RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, Tooltip,

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useQuestionStore } from '../../../../store/useQuestionStore';
 import { useReviewCardStore } from '../../../../store/useReviewCardStore';
 import { taskCreationService } from '../../../../services/taskCreationService';
+import { showSuccessToast, showErrorToast } from '../../../../utils/toast';
 
 type ViewType = 'input' | 'select';
 
@@ -12,8 +13,8 @@ export function useTaskCreationModal() {
   const [isLoading, setIsLoading] = useState(false);
 
   // 수정/삭제 상태 관리
-  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
-  const [editingQuestion, setEditingQuestion] = useState<{ id: string; text: string } | null>(null);
+  const [selectedQuestions, setSelectedQuestions] = useState<Set<number>>(new Set());
+  const [editingQuestion, setEditingQuestion] = useState<{ id: number; text: string } | null>(null);
 
   // 질문 설정 상태 관리
   const [repetitionCycle, setRepetitionCycle] = useState(3);
@@ -48,24 +49,26 @@ export function useTaskCreationModal() {
 
     setErrorMessage('');
     setIsLoading(true);
+    setCurrentView('select'); // 즉시 select view로 전환
 
     try {
       const result = await taskCreationService.createAnswer(trimmedValue);
       console.log('API Response:', result);
       setQuestions(result);
-      setCurrentView('select');
     } catch (error) {
       const errorMsg = error instanceof Error
         ? error.message
         : '요청 처리 중 오류가 발생했습니다. 다시 시도해주세요.';
       setErrorMessage(errorMsg);
+      showErrorToast(errorMsg);
+      setCurrentView('input'); // 에러 발생시 input view로 되돌리기
     } finally {
       setIsLoading(false);
     }
   }, [inputValue, setQuestions]);
 
   // 질문 선택/해제
-  const handleQuestionToggle = useCallback((questionId: string) => {
+  const handleQuestionToggle = useCallback((questionId: number) => {
     setSelectedQuestions(prev => {
       const newSet = new Set(prev);
       if (newSet.has(questionId)) {
@@ -78,7 +81,7 @@ export function useTaskCreationModal() {
   }, []);
 
   // 질문 수정 시작
-  const handleQuestionEdit = useCallback((questionId: string) => {
+  const handleQuestionEdit = useCallback((questionId: number) => {
     if (!questions) return;
 
     const question = questions.questions.find(q => q.id === questionId);
@@ -88,7 +91,7 @@ export function useTaskCreationModal() {
   }, [questions]);
 
   // 질문 수정 저장
-  const handleQuestionSave = useCallback((questionId: string, newText: string) => {
+  const handleQuestionSave = useCallback((questionId: number, newText: string) => {
     if (!questions) return;
 
     const updatedQuestions = {
@@ -103,7 +106,7 @@ export function useTaskCreationModal() {
   }, [questions, setQuestions]);
 
   // 질문 삭제
-  const handleQuestionDelete = useCallback((questionId: string) => {
+  const handleQuestionDelete = useCallback((questionId: number) => {
     if (!questions) return;
 
     const updatedQuestions = {
@@ -163,6 +166,9 @@ export function useTaskCreationModal() {
 
       await createReviewCard(reviewCardData);
 
+      // 성공 토스트 표시
+      showSuccessToast('복습 카드가 성공적으로 생성되었습니다');
+
       // 성공시 모달 상태 리셋
       resetModal();
     } catch (error) {
@@ -170,6 +176,7 @@ export function useTaskCreationModal() {
         ? error.message
         : '복습 카드 생성에 실패했습니다. 다시 시도해주세요.';
       setErrorMessage(errorMsg);
+      showErrorToast(errorMsg);
     } finally {
       setIsLoading(false);
     }

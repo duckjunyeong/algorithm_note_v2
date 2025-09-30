@@ -14,8 +14,8 @@ interface TaskCreationModalViewProps {
   errorMessage: string;
   isLoading: boolean;
   questions: CreateAnswerResponse | null;
-  selectedQuestions: Set<string>;
-  editingQuestion: { id: string; text: string } | null;
+  selectedQuestions: Set<number>;
+  editingQuestion: { id: number; text: string } | null;
   repetitionCycle: number;
   setRepetitionCycle: (value: number) => void;
   importance: number;
@@ -25,10 +25,10 @@ interface TaskCreationModalViewProps {
   categoryColor: string;
   setCategoryColor: (value: string) => void;
   onContinue: () => void;
-  onQuestionToggle: (questionId: string) => void;
-  onQuestionEdit: (questionId: string) => void;
-  onQuestionSave: (questionId: string, newText: string) => void;
-  onQuestionDelete: (questionId: string) => void;
+  onQuestionToggle: (questionId: number) => void;
+  onQuestionEdit: (questionId: number) => void;
+  onQuestionSave: (questionId: number, newText: string) => void;
+  onQuestionDelete: (questionId: number) => void;
   onEditModalClose: () => void;
   onRegisterSelectedQuestions: () => void;
 }
@@ -94,25 +94,31 @@ export function TaskCreationModalView({
               onContinue={onContinue}
             />
           )}
-          {currentView === 'select' && questions && (
-            <SelectView
-              title={questions.title}
-              questions={questions.questions}
-              selectedQuestions={selectedQuestions}
-              repetitionCycle={repetitionCycle}
-              setRepetitionCycle={setRepetitionCycle}
-              importance={importance}
-              setImportance={setImportance}
-              category={category}
-              setCategory={setCategory}
-              categoryColor={categoryColor}
-              setCategoryColor={setCategoryColor}
-              onQuestionToggle={onQuestionToggle}
-              onQuestionEdit={onQuestionEdit}
-              onQuestionDelete={onQuestionDelete}
-              onRegisterSelectedQuestions={onRegisterSelectedQuestions}
-              errorMessage={errorMessage}
-            />
+          {currentView === 'select' && (
+            <>
+              {isLoading && !questions ? (
+                <LoadingView />
+              ) : questions ? (
+                <SelectView
+                  title={questions.title}
+                  questions={questions.questions}
+                  selectedQuestions={selectedQuestions}
+                  repetitionCycle={repetitionCycle}
+                  setRepetitionCycle={setRepetitionCycle}
+                  importance={importance}
+                  setImportance={setImportance}
+                  category={category}
+                  setCategory={setCategory}
+                  categoryColor={categoryColor}
+                  setCategoryColor={setCategoryColor}
+                  onQuestionToggle={onQuestionToggle}
+                  onQuestionEdit={onQuestionEdit}
+                  onQuestionDelete={onQuestionDelete}
+                  onRegisterSelectedQuestions={onRegisterSelectedQuestions}
+                  errorMessage={errorMessage}
+                />
+              ) : null}
+            </>
           )}
         </div>
       </div>
@@ -179,8 +185,8 @@ function InputView({ value, onChange, errorMessage, isLoading, onContinue }: Inp
 
 interface SelectViewProps {
   title: string;
-  questions: Array<{ id: string; text: string }>;
-  selectedQuestions: Set<string>;
+  questions: Array<{ id: number; text: string }>;
+  selectedQuestions: Set<number>;
   repetitionCycle: number;
   setRepetitionCycle: (value: number) => void;
   importance: number;
@@ -189,9 +195,9 @@ interface SelectViewProps {
   setCategory: (value: string) => void;
   categoryColor: string;
   setCategoryColor: (value: string) => void;
-  onQuestionToggle: (questionId: string) => void;
-  onQuestionEdit: (questionId: string) => void;
-  onQuestionDelete: (questionId: string) => void;
+  onQuestionToggle: (questionId: number) => void;
+  onQuestionEdit: (questionId: number) => void;
+  onQuestionDelete: (questionId: number) => void;
   onRegisterSelectedQuestions: () => void;
   errorMessage: string;
 }
@@ -281,6 +287,19 @@ function SelectView({
           <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
         )}
       </div>
+    </div>
+  );
+}
+
+function LoadingView() {
+  return (
+    <div className="flex flex-col items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">질문을 생성하고 있습니다</h3>
+      <p className="text-sm text-gray-600 text-center">
+        입력하신 내용을 바탕으로 복습용 질문을 생성하고 있습니다.<br />
+        잠시만 기다려주세요.
+      </p>
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import AlgorithmLogicFlowAnalysisPage from './pages/AlgorithmLogicFlowAnalysis';
 import DashboardPage from './pages/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './components/AuthProvider';
 import { useApiClient } from './hooks/useApiClient';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   useApiClient();
@@ -18,6 +20,7 @@ function App() {
             element={<AlgorithmLogicFlowAnalysisPage />}
           />
         </Routes>
+        <ToastContainer />
       </AuthProvider>
     </BrowserRouter>
   );

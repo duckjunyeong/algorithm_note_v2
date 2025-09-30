@@ -70,8 +70,8 @@ export function useQuestionEditModal({
 
 export interface QuestionEditModalProps {
   isOpen: boolean;
-  questionId?: string;
+  questionId?: number;
   initialQuestion?: string;
-  onSave?: (questionId: string, newQuestion: string) => void;
+  onSave?: (questionId: number, newQuestion: string) => void;
   onClose?: () => void;
 }
