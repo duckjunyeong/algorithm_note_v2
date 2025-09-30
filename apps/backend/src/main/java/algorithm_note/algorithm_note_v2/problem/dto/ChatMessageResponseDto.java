@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageResponseDto {
-  private String aiResponse;
+  private Object aiResponse;
 
-  public static ChatMessageResponseDto of(String aiResponse) {
+  public static ChatMessageResponseDto of(Object aiResponse) {
     return new ChatMessageResponseDto(aiResponse);
   }
 }

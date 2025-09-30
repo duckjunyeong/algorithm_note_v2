@@ -14,19 +14,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GeminiResponseDto {
 
-  private String response;
+  private Object response;
   private boolean success;
   private String errorMessage;
 
-  public static GeminiResponseDto of(String response) {
+  public static GeminiResponseDto of(Object response) {
     return new GeminiResponseDto(response, true, null);
   }
 
-  public static GeminiResponseDto success(String response) {
+  public static GeminiResponseDto success(Object response) {
     return new GeminiResponseDto(response,true, null);
   }
 
-  public static GeminiResponseDto finalSuccess(String response) {
+  public static GeminiResponseDto finalSuccess(Object response) {
     return new GeminiResponseDto(response, true, null);
   }
 
