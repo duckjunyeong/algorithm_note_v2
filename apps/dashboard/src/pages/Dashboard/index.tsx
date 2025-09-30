@@ -15,6 +15,10 @@ const DashboardPage: FC = () => {
     isConfirmModalOpen,
     isConfirmLoading,
     isTaskCreationModalOpen,
+    backlogCards,
+    completedCards,
+    reviewCardsLoading,
+    reviewCardsError,
     openChatModal,
     closeChatModal,
     openConfirmModal,
@@ -38,6 +42,10 @@ const DashboardPage: FC = () => {
       isConfirmModalOpen={isConfirmModalOpen}
       isConfirmLoading={isConfirmLoading}
       isTaskCreationModalOpen={isTaskCreationModalOpen}
+      backlogCards={backlogCards}
+      completedCards={completedCards}
+      reviewCardsLoading={reviewCardsLoading}
+      reviewCardsError={reviewCardsError}
       onOpenChatModal={openChatModal}
       onCloseChatModal={closeChatModal}
       onOpenConfirmModal={openConfirmModal}

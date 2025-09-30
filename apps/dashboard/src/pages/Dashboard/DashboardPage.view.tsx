@@ -1,5 +1,6 @@
 // DashboardPage/DashboardPage.view.tsx
 import type { FC } from 'react';
+import type { ReviewCard } from '../../../../libs/api-types/src';
 import { 
   RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, Tooltip,
@@ -33,6 +34,11 @@ export interface DashboardPageViewProps {
     doneCount: number;
     failCount: number;
   };
+  // 복습 카드 관련 props
+  backlogCards: ReviewCard[];
+  completedCards: ReviewCard[];
+  reviewCardsLoading: boolean;
+  reviewCardsError: string | null;
   onToggleSidebar: () => void;
   isChatModalOpen: boolean;
   selectedTask: Task | null;
@@ -66,11 +72,38 @@ const CustomTooltip: FC<any> = ({ active, payload, label }) => {
   return null;
 };
 
+// 복습 카드 컴포넌트
+const ReviewCardComponent: FC<{ card: ReviewCard }> = ({ card }) => {
+  return (
+    <div className="rounded-lg border border-border-primary bg-background-primary p-4 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <h3 className="font-medium text-text-primary line-clamp-2">{card.title}</h3>
+          <div className="mt-2 flex items-center gap-4 text-sm text-text-secondary">
+            <span className="inline-flex items-center rounded-md bg-brand/10 px-2 py-1 text-xs font-medium text-brand">
+              {card.category}
+            </span>
+            <span>중요도: {card.importance}/5</span>
+            <span>{card.reviewCycle}일 주기</span>
+          </div>
+          <div className="mt-2 text-xs text-text-tertiary">
+            반복 횟수: {card.reviewCount}회
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isSidebarOpen,
   tasksByStatus,
   progressStats,
   analysisStats,
+  backlogCards,
+  completedCards,
+  reviewCardsLoading,
+  reviewCardsError,
   onToggleSidebar,
   isChatModalOpen,
   selectedTask,
@@ -171,27 +204,64 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
             </div>
           </div>
           
-          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {(['backlog', 'failed', 'done'] as TaskStatus[]).map((status) => {
-              const tasks = tasksByStatus[status] || [];
-              const styles = columnStyles[status];
-              const title = { backlog: '백로그', failed: '실패', done: '완료' }[status];
-              return (
-                <div key={status} className="flex flex-col gap-4">
-                  <div className={`flex items-center justify-between rounded-lg px-4 py-2 ${styles.bg} ${styles.text}`}>
-                    <div className="flex items-center gap-2">
-                      <span className={`h-2 w-2 rounded-full ${styles.dot}`} />
-                      <span className="font-semibold">{title}</span>
-                      <span>{tasks.length}</span>
-                    </div>
-                    <FiArrowDown size={16} />
-                  </div>
-                  {tasks.map((task) => (
-                    <TaskCard key={task.id} {...task} />
-                  ))}
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* 백로그 복습 카드 컬럼 */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between rounded-lg px-4 py-2 bg-neutral-800 text-text-inverse">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-neutral-400" />
+                  <span className="font-semibold">백로그</span>
+                  <span>{backlogCards.length}</span>
                 </div>
-              );
-            })}
+                <FiArrowDown size={16} />
+              </div>
+              {reviewCardsLoading ? (
+                <div className="text-center py-8 text-text-secondary">
+                  복습 카드를 불러오는 중...
+                </div>
+              ) : reviewCardsError ? (
+                <div className="text-center py-8 text-red-500">
+                  {reviewCardsError}
+                </div>
+              ) : backlogCards.length === 0 ? (
+                <div className="text-center py-8 text-text-secondary">
+                  백로그에 복습 카드가 없습니다.
+                </div>
+              ) : (
+                backlogCards.map((card) => (
+                  <ReviewCardComponent key={card.reviewCardId} card={card} />
+                ))
+              )}
+            </div>
+
+            {/* 완료 복습 카드 컬럼 */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between rounded-lg px-4 py-2 bg-brand text-text-inverse">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-brand-light" />
+                  <span className="font-semibold">완료</span>
+                  <span>{completedCards.length}</span>
+                </div>
+                <FiArrowDown size={16} />
+              </div>
+              {reviewCardsLoading ? (
+                <div className="text-center py-8 text-text-secondary">
+                  복습 카드를 불러오는 중...
+                </div>
+              ) : reviewCardsError ? (
+                <div className="text-center py-8 text-red-500">
+                  {reviewCardsError}
+                </div>
+              ) : completedCards.length === 0 ? (
+                <div className="text-center py-8 text-text-secondary">
+                  완료된 복습 카드가 없습니다.
+                </div>
+              ) : (
+                completedCards.map((card) => (
+                  <ReviewCardComponent key={card.reviewCardId} card={card} />
+                ))
+              )}
+            </div>
           </div>
         </main>
       </div>

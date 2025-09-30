@@ -1,13 +1,20 @@
 {
   "name": "api-types",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Shared TypeScript API type definitions for AlgoRevise platform",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["typescript", "api", "types"],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.16.0"
+  "packageManager": "pnpm@10.16.0",
+  "devDependencies": {
+    "typescript": "~5.8.3"
+  }
 }

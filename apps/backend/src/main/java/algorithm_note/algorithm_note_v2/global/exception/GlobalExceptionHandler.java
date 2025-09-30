@@ -6,6 +6,8 @@ import algorithm_note.algorithm_note_v2.problem.exception.ProblemNotFoundExcepti
 import algorithm_note.algorithm_note_v2.problem.exception.ProblemScrapingException;
 import algorithm_note.algorithm_note_v2.problem.exception.ProblemValidationException;
 import algorithm_note.algorithm_note_v2.problem.exception.RedisOperationException;
+import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateResponseDto;
+import algorithm_note.algorithm_note_v2.reviewcard.exception.ReviewCardNotFoundException;
 import algorithm_note.algorithm_note_v2.user.dto.UserResponseDto;
 import algorithm_note.algorithm_note_v2.user.exception.UserNotFoundException;
 import com.svix.exceptions.WebhookVerificationException;
@@ -90,6 +92,17 @@ public class GlobalExceptionHandler {
         log.error("Redis operation failed: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ProblemResponseDto.failure("Temporary storage operation failed"));
+    }
+
+    @ExceptionHandler(ReviewCardNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleReviewCardNotFoundException(ReviewCardNotFoundException ex) {
+        log.warn("Review card not found: {}", ex.getMessage());
+        Map<String, Object> errorResponse = Map.of(
+                "error", "Review card not found",
+                "message", ex.getMessage(),
+                "status", HttpStatus.NOT_FOUND.value()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

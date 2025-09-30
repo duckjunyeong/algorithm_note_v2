@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useQuestionStore } from '../../../../store/useQuestionStore';
+import { useReviewCardStore } from '../../../../store/useReviewCardStore';
 import { taskCreationService } from '../../../../services/taskCreationService';
 
 type ViewType = 'input' | 'select';
@@ -21,6 +22,7 @@ export function useTaskCreationModal() {
   const [categoryColor, setCategoryColor] = useState('#3B82F6');
 
   const { questions, setQuestions, clearQuestions } = useQuestionStore();
+  const { createReviewCard } = useReviewCardStore();
 
   const resetModal = useCallback(() => {
     setCurrentView('input');
@@ -125,16 +127,53 @@ export function useTaskCreationModal() {
   }, []);
 
   // 선택된 질문들 등록
-  const handleRegisterSelectedQuestions = useCallback(() => {
+  const handleRegisterSelectedQuestions = useCallback(async () => {
     if (selectedQuestions.size === 0) {
       setErrorMessage('등록할 질문을 선택해주세요');
       return;
     }
 
-    console.log('Selected questions for registration:', Array.from(selectedQuestions));
-    // 실제 등록 로직은 향후 구현
+    if (!questions) {
+      setErrorMessage('질문 데이터가 없습니다');
+      return;
+    }
+
+    if (!category.trim()) {
+      setErrorMessage('카테고리를 입력해주세요');
+      return;
+    }
+
     setErrorMessage('');
-  }, [selectedQuestions]);
+    setIsLoading(true);
+
+    try {
+      // 선택된 질문들만 필터링
+      const selectedQuestionTexts = questions.questions
+        .filter(q => selectedQuestions.has(q.id))
+        .map(q => ({ text: q.text }));
+
+      // 복습 카드 생성 요청 데이터 구성
+      const reviewCardData = {
+        title: questions.title,
+        category: category.trim(),
+        importance,
+        reviewCycle: repetitionCycle,
+        questions: selectedQuestionTexts
+      };
+
+      await createReviewCard(reviewCardData);
+
+      // 성공시 모달 상태 리셋
+      resetModal();
+    } catch (error) {
+      const errorMsg = error instanceof Error
+        ? error.message
+        : '복습 카드 생성에 실패했습니다. 다시 시도해주세요.';
+      setErrorMessage(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedQuestions, questions, category, importance, repetitionCycle, createReviewCard, resetModal]);
 
   return {
     currentView,
