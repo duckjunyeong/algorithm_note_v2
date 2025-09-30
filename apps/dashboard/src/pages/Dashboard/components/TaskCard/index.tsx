@@ -9,13 +9,11 @@ const TaskCard = (props : TaskCardProps) => {
   const { handleMouseEnter, handleMouseLeave } = useTaskCard();
 
   const dummyTags = [
-    { label: '긴급도', value: 9 },
-    { label: '복잡도', value: 6 },
+    { label: '중요도', value: `3` },
+    { label: '반복주기', value: `3 일` },
     {
-      label: '중요도',
-      value: '필수',
-      backgroundColor: 'bg-semantic-error/10', // 10% opacity
-      textColor: 'text-semantic-error',
+      label: '반복 횟수',
+      value: `0 회`,
     },
   ];
 

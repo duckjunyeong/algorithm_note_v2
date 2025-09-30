@@ -15,8 +15,23 @@ export function TaskCreationModal({ isOpen, onClose, onBackgroundClick }: TaskCr
     errorMessage,
     isLoading,
     questions,
+    selectedQuestions,
+    editingQuestion,
+    repetitionCycle,
+    setRepetitionCycle,
+    importance,
+    setImportance,
+    category,
+    setCategory,
+    categoryColor,
+    setCategoryColor,
     handleContinue,
-    handleQuestionRegister,
+    handleQuestionToggle,
+    handleQuestionEdit,
+    handleQuestionSave,
+    handleQuestionDelete,
+    handleEditModalClose,
+    handleRegisterSelectedQuestions,
     resetModal
   } = useTaskCreationModal();
 
@@ -44,8 +59,23 @@ export function TaskCreationModal({ isOpen, onClose, onBackgroundClick }: TaskCr
       errorMessage={errorMessage}
       isLoading={isLoading}
       questions={questions}
+      selectedQuestions={selectedQuestions}
+      editingQuestion={editingQuestion}
+      repetitionCycle={repetitionCycle}
+      setRepetitionCycle={setRepetitionCycle}
+      importance={importance}
+      setImportance={setImportance}
+      category={category}
+      setCategory={setCategory}
+      categoryColor={categoryColor}
+      setCategoryColor={setCategoryColor}
       onContinue={handleContinue}
-      onQuestionRegister={handleQuestionRegister}
+      onQuestionToggle={handleQuestionToggle}
+      onQuestionEdit={handleQuestionEdit}
+      onQuestionSave={handleQuestionSave}
+      onQuestionDelete={handleQuestionDelete}
+      onEditModalClose={handleEditModalClose}
+      onRegisterSelectedQuestions={handleRegisterSelectedQuestions}
     />
   );
 }

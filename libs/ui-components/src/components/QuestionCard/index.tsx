@@ -2,16 +2,18 @@ import { useQuestionCard } from './useQuestionCard';
 import { QuestionCardView } from './QuestionCard.view';
 import type { QuestionCardProps } from './useQuestionCard';
 
-export function QuestionCard({ questionId, question, onRegister }: QuestionCardProps) {
-  const { isLoading, handleRegister } = useQuestionCard({
+export function QuestionCard({ questionId, question, onEdit, onDelete }: QuestionCardProps) {
+  const { isLoading, handleEdit, handleDelete } = useQuestionCard({
     questionId,
-    onRegister
+    onEdit,
+    onDelete
   });
 
   return (
     <QuestionCardView
       question={question}
-      onRegister={handleRegister}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
       isLoading={isLoading}
     />
   );

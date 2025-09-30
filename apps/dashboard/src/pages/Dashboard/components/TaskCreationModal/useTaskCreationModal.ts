@@ -10,6 +10,16 @@ export function useTaskCreationModal() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // 수정/삭제 상태 관리
+  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
+  const [editingQuestion, setEditingQuestion] = useState<{ id: string; text: string } | null>(null);
+
+  // 질문 설정 상태 관리
+  const [repetitionCycle, setRepetitionCycle] = useState(3);
+  const [importance, setImportance] = useState(5);
+  const [category, setCategory] = useState('');
+  const [categoryColor, setCategoryColor] = useState('#3B82F6');
+
   const { questions, setQuestions, clearQuestions } = useQuestionStore();
 
   const resetModal = useCallback(() => {
@@ -17,6 +27,12 @@ export function useTaskCreationModal() {
     setInputValue('');
     setErrorMessage('');
     setIsLoading(false);
+    setSelectedQuestions(new Set());
+    setEditingQuestion(null);
+    setRepetitionCycle(3);
+    setImportance(5);
+    setCategory('');
+    setCategoryColor('#3B82F6');
     clearQuestions();
   }, [clearQuestions]);
 
@@ -46,10 +62,79 @@ export function useTaskCreationModal() {
     }
   }, [inputValue, setQuestions]);
 
-  const handleQuestionRegister = useCallback((questionId: string) => {
-    // 현재 단계에서는 실제 기능 없음 - 향후 확장 지점
-    console.log('Question registered:', questionId);
+  // 질문 선택/해제
+  const handleQuestionToggle = useCallback((questionId: string) => {
+    setSelectedQuestions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(questionId)) {
+        newSet.delete(questionId);
+      } else {
+        newSet.add(questionId);
+      }
+      return newSet;
+    });
   }, []);
+
+  // 질문 수정 시작
+  const handleQuestionEdit = useCallback((questionId: string) => {
+    if (!questions) return;
+
+    const question = questions.questions.find(q => q.id === questionId);
+    if (question) {
+      setEditingQuestion({ id: question.id, text: question.text });
+    }
+  }, [questions]);
+
+  // 질문 수정 저장
+  const handleQuestionSave = useCallback((questionId: string, newText: string) => {
+    if (!questions) return;
+
+    const updatedQuestions = {
+      ...questions,
+      questions: questions.questions.map(q =>
+        q.id === questionId ? { ...q, text: newText } : q
+      )
+    };
+
+    setQuestions(updatedQuestions);
+    setEditingQuestion(null);
+  }, [questions, setQuestions]);
+
+  // 질문 삭제
+  const handleQuestionDelete = useCallback((questionId: string) => {
+    if (!questions) return;
+
+    const updatedQuestions = {
+      ...questions,
+      questions: questions.questions.filter(q => q.id !== questionId)
+    };
+
+    setQuestions(updatedQuestions);
+
+    // 선택 목록에서도 제거
+    setSelectedQuestions(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(questionId);
+      return newSet;
+    });
+  }, [questions, setQuestions]);
+
+  // 수정 모달 닫기
+  const handleEditModalClose = useCallback(() => {
+    setEditingQuestion(null);
+  }, []);
+
+  // 선택된 질문들 등록
+  const handleRegisterSelectedQuestions = useCallback(() => {
+    if (selectedQuestions.size === 0) {
+      setErrorMessage('등록할 질문을 선택해주세요');
+      return;
+    }
+
+    console.log('Selected questions for registration:', Array.from(selectedQuestions));
+    // 실제 등록 로직은 향후 구현
+    setErrorMessage('');
+  }, [selectedQuestions]);
 
   return {
     currentView,
@@ -58,8 +143,23 @@ export function useTaskCreationModal() {
     errorMessage,
     isLoading,
     questions,
+    selectedQuestions,
+    editingQuestion,
+    repetitionCycle,
+    setRepetitionCycle,
+    importance,
+    setImportance,
+    category,
+    setCategory,
+    categoryColor,
+    setCategoryColor,
     handleContinue,
-    handleQuestionRegister,
+    handleQuestionToggle,
+    handleQuestionEdit,
+    handleQuestionSave,
+    handleQuestionDelete,
+    handleEditModalClose,
+    handleRegisterSelectedQuestions,
     resetModal
   };
 }

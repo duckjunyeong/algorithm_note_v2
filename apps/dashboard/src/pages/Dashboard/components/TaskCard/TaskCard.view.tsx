@@ -9,7 +9,7 @@ interface Tag {
 
 export interface TaskCardViewProps {
   id: string;
-  type: string;
+  category: string;
   title: string;
   description: string;
   tags?: Tag[];
@@ -19,7 +19,7 @@ export interface TaskCardViewProps {
 
 export const TaskCardView = ({
   id,
-  type,
+  category,
   title,
   description,
   tags,
@@ -35,18 +35,14 @@ export const TaskCardView = ({
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-text-secondary">{id}</span>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-text-tertiary">{type}</span>
+          <span className="text-sm text-text-tertiary">{category}</span>
           <FiCircle className="text-text-tertiary" size={16} />
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <h3 className="font-bold text-text-primary">{title}</h3>
+        <h3 className="font-bold text-text-primary">{title}</h3> 
         <div>
-          <span className="text-sm font-semibold text-text-primary">요구사항</span>
-          <p className="mt-1 text-sm text-text-secondary line-clamp-2">
-            {description}
-          </p>
         </div>
       </div>
 

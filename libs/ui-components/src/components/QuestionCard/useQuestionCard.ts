@@ -2,31 +2,33 @@ import { useState, useCallback } from 'react';
 
 interface UseQuestionCardProps {
   questionId: string;
-  onRegister?: (questionId: string) => void;
+  onEdit?: (questionId: string) => void;
+  onDelete?: (questionId: string) => void;
 }
 
-export function useQuestionCard({ questionId, onRegister }: UseQuestionCardProps) {
+export function useQuestionCard({ questionId, onEdit, onDelete }: UseQuestionCardProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = useCallback(() => {
+  const handleEdit = useCallback(() => {
     if (isLoading) return;
+    onEdit?.(questionId);
+  }, [questionId, onEdit, isLoading]);
 
-    setIsLoading(true);
-    try {
-      onRegister?.(questionId);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [questionId, onRegister, isLoading]);
+  const handleDelete = useCallback(() => {
+    if (isLoading) return;
+    onDelete?.(questionId);
+  }, [questionId, onDelete, isLoading]);
 
   return {
     isLoading,
-    handleRegister
+    handleEdit,
+    handleDelete
   };
 }
 
 export interface QuestionCardProps {
   questionId: string;
   question: string;
-  onRegister?: (questionId: string) => void;
+  onEdit?: (questionId: string) => void;
+  onDelete?: (questionId: string) => void;
 }

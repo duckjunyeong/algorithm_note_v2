@@ -1,5 +1,7 @@
 import { Button } from '../../../../../../../libs/ui-components/src/components/Button';
 import { QuestionCard } from '../../../../../../../libs/ui-components/src/components/QuestionCard';
+import { QuestionEditModal } from '../../../../../../../libs/ui-components/src/components/QuestionEditModal';
+import { QuestionSettingsPanel } from '../../../../../../../libs/ui-components/src/components/QuestionSettingsPanel';
 import type { CreateAnswerResponse } from '../../../../schemas/taskCreation.schema';
 
 interface TaskCreationModalViewProps {
@@ -12,8 +14,23 @@ interface TaskCreationModalViewProps {
   errorMessage: string;
   isLoading: boolean;
   questions: CreateAnswerResponse | null;
+  selectedQuestions: Set<string>;
+  editingQuestion: { id: string; text: string } | null;
+  repetitionCycle: number;
+  setRepetitionCycle: (value: number) => void;
+  importance: number;
+  setImportance: (value: number) => void;
+  category: string;
+  setCategory: (value: string) => void;
+  categoryColor: string;
+  setCategoryColor: (value: string) => void;
   onContinue: () => void;
-  onQuestionRegister: (questionId: string) => void;
+  onQuestionToggle: (questionId: string) => void;
+  onQuestionEdit: (questionId: string) => void;
+  onQuestionSave: (questionId: string, newText: string) => void;
+  onQuestionDelete: (questionId: string) => void;
+  onEditModalClose: () => void;
+  onRegisterSelectedQuestions: () => void;
 }
 
 export function TaskCreationModalView({
@@ -26,8 +43,23 @@ export function TaskCreationModalView({
   errorMessage,
   isLoading,
   questions,
+  selectedQuestions,
+  editingQuestion,
+  repetitionCycle,
+  setRepetitionCycle,
+  importance,
+  setImportance,
+  category,
+  setCategory,
+  categoryColor,
+  setCategoryColor,
   onContinue,
-  onQuestionRegister
+  onQuestionToggle,
+  onQuestionEdit,
+  onQuestionSave,
+  onQuestionDelete,
+  onEditModalClose,
+  onRegisterSelectedQuestions
 }: TaskCreationModalViewProps) {
   if (!isOpen) return null;
 
@@ -37,7 +69,7 @@ export function TaskCreationModalView({
         className="absolute inset-0"
         onClick={onBackgroundClick}
       />
-      <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-900">
             추가 태스크 생성
@@ -66,11 +98,33 @@ export function TaskCreationModalView({
             <SelectView
               title={questions.title}
               questions={questions.questions}
-              onQuestionRegister={onQuestionRegister}
+              selectedQuestions={selectedQuestions}
+              repetitionCycle={repetitionCycle}
+              setRepetitionCycle={setRepetitionCycle}
+              importance={importance}
+              setImportance={setImportance}
+              category={category}
+              setCategory={setCategory}
+              categoryColor={categoryColor}
+              setCategoryColor={setCategoryColor}
+              onQuestionToggle={onQuestionToggle}
+              onQuestionEdit={onQuestionEdit}
+              onQuestionDelete={onQuestionDelete}
+              onRegisterSelectedQuestions={onRegisterSelectedQuestions}
+              errorMessage={errorMessage}
             />
           )}
         </div>
       </div>
+
+      {/* Question Edit Modal */}
+      <QuestionEditModal
+        isOpen={!!editingQuestion}
+        questionId={editingQuestion?.id}
+        initialQuestion={editingQuestion?.text}
+        onSave={onQuestionSave}
+        onClose={onEditModalClose}
+      />
     </div>
   );
 }
@@ -126,28 +180,106 @@ function InputView({ value, onChange, errorMessage, isLoading, onContinue }: Inp
 interface SelectViewProps {
   title: string;
   questions: Array<{ id: string; text: string }>;
-  onQuestionRegister: (questionId: string) => void;
+  selectedQuestions: Set<string>;
+  repetitionCycle: number;
+  setRepetitionCycle: (value: number) => void;
+  importance: number;
+  setImportance: (value: number) => void;
+  category: string;
+  setCategory: (value: string) => void;
+  categoryColor: string;
+  setCategoryColor: (value: string) => void;
+  onQuestionToggle: (questionId: string) => void;
+  onQuestionEdit: (questionId: string) => void;
+  onQuestionDelete: (questionId: string) => void;
+  onRegisterSelectedQuestions: () => void;
+  errorMessage: string;
 }
 
-function SelectView({ title, questions, onQuestionRegister }: SelectViewProps) {
+function SelectView({
+  title,
+  questions,
+  selectedQuestions,
+  repetitionCycle,
+  setRepetitionCycle,
+  importance,
+  setImportance,
+  category,
+  setCategory,
+  categoryColor,
+  setCategoryColor,
+  onQuestionToggle,
+  onQuestionEdit,
+  onQuestionDelete,
+  onRegisterSelectedQuestions,
+  errorMessage
+}: SelectViewProps) {
   return (
-    <div className="space-y-4">
+    <div className="relative space-y-4">
+      {/* 설정 패널 - 우상단 고정 */}
+      <QuestionSettingsPanel
+        repetitionCycle={repetitionCycle}
+        setRepetitionCycle={setRepetitionCycle}
+        importance={importance}
+        setImportance={setImportance}
+        category={category}
+        setCategory={setCategory}
+        categoryColor={categoryColor}
+        setCategoryColor={setCategoryColor}
+      />
+
       <div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
         <p className="text-sm text-gray-600 mb-4">
-          생성된 질문 중에서 등록하고 싶은 것을 선택해주세요.
+          생성된 질문을 수정하거나 삭제할 수 있습니다. 체크박스로 선택 후 하단 등록 버튼을 클릭해주세요.
         </p>
       </div>
 
-      <div className="max-h-96 overflow-y-auto space-y-3">
+      <div className="max-h-96 overflow-y-auto space-y-3 mr-72">
         {questions.map((question) => (
-          <QuestionCard
-            key={question.id}
-            questionId={question.id}
-            question={question.text}
-            onRegister={onQuestionRegister}
-          />
+          <div key={question.id} className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id={`question-${question.id}`}
+              checked={selectedQuestions.has(question.id)}
+              onChange={() => onQuestionToggle(question.id)}
+              className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+            />
+            <div className="flex-1">
+              <QuestionCard
+                questionId={question.id}
+                question={question.text}
+                onEdit={onQuestionEdit}
+                onDelete={onQuestionDelete}
+              />
+            </div>
+          </div>
         ))}
+      </div>
+
+      {questions.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          표시할 질문이 없습니다.
+        </div>
+      )}
+
+      {/* Bottom Action Bar */}
+      <div className="border-t pt-4 bg-gray-50 -mx-6 -mb-6 px-6 pb-6">
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            {selectedQuestions.size}개 질문 선택됨
+          </div>
+          <Button
+            onClick={onRegisterSelectedQuestions}
+            disabled={selectedQuestions.size === 0}
+            variant="primary"
+          >
+            선택한 질문 등록하기
+          </Button>
+        </div>
+        {errorMessage && (
+          <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
+        )}
       </div>
     </div>
   );
