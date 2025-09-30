@@ -10,9 +10,9 @@ import {
 import { SidebarNav } from '../../components/SidebarNav';
 import { Header } from '../../components/Header';
 import TaskCard from '../Dashboard/components/TaskCard';
-import { FiPlus, FiArrowDown } from 'react-icons/fi';
+import { FiArrowDown, FiPlus } from 'react-icons/fi';
 import type { Task, TaskStatus } from './useDashboardPage';
-import RegisterProblemModal from '../Dashboard/components/RegisterProblemModal';
+import ChatModal from '../AlgorithmLogicFlowAnalysis/components/ChatModal';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
 
 export interface DashboardPageViewProps {
@@ -33,10 +33,13 @@ export interface DashboardPageViewProps {
     failCount: number;
   };
   onToggleSidebar: () => void;
-  isRegisterModalOpen: boolean;
+  isChatModalOpen: boolean;
+  selectedTask: Task | null;
+  chatSessionKey: string;
   isConfirmModalOpen: boolean;
   isConfirmLoading: boolean;
-  onOpenRegisterModal: () => void;
+  onOpenChatModal: () => void;
+  onCloseChatModal: () => void;
   onOpenConfirmModal: () => void;
   onCloseConfirmModal: () => void;
   onConfirmStop: () => void;
@@ -65,10 +68,13 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   progressStats,
   analysisStats,
   onToggleSidebar,
-  isRegisterModalOpen,
+  isChatModalOpen,
+  selectedTask,
+  chatSessionKey,
   isConfirmModalOpen,
   isConfirmLoading,
-  onOpenRegisterModal,
+  onOpenChatModal,
+  onCloseChatModal,
   onOpenConfirmModal,
   onCloseConfirmModal,
   onConfirmStop,
@@ -86,11 +92,12 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
               <h1 className="text-2xl font-bold text-text-primary">알고리바 태스크 목록</h1>
               <p className="mt-1 text-text-secondary">태스크 진행 상황을 한눈에 확인하세요</p>
             </div>
-            <button 
-              onClick={onOpenRegisterModal}
-              className="flex items-center gap-2 rounded-md bg-brand p-2 px-4 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-dark"
+            <button
+              onClick={onOpenChatModal}
+              className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
             >
-              <FiPlus /> 추가 태스크 생성
+              <FiPlus size={16} />
+              추가 태스크 생성
             </button>
           </div>
 
@@ -181,16 +188,24 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           </div>
         </main>
       </div>
-      
-      <RegisterProblemModal
-        isOpen={isRegisterModalOpen}
-        onAttemptClose={onOpenConfirmModal}
+
+      <ChatModal
+        isOpen={isChatModalOpen}
+        onClose={onCloseChatModal}
+        onBackgroundClick={onOpenConfirmModal}
+        title={selectedTask ? "오답노트 생성하기" : "추가 태스크 생성"}
+        selectedStep={selectedTask ? {
+          id: selectedTask.id,
+          title: selectedTask.title,
+          code: selectedTask.description
+        } : null}
+        chatSessionKey={chatSessionKey}
       />
 
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         title="작업을 중단하시겠습니까?"
-        message="진행 중인 문제 등록이 취소되고 입력한 내용이 사라집니다."
+        message="진행 중인 채팅이 취소되고 입력한 내용이 사라집니다."
         onConfirm={onConfirmStop}
         onCancel={onCloseConfirmModal}
         isLoading={isConfirmLoading}

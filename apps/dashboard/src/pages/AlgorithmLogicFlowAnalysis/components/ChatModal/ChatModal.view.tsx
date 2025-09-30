@@ -45,7 +45,6 @@ interface ChatModalViewProps {
   setInputValue: (value: string) => void;
   handleSendMessage: (message?: string) => void;
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-  handleRecommendationClick: (question: string) => void;
   handleTypingComplete: (messageId: number) => void;
   handleSaveNote: (onClose: () => void) => void;
 }
@@ -64,7 +63,6 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   setInputValue,
   handleSendMessage,
   handleKeyDown,
-  handleRecommendationClick,
   handleTypingComplete,
   handleSaveNote
 }) => {
@@ -137,17 +135,6 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
               )}
             </div>
 
-            {/* Recommendations Area */}
-            {messages.length <= 1 && !loading && (
-              <div className="flex flex-wrap justify-end gap-2.5 px-6 pb-4">
-                {recommendedQuestions.map((q, i) => (
-                  <button key={i} onClick={() => handleRecommendationClick(q)} className="px-4 py-2 text-sm transition-colors bg-gray-600 border border-gray-600 rounded-xl hover:bg-gray-700">
-                    {q}
-                  </button>
-                ))}
-              </div>
-            )}
-            
             {/* Message Input Area */}
             <div className="p-4 px-6 border-t border-gray-700 flex-shrink-0 bg-[#1e1e1e]">
               <div className="relative flex items-center bg-gray-700 border border-gray-600 rounded-lg focus-within:border-blue-500">

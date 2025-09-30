@@ -62,6 +62,7 @@ export const TaskCardView = ({
           </span>
         ))}
       </div>
+
     </div>
   );
 };

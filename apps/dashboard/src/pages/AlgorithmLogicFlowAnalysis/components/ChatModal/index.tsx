@@ -25,9 +25,6 @@ const ChatModal: React.FC<ChatModalProps> = ({
   onClose,
   onBackgroundClick,
   title = "추가 태스크 생성",
-  scrapedInfo,
-  block,
-  selectedStep,
   chatSessionKey
 }) => {
   const {
@@ -39,10 +36,9 @@ const ChatModal: React.FC<ChatModalProps> = ({
     setInputValue,
     handleSendMessage,
     handleKeyDown,
-    handleRecommendationClick,
     handleTypingComplete,
     handleSaveNote
-  } = useChatModal({ isOpen, scrapedInfo, block, selectedStep, chatSessionKey });
+  } = useChatModal({ isOpen, chatSessionKey, name: "사용자" });
 
   return (
     <ChatModalView
@@ -58,7 +54,6 @@ const ChatModal: React.FC<ChatModalProps> = ({
       setInputValue={setInputValue}
       handleSendMessage={handleSendMessage}
       handleKeyDown={handleKeyDown}
-      handleRecommendationClick={handleRecommendationClick}
       handleTypingComplete={handleTypingComplete}
       handleSaveNote={() => handleSaveNote(onClose)}
     />

@@ -19,6 +19,7 @@ interface AnalysisStep {
 interface UseChatModalProps {
   isOpen: boolean;
   scrapedInfo?: { confirmationKey?: string; confirmKey?: string };
+  name: string;
   block?: { id?: string | number };
   selectedStep?: AnalysisStep | null;
   chatSessionKey?: string;
@@ -30,7 +31,7 @@ const recommendedQuestions = [
   "기술적 기반 구축(인프라, 보안 등)"
 ];
 
-export const useChatModal = ({ isOpen, scrapedInfo, block, selectedStep, chatSessionKey }: UseChatModalProps) => {
+export const useChatModal = ({ isOpen, chatSessionKey, name }: UseChatModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,57 +39,20 @@ export const useChatModal = ({ isOpen, scrapedInfo, block, selectedStep, chatSes
 
   useEffect(() => {
     if (isOpen && chatSessionKey) {
+        const initialBotMessage: Message = {
+        id: 1,
+        sender: 'bot',
+        text: `${name}님 학습하신 개념을 작성해주시면 이를 기반으로 복습을 위한 질문지를 생성해드리겠습니다.`,
+        isTyping: true
+      };
       // 메시지 초기화 후 새로운 채팅 시작
-      setMessages([]);
+      setMessages([initialBotMessage]);
       setLoading(false);
       setShowSaveButton(false);
       setInputValue('');
 
-      if (selectedStep) {
-        initiateNoteCreation();
-      } else if (block?.id) {
-        // 기존 block 로직 유지
-      }
     }
-  }, [isOpen, chatSessionKey, selectedStep, block]);
-
-  
-
-  const initiateNoteCreation = async () => {
-    setLoading(true);
-    try {
-      // apiClient 사용
-      const response = await apiClient.post('/problems/chat', {
-        messages: null,
-
-        logicalUnit: {
-          unitName: selectedStep?.title,
-          description: selectedStep?.description,
-          specificSteps: [], 
-          code: selectedStep?.code
-        }
-      });
-
-      const botMessage: Message = {
-        id: Date.now(),
-        sender: 'bot',
-        text: response.data.aiResponse,
-        isTyping: true
-      };
-      setMessages([botMessage]);
-    } catch (error) {
-      console.error('Failed to initiate note creation:', error);
-      const initialBotMessage: Message = {
-        id: 1,
-        sender: 'bot',
-        text: `안녕하세요! 오늘 어떤 도움이 필요하신가요?`,
-        isTyping: false
-      };
-      setMessages([initialBotMessage]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [isOpen, chatSessionKey]);
 
   const handleSendMessage = async (messageText?: string) => {
     const textToSend = (typeof messageText === 'string' ? messageText : inputValue).trim();
@@ -100,10 +64,8 @@ export const useChatModal = ({ isOpen, scrapedInfo, block, selectedStep, chatSes
     setLoading(true);
 
     try {
-      const sessionId = scrapedInfo?.confirmKey || scrapedInfo?.confirmationKey;
-      // apiClient 사용
-      const response = await apiClient.post('/api/notes/chat', {
-        sessionId,
+      const response = await apiClient.post('/problems/chat', {
+        chatSessionKey,
         message: textToSend,
         blockId: null
       });
@@ -150,10 +112,8 @@ export const useChatModal = ({ isOpen, scrapedInfo, block, selectedStep, chatSes
   const handleSaveNote = async (onClose: () => void) => {
     setLoading(true);
     try {
-      const sessionId = scrapedInfo?.confirmKey || scrapedInfo?.confirmationKey;
-      // apiClient 사용
       const response = await apiClient.post('/api/notes/save-final-note', {
-        sessionId
+        chatSessionKey
       });
 
       if (response.data) { // 응답 데이터 구조에 맞게 조건 확인

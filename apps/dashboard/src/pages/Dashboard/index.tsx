@@ -9,10 +9,13 @@ const DashboardPage: FC = () => {
     tasksByStatus,
     progressStats,
     analysisStats,
-    isRegisterModalOpen,
+    isChatModalOpen,
+    selectedTask,
+    chatSessionKey,
     isConfirmModalOpen,
     isConfirmLoading,
-    openRegisterModal,
+    openChatModal,
+    closeChatModal,
     openConfirmModal,
     closeConfirmModal,
     handleConfirmStop,
@@ -25,14 +28,17 @@ const DashboardPage: FC = () => {
       tasksByStatus={tasksByStatus}
       progressStats={progressStats}
       analysisStats={analysisStats}
-      isRegisterModalOpen={isRegisterModalOpen}
+      onToggleSidebar={toggleSidebar}
+      isChatModalOpen={isChatModalOpen}
+      selectedTask={selectedTask}
+      chatSessionKey={chatSessionKey}
       isConfirmModalOpen={isConfirmModalOpen}
       isConfirmLoading={isConfirmLoading}
-      onOpenRegisterModal={openRegisterModal}
+      onOpenChatModal={openChatModal}
+      onCloseChatModal={closeChatModal}
       onOpenConfirmModal={openConfirmModal}
       onCloseConfirmModal={closeConfirmModal}
       onConfirmStop={handleConfirmStop}
-      onToggleSidebar={toggleSidebar}
     />
   );
 };

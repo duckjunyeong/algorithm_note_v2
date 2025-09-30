@@ -13,13 +13,7 @@ public class ChatMessageRequestDto {
 
   private String message;
 
-  private LogicalUnitDto logicalUnit;
-
   public static ChatMessageRequestDto of(String message) {
-    return new ChatMessageRequestDto(message, null);
-  }
-
-  public static ChatMessageRequestDto forFirstChat(LogicalUnitDto logicalUnit) {
-    return new ChatMessageRequestDto(null, logicalUnit);
+    return new ChatMessageRequestDto(message);
   }
 }
