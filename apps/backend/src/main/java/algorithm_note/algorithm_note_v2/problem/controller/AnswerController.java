@@ -2,8 +2,6 @@ package algorithm_note.algorithm_note_v2.problem.controller;
 
 import algorithm_note.algorithm_note_v2.global.service.GeminiClient;
 import algorithm_note.algorithm_note_v2.problem.dto.*;
-import algorithm_note.algorithm_note_v2.problem.service.ChatService;
-import algorithm_note.algorithm_note_v2.problem.service.CodeAnalysisService;
 import algorithm_note.algorithm_note_v2.problem.service.ProblemService;
 import algorithm_note.algorithm_note_v2.user.domain.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 public class AnswerController {
 
     private final ProblemService problemService;
-    private final ChatService chatService;
-    private final CodeAnalysisService codeAnalysisService;
     private final GeminiClient geminiClient;
 
 //    @PostMapping("/register/url")

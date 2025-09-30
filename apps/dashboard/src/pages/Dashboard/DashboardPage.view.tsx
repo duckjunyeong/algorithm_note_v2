@@ -14,6 +14,7 @@ import { FiArrowDown, FiPlus } from 'react-icons/fi';
 import type { Task, TaskStatus } from './useDashboardPage';
 import ChatModal from '../AlgorithmLogicFlowAnalysis/components/ChatModal';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
+import { TaskCreationModal } from './components/TaskCreationModal';
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
@@ -38,10 +39,13 @@ export interface DashboardPageViewProps {
   chatSessionKey: string;
   isConfirmModalOpen: boolean;
   isConfirmLoading: boolean;
+  isTaskCreationModalOpen: boolean;
   onOpenChatModal: () => void;
   onCloseChatModal: () => void;
   onOpenConfirmModal: () => void;
   onCloseConfirmModal: () => void;
+  onOpenTaskCreationModal: () => void;
+  onCloseTaskCreationModal: () => void;
   onConfirmStop: () => void;
 }
 
@@ -73,10 +77,13 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   chatSessionKey,
   isConfirmModalOpen,
   isConfirmLoading,
+  isTaskCreationModalOpen,
   onOpenChatModal,
   onCloseChatModal,
   onOpenConfirmModal,
   onCloseConfirmModal,
+  onOpenTaskCreationModal,
+  onCloseTaskCreationModal,
   onConfirmStop,
 }) => {
   const PIE_COLORS = ['#5E6AD2', '#D1D5DB'];
@@ -93,7 +100,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
               <p className="mt-1 text-text-secondary">태스크 진행 상황을 한눈에 확인하세요</p>
             </div>
             <button
-              onClick={onOpenChatModal}
+              onClick={onOpenTaskCreationModal}
               className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
             >
               <FiPlus size={16} />
@@ -211,6 +218,11 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         isLoading={isConfirmLoading}
         confirmText="중단하기"
         cancelText="취소"
+      />
+
+      <TaskCreationModal
+        isOpen={isTaskCreationModalOpen}
+        onClose={onCloseTaskCreationModal}
       />
     </div>
   );

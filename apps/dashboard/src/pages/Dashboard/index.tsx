@@ -14,10 +14,13 @@ const DashboardPage: FC = () => {
     chatSessionKey,
     isConfirmModalOpen,
     isConfirmLoading,
+    isTaskCreationModalOpen,
     openChatModal,
     closeChatModal,
     openConfirmModal,
     closeConfirmModal,
+    openTaskCreationModal,
+    closeTaskCreationModal,
     handleConfirmStop,
     toggleSidebar
   } = useDashboardPage();
@@ -34,10 +37,13 @@ const DashboardPage: FC = () => {
       chatSessionKey={chatSessionKey}
       isConfirmModalOpen={isConfirmModalOpen}
       isConfirmLoading={isConfirmLoading}
+      isTaskCreationModalOpen={isTaskCreationModalOpen}
       onOpenChatModal={openChatModal}
       onCloseChatModal={closeChatModal}
       onOpenConfirmModal={openConfirmModal}
       onCloseConfirmModal={closeConfirmModal}
+      onOpenTaskCreationModal={openTaskCreationModal}
+      onCloseTaskCreationModal={closeTaskCreationModal}
       onConfirmStop={handleConfirmStop}
     />
   );

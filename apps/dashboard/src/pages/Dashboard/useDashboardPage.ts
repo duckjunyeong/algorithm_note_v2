@@ -11,6 +11,7 @@ export const useDashboardPage = () => {
   const [chatSessionKey, setChatSessionKey] = useState<string>('');
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
+  const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
 
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
 
@@ -28,6 +29,9 @@ export const useDashboardPage = () => {
 
   const openConfirmModal = () => setIsConfirmModalOpen(true);
   const closeConfirmModal = () => setIsConfirmModalOpen(false);
+
+  const openTaskCreationModal = () => setIsTaskCreationModalOpen(true);
+  const closeTaskCreationModal = () => setIsTaskCreationModalOpen(false);
 
   const handleConfirmStop = async () => {
     // 중복 클릭 방지
@@ -113,10 +117,13 @@ export const useDashboardPage = () => {
     chatSessionKey,
     isConfirmModalOpen,
     isConfirmLoading,
+    isTaskCreationModalOpen,
     openChatModal,
     closeChatModal,
     openConfirmModal,
     closeConfirmModal,
+    openTaskCreationModal,
+    closeTaskCreationModal,
     handleConfirmStop,
     toggleSidebar,
   };
