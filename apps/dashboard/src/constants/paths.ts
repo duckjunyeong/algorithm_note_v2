@@ -1,7 +1,6 @@
 export const PATHS = {
   HOME: '/',
   DASHBOARD: '/dashboard',
-  SIGN_IN: '/sign-in',
-  SIGN_UP: '/sign-up',
-  ALGORITHM_ANALYSIS: '/algorithm-logic-flow-analysis',
+  SIGN_IN: 'http://localhost:5174/sign-in',
+  SIGN_UP: 'http://localhost:5174/sign-up',
 } as const;

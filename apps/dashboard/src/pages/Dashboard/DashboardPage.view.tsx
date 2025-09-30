@@ -10,10 +10,8 @@ import {
 // 🔥 수정: 제공해주신 import 경로로 변경
 import { SidebarNav } from '../../components/SidebarNav';
 import { Header } from '../../components/Header';
-import TaskCard from '../Dashboard/components/TaskCard';
 import { FiArrowDown, FiPlus } from 'react-icons/fi';
 import type { Task, TaskStatus } from './useDashboardPage';
-import ChatModal from '../AlgorithmLogicFlowAnalysis/components/ChatModal';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
 import { TaskCreationModal } from './components/TaskCreationModal';
 
@@ -265,19 +263,6 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           </div>
         </main>
       </div>
-
-      <ChatModal
-        isOpen={isChatModalOpen}
-        onClose={onCloseChatModal}
-        onBackgroundClick={onOpenConfirmModal}
-        title={selectedTask ? "오답노트 생성하기" : "추가 태스크 생성"}
-        selectedStep={selectedTask ? {
-          id: selectedTask.id,
-          title: selectedTask.title,
-          code: selectedTask.description
-        } : null}
-        chatSessionKey={chatSessionKey}
-      />
 
       <ConfirmModal
         isOpen={isConfirmModalOpen}
