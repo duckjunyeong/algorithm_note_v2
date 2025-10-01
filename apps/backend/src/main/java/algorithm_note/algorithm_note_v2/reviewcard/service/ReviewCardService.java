@@ -217,15 +217,25 @@ public class ReviewCardService {
      */
     @Transactional
     public void updateReviewResult(Long reviewCardId, ReviewCardUpdateRequestDto requestDto, User user) {
-        log.info("Updating review result - cardId: {}, user: {}, successCount: {}, failCount: {}",
-                reviewCardId, user.getId(), requestDto.getSuccessCount(), requestDto.getFailCount());
+        log.info("Updating review result - cardId: {}, user: {}", reviewCardId, user.getId());
 
         // 1. ReviewCard 조회 및 권한 검증
         ReviewCard card = reviewCardRepository.findByIdAndUserWithQuestions(reviewCardId, user)
                 .orElseThrow(() -> new ReviewCardNotFoundException("복습 카드를 찾을 수 없습니다."));
 
-        // 2. 테스트 결과 반영 (비즈니스 메서드 사용)
-        card.updateTestResult(requestDto.getSuccessCount(), requestDto.getFailCount());
+        // 2. 질문별 테스트 결과 반영
+        List<ReviewCardUpdateRequestDto.QuestionUpdateDto> questionUpdates =
+                requestDto.getQuestionUpdates() != null ? requestDto.getQuestionUpdates() : Collections.emptyList();
+
+        for (ReviewCardUpdateRequestDto.QuestionUpdateDto update : questionUpdates) {
+            ReviewQuestion question = card.getReviewQuestions().stream()
+                    .filter(q -> q.getReviewQuestionId().equals(update.getReviewQuestionId()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "질문을 찾을 수 없습니다: " + update.getReviewQuestionId()));
+
+            question.updateTestResult(update.getSuccessCount(), update.getFailCount());
+        }
 
         // 3. 카드 설정 변경
         card.updateCardInfo(

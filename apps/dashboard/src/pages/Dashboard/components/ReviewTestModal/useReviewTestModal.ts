@@ -29,8 +29,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
   const [isSavingAnswer, setIsSavingAnswer] = useState<boolean>(false);
 
   // Result View states
-  const [localSuccessCount, setLocalSuccessCount] = useState<number>(0);
-  const [localFailCount, setLocalFailCount] = useState<number>(0);
+  const [questionResults, setQuestionResults] = useState<Map<number, { successCount: number; failCount: number }>>(new Map());
   const [localSettings, setLocalSettings] = useState({
     category: '',
     importance: 3,
@@ -50,8 +49,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
           reviewCycle: reviewCard.reviewCycle || 7
         });
       }
-      setLocalSuccessCount(0);
-      setLocalFailCount(0);
+      setQuestionResults(new Map());
       setDeletedQuestionIds(new Set());
     } else {
       resetModalState();
@@ -78,8 +76,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     setAnswerInput('');
     setPreviousAnswers([]);
     setCurrentAnswerIndex(0);
-    setLocalSuccessCount(0);
-    setLocalFailCount(0);
+    setQuestionResults(new Map());
     setDeletedQuestionIds(new Set());
   };
 
@@ -131,12 +128,22 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
       return;
     }
 
-    // 로컬 카운트만 증가 (API 호출 없음)
-    if (result === 'SUCCESS') {
-      setLocalSuccessCount(prev => prev + 1);
-    } else {
-      setLocalFailCount(prev => prev + 1);
-    }
+    const currentQuestion = questions[currentQuestionIndex];
+
+    // 로컬 Map 업데이트 (질문별 카운트 증가)
+    setQuestionResults(prev => {
+      const newMap = new Map(prev);
+      const current = newMap.get(currentQuestion.reviewQuestionId) || { successCount: 0, failCount: 0 };
+
+      if (result === 'SUCCESS') {
+        current.successCount++;
+      } else {
+        current.failCount++;
+      }
+
+      newMap.set(currentQuestion.reviewQuestionId, current);
+      return newMap;
+    });
 
     // 마지막 질문인지 확인
     if (currentQuestionIndex === questions.length - 1) {
@@ -179,16 +186,22 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
         await ReviewCardService.deleteReviewCard(reviewCardId);
         showSuccessToast('복습 카드가 삭제되었습니다.');
       } else {
+        // Map을 questionUpdates 배열로 변환
+        const questionUpdates = Array.from(questionResults.entries()).map(([questionId, counts]) => ({
+          reviewQuestionId: questionId,
+          successCount: counts.successCount,
+          failCount: counts.failCount
+        }));
+
         // 카드 업데이트
         await ReviewCardService.updateReviewResult(reviewCardId, {
           title: reviewCard?.title,
           category: localSettings.category,
           importance: localSettings.importance,
           reviewCycle: localSettings.reviewCycle,
-          successCount: localSuccessCount,
-          failCount: localFailCount,
+          isActive: false,
           deletedQuestionIds: Array.from(deletedQuestionIds),
-          isActive: false
+          questionUpdates
         });
         showSuccessToast('저장되었습니다.');
       }
@@ -225,7 +238,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     questions,
     deletedQuestionIds,
     localSettings,
-    localCounts: { successCount: localSuccessCount, failCount: localFailCount },
+    questionResults,
     handleDeleteQuestion,
     handleSettingChange,
     handleSave,

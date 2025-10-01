@@ -23,7 +23,7 @@ export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: R
     questions,
     deletedQuestionIds,
     localSettings,
-    localCounts,
+    questionResults,
     handleDeleteQuestion,
     handleSettingChange,
     handleSave,
@@ -52,7 +52,7 @@ export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: R
       questions={questions}
       deletedQuestionIds={deletedQuestionIds}
       localSettings={localSettings}
-      localCounts={localCounts}
+      questionResults={questionResults}
       onDeleteQuestion={handleDeleteQuestion}
       onSettingChange={handleSettingChange}
       onSave={handleSave}

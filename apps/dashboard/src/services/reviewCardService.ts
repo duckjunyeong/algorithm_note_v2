@@ -61,7 +61,7 @@ export class ReviewCardService {
    */
   static async updateReviewResult(reviewCardId: number, data: UpdateReviewResultRequest): Promise<void> {
     try {
-      await apiClient.put(`/api/reviewCard/${reviewCardId}/result`, data);
+      await apiClient.put(`/reviewCard/${reviewCardId}/result`, data);
     } catch (error) {
       console.error('복습 결과 저장 실패:', error);
       throw error;
@@ -74,7 +74,7 @@ export class ReviewCardService {
    */
   static async deleteReviewCard(reviewCardId: number): Promise<void> {
     try {
-      await apiClient.delete(`/api/reviewCard/${reviewCardId}`);
+      await apiClient.delete(`/reviewCard/${reviewCardId}`);
     } catch (error) {
       console.error('복습 카드 삭제 실패:', error);
       throw error;

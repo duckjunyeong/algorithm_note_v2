@@ -32,10 +32,7 @@ export interface ReviewTestModalViewProps {
     importance: number;
     reviewCycle: number;
   };
-  localCounts?: {
-    successCount: number;
-    failCount: number;
-  };
+  questionResults?: Map<number, { successCount: number; failCount: number }>;
   onDeleteQuestion?: (questionId: number) => void;
   onSettingChange?: (field: string, value: string | number) => void;
   onSave?: () => void;
@@ -63,7 +60,7 @@ export function ReviewTestModalView({
   questions,
   deletedQuestionIds,
   localSettings,
-  localCounts,
+  questionResults,
   onDeleteQuestion,
   onSettingChange,
   onSave,
@@ -95,7 +92,7 @@ export function ReviewTestModalView({
               questions={questions || []}
               deletedQuestionIds={deletedQuestionIds || new Set()}
               localSettings={localSettings || { category: '', importance: 3, reviewCycle: 7 }}
-              localCounts={localCounts || { successCount: 0, failCount: 0 }}
+              questionResults={questionResults || new Map()}
               onDeleteQuestion={onDeleteQuestion || (() => {})}
               onSettingChange={onSettingChange || (() => {})}
               onSave={onSave || (() => {})}
@@ -334,10 +331,7 @@ interface ResultViewProps {
     importance: number;
     reviewCycle: number;
   };
-  localCounts: {
-    successCount: number;
-    failCount: number;
-  };
+  questionResults: Map<number, { successCount: number; failCount: number }>;
   onDeleteQuestion: (questionId: number) => void;
   onSettingChange: (field: string, value: string | number) => void;
   onSave: () => void;
@@ -348,7 +342,7 @@ function ResultView({
   questions,
   deletedQuestionIds,
   localSettings,
-  localCounts,
+  questionResults,
   onDeleteQuestion,
   onSettingChange,
   onSave,
@@ -359,18 +353,6 @@ function ResultView({
 
   return (
     <div className="space-y-4">
-      {/* Counts Summary */}
-      <div className="flex gap-4 p-4 bg-gray-50 rounded-lg">
-        <div className="flex-1">
-          <span className="text-sm text-gray-600">성공</span>
-          <p className="text-2xl font-bold text-green-600">{localCounts.successCount}</p>
-        </div>
-        <div className="flex-1">
-          <span className="text-sm text-gray-600">실패</span>
-          <p className="text-2xl font-bold text-red-600">{localCounts.failCount}</p>
-        </div>
-      </div>
-
       {/* Main Content: Questions + Settings */}
       <div className="grid grid-cols-2 gap-4 min-h-[400px]">
         {/* Left: Question List */}
@@ -382,37 +364,70 @@ function ResultView({
             <div className="space-y-2">
               {questions.map((question) => {
                 const isDeleted = deletedQuestionIds.has(question.reviewQuestionId);
+                const result = questionResults.get(question.reviewQuestionId) || { successCount: 0, failCount: 0 };
+
+                // Determine background color based on results
+                let bgColor = 'bg-white';
+                if (!isDeleted) {
+                  if (result.successCount > 0 && result.failCount === 0) {
+                    bgColor = 'bg-green-50';
+                  } else if (result.failCount > 0 && result.successCount === 0) {
+                    bgColor = 'bg-red-50';
+                  } else if (result.successCount > 0 && result.failCount > 0) {
+                    bgColor = 'bg-yellow-50';
+                  }
+                }
+                if (isDeleted) bgColor = 'bg-gray-100';
+
                 return (
                   <div
                     key={question.reviewQuestionId}
-                    className={`p-3 rounded-lg border flex items-start justify-between ${
-                      isDeleted
-                        ? 'bg-gray-100 border-gray-300 opacity-60'
-                        : 'bg-white border-gray-200'
+                    className={`${bgColor} p-3 rounded-lg border ${
+                      isDeleted ? 'border-gray-300 opacity-60' : 'border-gray-200'
                     }`}
                   >
-                    <div className="flex-1">
-                      <p
-                        className={`text-sm ${
-                          isDeleted ? 'line-through text-gray-500' : 'text-gray-900'
-                        }`}
-                      >
-                        {question.questionText}
-                      </p>
-                      {isDeleted && (
-                        <span className="inline-block mt-1 text-xs px-2 py-1 bg-red-100 text-red-700 rounded">
-                          삭제됨
-                        </span>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p
+                          className={`text-sm mb-2 ${
+                            isDeleted ? 'line-through text-gray-500' : 'text-gray-900'
+                          }`}
+                        >
+                          {question.questionText}
+                        </p>
+
+                        {/* Display counts for each question */}
+                        {!isDeleted && (result.successCount > 0 || result.failCount > 0) && (
+                          <div className="flex gap-2 mt-2">
+                            {result.successCount > 0 && (
+                              <span className="inline-flex items-center text-xs px-2 py-1 bg-green-100 text-green-800 rounded">
+                                성공 {result.successCount}회
+                              </span>
+                            )}
+                            {result.failCount > 0 && (
+                              <span className="inline-flex items-center text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
+                                실패 {result.failCount}회
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {isDeleted && (
+                          <span className="inline-block text-xs px-2 py-1 bg-red-100 text-red-700 rounded">
+                            삭제됨
+                          </span>
+                        )}
+                      </div>
+
+                      {!isDeleted && (
+                        <button
+                          onClick={() => onDeleteQuestion(question.reviewQuestionId)}
+                          className="ml-2 text-red-500 hover:text-red-700 transition-colors"
+                        >
+                          <FiTrash size={16} />
+                        </button>
                       )}
                     </div>
-                    {!isDeleted && (
-                      <button
-                        onClick={() => onDeleteQuestion(question.reviewQuestionId)}
-                        className="ml-2 text-red-500 hover:text-red-700 transition-colors"
-                      >
-                        <FiTrash size={16} />
-                      </button>
-                    )}
                   </div>
                 );
               })}
@@ -431,52 +446,58 @@ function ResultView({
 
         {/* Right: Settings Panel */}
         <div className="border border-gray-200 rounded-lg p-4 bg-white">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">설정</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-4">설정</h3>
           <div className="space-y-4">
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-gray-700 mb-2">
                 카테고리
               </label>
               <input
                 type="text"
                 value={localSettings.category}
                 onChange={(e) => onSettingChange('category', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="카테고리 입력"
+                className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
-            {/* Importance */}
+            {/* Importance Slider */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                중요도
-              </label>
-              <select
-                value={localSettings.importance}
-                onChange={(e) => onSettingChange('importance', Number(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {[1, 2, 3, 4, 5].map((val) => (
-                  <option key={val} value={val}>
-                    {val}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Review Cycle */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                복습 주기 (일)
+              <label className="block text-xs font-medium text-gray-700 mb-2">
+                중요도: {localSettings.importance}/5
               </label>
               <input
-                type="number"
+                type="range"
+                min="1"
+                max="5"
+                value={localSettings.importance}
+                onChange={(e) => onSettingChange('importance', Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>1</span>
+                <span>5</span>
+              </div>
+            </div>
+
+            {/* Review Cycle Slider */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-2">
+                복습 주기: {localSettings.reviewCycle}일
+              </label>
+              <input
+                type="range"
                 min="1"
                 max="365"
                 value={localSettings.reviewCycle}
                 onChange={(e) => onSettingChange('reviewCycle', Number(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>1일</span>
+                <span>365일</span>
+              </div>
             </div>
           </div>
         </div>
@@ -495,6 +516,42 @@ function ResultView({
           {isSaving ? '저장 중...' : '저장하기'}
         </button>
       </div>
+
+      {/* Slider Styles */}
+      <style jsx>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #3B82F6;
+          cursor: pointer;
+          border: 2px solid #ffffff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #3B82F6;
+          cursor: pointer;
+          border: 2px solid #ffffff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider::-webkit-slider-track {
+          background: #E5E7EB;
+          border-radius: 8px;
+          height: 8px;
+        }
+
+        .slider::-moz-range-track {
+          background: #E5E7EB;
+          border-radius: 8px;
+          height: 8px;
+        }
+      `}</style>
     </div>
   );
 }

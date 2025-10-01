@@ -188,9 +188,6 @@ public class ReviewCardController {
             @PathVariable Long reviewCardId,
             @Valid @RequestBody ReviewCardUpdateRequestDto requestDto) {
 
-        log.info("Updating review result - ID: {}, successCount: {}, failCount: {}",
-                reviewCardId, requestDto.getSuccessCount(), requestDto.getFailCount());
-
         User currentUser = getCurrentUser();
         reviewCardService.updateReviewResult(reviewCardId, requestDto, currentUser);
 

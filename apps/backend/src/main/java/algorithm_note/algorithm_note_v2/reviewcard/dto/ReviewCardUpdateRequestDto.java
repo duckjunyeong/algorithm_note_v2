@@ -28,20 +28,33 @@ public class ReviewCardUpdateRequestDto {
     private Integer importance;
 
     @Min(value = 1, message = "복습 주기는 1일 이상이어야 합니다")
-    @Max(value = 365, message = "복습 주기는 365일 이하여야 합니다")
+    @Max(value = 15, message = "복습 주기는 15일 이하여야 합니다")
     private Integer reviewCycle;
-
-    @NotNull(message = "successCount는 필수입니다")
-    @Min(value = 0, message = "successCount는 0 이상이어야 합니다")
-    private Integer successCount;
-
-    @NotNull(message = "failCount는 필수입니다")
-    @Min(value = 0, message = "failCount는 0 이상이어야 합니다")
-    private Integer failCount;
 
     @NotNull(message = "isActive는 필수입니다")
     private Boolean isActive;
 
     @Builder.Default
     private List<Long> deletedQuestionIds = List.of();
+
+    @Builder.Default
+    private List<QuestionUpdateDto> questionUpdates = List.of();
+
+    /**
+     * 질문별 업데이트 DTO
+     */
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class QuestionUpdateDto {
+        @NotNull(message = "reviewQuestionId는 필수입니다")
+        private Long reviewQuestionId;
+
+        @Min(value = 0, message = "successCount는 0 이상이어야 합니다")
+        private Integer successCount;
+
+        @Min(value = 0, message = "failCount는 0 이상이어야 합니다")
+        private Integer failCount;
+    }
 }

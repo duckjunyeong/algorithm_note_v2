@@ -33,6 +33,14 @@ public class ReviewQuestion {
     @Column(name = "question_text", nullable = false, columnDefinition = "TEXT")
     private String questionText;
 
+    @Column(name = "success_count", nullable = false)
+    @Builder.Default
+    private Integer successCount = 0;
+
+    @Column(name = "fail_count", nullable = false)
+    @Builder.Default
+    private Integer failCount = 0;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -49,6 +57,21 @@ public class ReviewQuestion {
     public void updateQuestionText(String questionText) {
         if (questionText != null && !questionText.trim().isEmpty()) {
             this.questionText = questionText.trim();
+        }
+    }
+
+    /**
+     * 테스트 결과를 업데이트합니다.
+     *
+     * @param successCount 성공 횟수
+     * @param failCount 실패 횟수
+     */
+    public void updateTestResult(Integer successCount, Integer failCount) {
+        if (successCount != null && successCount >= 0) {
+            this.successCount = successCount;
+        }
+        if (failCount != null && failCount >= 0) {
+            this.failCount = failCount;
         }
     }
 
