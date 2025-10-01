@@ -3,7 +3,7 @@ import { ReviewTestModalView } from './ReviewTestModal.view';
 
 export interface ReviewTestModalProps extends UseReviewTestModalProps {}
 
-export function ReviewTestModal({ isOpen, reviewCardId, onClose }: ReviewTestModalProps) {
+export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: ReviewTestModalProps) {
   const {
     currentView,
     currentQuestion,
@@ -20,7 +20,15 @@ export function ReviewTestModal({ isOpen, reviewCardId, onClose }: ReviewTestMod
     handlePrevAnswer,
     handleNextAnswer,
     handleEvaluate,
-  } = useReviewTestModal({ isOpen, reviewCardId, onClose });
+    questions,
+    deletedQuestionIds,
+    localSettings,
+    localCounts,
+    handleDeleteQuestion,
+    handleSettingChange,
+    handleSave,
+    isSaving,
+  } = useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose });
 
   return (
     <ReviewTestModalView
@@ -41,6 +49,14 @@ export function ReviewTestModal({ isOpen, reviewCardId, onClose }: ReviewTestMod
       onPrevAnswer={handlePrevAnswer}
       onNextAnswer={handleNextAnswer}
       onEvaluate={handleEvaluate}
+      questions={questions}
+      deletedQuestionIds={deletedQuestionIds}
+      localSettings={localSettings}
+      localCounts={localCounts}
+      onDeleteQuestion={handleDeleteQuestion}
+      onSettingChange={handleSettingChange}
+      onSave={handleSave}
+      isSaving={isSaving}
     />
   );
 }

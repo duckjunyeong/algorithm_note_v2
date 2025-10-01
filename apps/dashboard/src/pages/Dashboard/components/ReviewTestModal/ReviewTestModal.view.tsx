@@ -1,4 +1,4 @@
-import { FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiX, FiChevronLeft, FiChevronRight, FiTrash } from 'react-icons/fi';
 import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
 
 interface ReviewQuestion {
@@ -9,7 +9,7 @@ interface ReviewQuestion {
 export interface ReviewTestModalViewProps {
   isOpen: boolean;
   onClose: () => void;
-  currentView: 'input' | 'evaluation';
+  currentView: 'input' | 'evaluation' | 'result';
   currentQuestion: ReviewQuestion | null;
   answerInput: string;
   setAnswerInput: (value: string) => void;
@@ -24,6 +24,22 @@ export interface ReviewTestModalViewProps {
   onPrevAnswer: () => void;
   onNextAnswer: () => void;
   onEvaluate: (result: EvaluationResult) => void;
+  // Result View props
+  questions?: ReviewQuestion[];
+  deletedQuestionIds?: Set<number>;
+  localSettings?: {
+    category: string;
+    importance: number;
+    reviewCycle: number;
+  };
+  localCounts?: {
+    successCount: number;
+    failCount: number;
+  };
+  onDeleteQuestion?: (questionId: number) => void;
+  onSettingChange?: (field: string, value: string | number) => void;
+  onSave?: () => void;
+  isSaving?: boolean;
 }
 
 export function ReviewTestModalView({
@@ -44,6 +60,14 @@ export function ReviewTestModalView({
   onPrevAnswer,
   onNextAnswer,
   onEvaluate,
+  questions,
+  deletedQuestionIds,
+  localSettings,
+  localCounts,
+  onDeleteQuestion,
+  onSettingChange,
+  onSave,
+  isSaving,
 }: ReviewTestModalViewProps) {
   if (!isOpen) return null;
 
@@ -66,6 +90,17 @@ export function ReviewTestModalView({
         <div className="p-6">
           {isLoadingQuestions ? (
             <LoadingView message="질문을 불러오고 있습니다..." />
+          ) : currentView === 'result' ? (
+            <ResultView
+              questions={questions || []}
+              deletedQuestionIds={deletedQuestionIds || new Set()}
+              localSettings={localSettings || { category: '', importance: 3, reviewCycle: 7 }}
+              localCounts={localCounts || { successCount: 0, failCount: 0 }}
+              onDeleteQuestion={onDeleteQuestion || (() => {})}
+              onSettingChange={onSettingChange || (() => {})}
+              onSave={onSave || (() => {})}
+              isSaving={isSaving || false}
+            />
           ) : currentQuestion ? (
             currentView === 'input' ? (
               <InputView
@@ -286,6 +321,180 @@ function EmptyView() {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <p className="text-gray-600">질문이 없습니다.</p>
+    </div>
+  );
+}
+
+/* Result View Component */
+interface ResultViewProps {
+  questions: ReviewQuestion[];
+  deletedQuestionIds: Set<number>;
+  localSettings: {
+    category: string;
+    importance: number;
+    reviewCycle: number;
+  };
+  localCounts: {
+    successCount: number;
+    failCount: number;
+  };
+  onDeleteQuestion: (questionId: number) => void;
+  onSettingChange: (field: string, value: string | number) => void;
+  onSave: () => void;
+  isSaving: boolean;
+}
+
+function ResultView({
+  questions,
+  deletedQuestionIds,
+  localSettings,
+  localCounts,
+  onDeleteQuestion,
+  onSettingChange,
+  onSave,
+  isSaving,
+}: ResultViewProps) {
+  const remainingQuestions = questions.filter(q => !deletedQuestionIds.has(q.reviewQuestionId));
+  const isAllQuestionsDeleted = remainingQuestions.length === 0;
+
+  return (
+    <div className="space-y-4">
+      {/* Counts Summary */}
+      <div className="flex gap-4 p-4 bg-gray-50 rounded-lg">
+        <div className="flex-1">
+          <span className="text-sm text-gray-600">성공</span>
+          <p className="text-2xl font-bold text-green-600">{localCounts.successCount}</p>
+        </div>
+        <div className="flex-1">
+          <span className="text-sm text-gray-600">실패</span>
+          <p className="text-2xl font-bold text-red-600">{localCounts.failCount}</p>
+        </div>
+      </div>
+
+      {/* Main Content: Questions + Settings */}
+      <div className="grid grid-cols-2 gap-4 min-h-[400px]">
+        {/* Left: Question List */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 overflow-y-auto max-h-[500px]">
+          <h3 className="text-sm font-medium text-gray-700 mb-3">질문 목록</h3>
+          {questions.length === 0 ? (
+            <EmptyView />
+          ) : (
+            <div className="space-y-2">
+              {questions.map((question) => {
+                const isDeleted = deletedQuestionIds.has(question.reviewQuestionId);
+                return (
+                  <div
+                    key={question.reviewQuestionId}
+                    className={`p-3 rounded-lg border flex items-start justify-between ${
+                      isDeleted
+                        ? 'bg-gray-100 border-gray-300 opacity-60'
+                        : 'bg-white border-gray-200'
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <p
+                        className={`text-sm ${
+                          isDeleted ? 'line-through text-gray-500' : 'text-gray-900'
+                        }`}
+                      >
+                        {question.questionText}
+                      </p>
+                      {isDeleted && (
+                        <span className="inline-block mt-1 text-xs px-2 py-1 bg-red-100 text-red-700 rounded">
+                          삭제됨
+                        </span>
+                      )}
+                    </div>
+                    {!isDeleted && (
+                      <button
+                        onClick={() => onDeleteQuestion(question.reviewQuestionId)}
+                        className="ml-2 text-red-500 hover:text-red-700 transition-colors"
+                      >
+                        <FiTrash size={16} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Warning for all deleted */}
+          {isAllQuestionsDeleted && (
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                ⚠️ 모든 질문이 삭제되었습니다. 저장 시 이 카드는 영구히 삭제됩니다.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Settings Panel */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-white">
+          <h3 className="text-sm font-medium text-gray-700 mb-3">설정</h3>
+          <div className="space-y-4">
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                카테고리
+              </label>
+              <input
+                type="text"
+                value={localSettings.category}
+                onChange={(e) => onSettingChange('category', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Importance */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                중요도
+              </label>
+              <select
+                value={localSettings.importance}
+                onChange={(e) => onSettingChange('importance', Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {[1, 2, 3, 4, 5].map((val) => (
+                  <option key={val} value={val}>
+                    {val}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Review Cycle */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                복습 주기 (일)
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="365"
+                value={localSettings.reviewCycle}
+                onChange={(e) => onSettingChange('reviewCycle', Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Save Button */}
+      <div className="flex justify-end pt-4 border-t">
+        <button
+          onClick={onSave}
+          disabled={isSaving}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+        >
+          {isSaving && (
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          )}
+          {isSaving ? '저장 중...' : '저장하기'}
+        </button>
+      </div>
     </div>
   );
 }

@@ -5,15 +5,18 @@ import algorithm_note.algorithm_note_v2.reviewQuestion.domain.ReviewQuestion;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateRequestDto;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateResponseDto;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardResponseDto;
+import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardUpdateRequestDto;
 import algorithm_note.algorithm_note_v2.reviewcard.exception.ReviewCardNotFoundException;
 import algorithm_note.algorithm_note_v2.reviewcard.repository.ReviewCardRepository;
 import algorithm_note.algorithm_note_v2.reviewQuestion.repository.ReviewQuestionRepository;
+import algorithm_note.algorithm_note_v2.reviewQuestion.service.ReviewQuestionService;
 import algorithm_note.algorithm_note_v2.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,7 @@ public class ReviewCardService {
 
     private final ReviewCardRepository reviewCardRepository;
     private final ReviewQuestionRepository reviewQuestionRepository;
+    private final ReviewQuestionService reviewQuestionService;
 
     /**
      * 복습 카드를 생성합니다.
@@ -202,6 +206,63 @@ public class ReviewCardService {
                 .activeCount(activeCount)
                 .completedCount(completedCount)
                 .build();
+    }
+
+    /**
+     * 복습 테스트 결과를 저장합니다.
+     *
+     * @param reviewCardId 복습 카드 ID
+     * @param requestDto 업데이트 요청 DTO
+     * @param user 소유자 사용자
+     */
+    @Transactional
+    public void updateReviewResult(Long reviewCardId, ReviewCardUpdateRequestDto requestDto, User user) {
+        log.info("Updating review result - cardId: {}, user: {}, successCount: {}, failCount: {}",
+                reviewCardId, user.getId(), requestDto.getSuccessCount(), requestDto.getFailCount());
+
+        // 1. ReviewCard 조회 및 권한 검증
+        ReviewCard card = reviewCardRepository.findByIdAndUserWithQuestions(reviewCardId, user)
+                .orElseThrow(() -> new ReviewCardNotFoundException("복습 카드를 찾을 수 없습니다."));
+
+        // 2. 테스트 결과 반영 (비즈니스 메서드 사용)
+        card.updateTestResult(requestDto.getSuccessCount(), requestDto.getFailCount());
+
+        // 3. 카드 설정 변경
+        card.updateCardInfo(
+                requestDto.getTitle(),
+                requestDto.getCategory(),
+                requestDto.getImportance(),
+                requestDto.getReviewCycle()
+        );
+
+        // 4. 상태 변경 (테스트 완료)
+        card.updateStatus(requestDto.getIsActive());
+
+        // 5. 질문 삭제 처리
+        List<Long> deletedIds = requestDto.getDeletedQuestionIds() != null
+                ? requestDto.getDeletedQuestionIds()
+                : Collections.emptyList();
+
+        if (!deletedIds.isEmpty()) {
+            reviewQuestionService.deleteQuestionsByIds(deletedIds);
+        }
+
+        // 6. 모든 질문이 삭제되었는지 확인
+        long remainingQuestionsCount = card.getReviewQuestions().stream()
+                .filter(q -> !deletedIds.contains(q.getReviewQuestionId()))
+                .count();
+
+        if (remainingQuestionsCount == 0) {
+            // 모든 질문 삭제 시 카드도 삭제
+            log.info("Deleting card {} - all questions deleted", reviewCardId);
+            reviewCardRepository.delete(card);
+        } else {
+            // 카드 저장
+            log.info("Saving card {} - {} questions remaining", reviewCardId, remainingQuestionsCount);
+            reviewCardRepository.save(card);
+        }
+
+        log.info("Successfully updated review result - cardId: {}", reviewCardId);
     }
 
     /**

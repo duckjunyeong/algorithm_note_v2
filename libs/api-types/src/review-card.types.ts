@@ -11,6 +11,8 @@ export interface ReviewCard {
   reviewCycle: number;
   isActive: boolean;
   reviewCount: number;
+  successCount: number;
+  failCount: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -43,6 +45,18 @@ export interface CreateReviewCardResponse {
 // 복습 카드 목록 조회 응답 인터페이스
 export interface GetReviewCardsResponse {
   reviewCards: ReviewCard[];
+}
+
+// 복습 결과 업데이트 요청 인터페이스
+export interface UpdateReviewResultRequest {
+  title?: string;
+  category?: string;
+  importance?: number;
+  reviewCycle?: number;
+  successCount: number;
+  failCount: number;
+  isActive: boolean;
+  deletedQuestionIds: number[];
 }
 
 // API 에러 응답 인터페이스

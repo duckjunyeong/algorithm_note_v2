@@ -52,6 +52,14 @@ public class ReviewCard {
     @Builder.Default
     private Integer reviewCount = 0;
 
+    @Column(name = "success_count", nullable = false)
+    @Builder.Default
+    private Integer successCount = 0;
+
+    @Column(name = "fail_count", nullable = false)
+    @Builder.Default
+    private Integer failCount = 0;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -106,6 +114,23 @@ public class ReviewCard {
         if (category != null) this.category = category;
         if (importance != null) this.importance = importance;
         if (reviewCycle != null) this.reviewCycle = reviewCycle;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 복습 테스트 결과를 반영합니다.
+     * 로컬에서 계산된 성공/실패 횟수를 설정합니다.
+     *
+     * @param successCount 성공 횟수
+     * @param failCount 실패 횟수
+     */
+    public void updateTestResult(Integer successCount, Integer failCount) {
+        if (successCount != null && successCount >= 0) {
+            this.successCount = successCount;
+        }
+        if (failCount != null && failCount >= 0) {
+            this.failCount = failCount;
+        }
         this.updatedAt = LocalDateTime.now();
     }
 }

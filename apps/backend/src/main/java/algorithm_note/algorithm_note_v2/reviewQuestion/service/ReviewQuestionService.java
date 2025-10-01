@@ -54,4 +54,23 @@ public class ReviewQuestionService {
                 .map(ReviewQuestionResponseDto::from)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 여러 질문을 ID 목록으로 삭제합니다.
+     *
+     * @param questionIds 삭제할 질문 ID 목록
+     */
+    @Transactional
+    public void deleteQuestionsByIds(List<Long> questionIds) {
+        if (questionIds == null || questionIds.isEmpty()) {
+            log.info("No questions to delete - empty list provided");
+            return;
+        }
+
+        log.info("Deleting {} questions with IDs: {}", questionIds.size(), questionIds);
+
+        reviewQuestionRepository.deleteAllById(questionIds);
+
+        log.info("Successfully deleted {} questions", questionIds.size());
+    }
 }

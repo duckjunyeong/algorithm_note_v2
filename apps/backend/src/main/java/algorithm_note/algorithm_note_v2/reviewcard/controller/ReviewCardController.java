@@ -177,6 +177,29 @@ public class ReviewCardController {
     }
 
     /**
+     * 복습 테스트 결과를 저장합니다.
+     *
+     * @param reviewCardId 복습 카드 ID
+     * @param requestDto 업데이트 요청 DTO
+     * @return 성공 응답
+     */
+    @PutMapping("/{reviewCardId}/result")
+    public ResponseEntity<Void> updateReviewResult(
+            @PathVariable Long reviewCardId,
+            @Valid @RequestBody ReviewCardUpdateRequestDto requestDto) {
+
+        log.info("Updating review result - ID: {}, successCount: {}, failCount: {}",
+                reviewCardId, requestDto.getSuccessCount(), requestDto.getFailCount());
+
+        User currentUser = getCurrentUser();
+        reviewCardService.updateReviewResult(reviewCardId, requestDto, currentUser);
+
+        log.info("Successfully updated review result - ID: {}", reviewCardId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * SecurityContext로부터 현재 인증된 사용자를 가져옵니다.
      *
      * @return 현재 인증된 사용자
