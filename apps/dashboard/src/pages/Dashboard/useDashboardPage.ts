@@ -13,6 +13,8 @@ export const useDashboardPage = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
   const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
+  const [isReviewTestModalOpen, setIsReviewTestModalOpen] = useState<boolean>(false);
+  const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
 
   // 복습 카드 store 사용
   const {
@@ -53,6 +55,16 @@ export const useDashboardPage = () => {
     if (reviewCardsError) {
       clearError();
     }
+  };
+
+  const openReviewTestModal = (reviewCardId: number) => {
+    setSelectedReviewCardId(reviewCardId);
+    setIsReviewTestModalOpen(true);
+  };
+
+  const closeReviewTestModal = () => {
+    setIsReviewTestModalOpen(false);
+    setSelectedReviewCardId(null);
   };
 
   const handleConfirmStop = async () => {
@@ -140,6 +152,8 @@ export const useDashboardPage = () => {
     isConfirmModalOpen,
     isConfirmLoading,
     isTaskCreationModalOpen,
+    isReviewTestModalOpen,
+    selectedReviewCardId,
     // 복습 카드 관련 상태 추가
     backlogCards,
     completedCards,
@@ -151,6 +165,8 @@ export const useDashboardPage = () => {
     closeConfirmModal,
     openTaskCreationModal,
     closeTaskCreationModal,
+    openReviewTestModal,
+    closeReviewTestModal,
     handleConfirmStop,
     toggleSidebar,
   };

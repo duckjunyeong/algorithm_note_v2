@@ -1,6 +1,6 @@
 package algorithm_note.algorithm_note_v2.global.service;
 
-import algorithm_note.algorithm_note_v2.problem.dto.*;
+import algorithm_note.algorithm_note_v2.reviewQuestion.dto.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.Content;
@@ -21,7 +21,7 @@ public class GeminiClient {
   private final ObjectMapper objectMapper;
   private final Client client;
 
-  public GeminiClient(ObjectMapper objectMapper, RedisService redisService,
+  public GeminiClient(ObjectMapper objectMapper,
                       @Value("${ai.api.key}") String apiKey,
                       @Value("${ai.prompt.answer-generator}") String answerGenerPrompt) {
     this.objectMapper = objectMapper;

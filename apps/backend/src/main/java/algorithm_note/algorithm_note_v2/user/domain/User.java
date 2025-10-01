@@ -1,6 +1,5 @@
 package algorithm_note.algorithm_note_v2.user.domain;
 
-import algorithm_note.algorithm_note_v2.problem.domain.Problem;
 import algorithm_note.algorithm_note_v2.reviewcard.domain.ReviewCard;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -42,11 +41,6 @@ public class User {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    @Builder.Default
-    private List<Problem> problems = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference

@@ -15,6 +15,8 @@ const DashboardPage: FC = () => {
     isConfirmModalOpen,
     isConfirmLoading,
     isTaskCreationModalOpen,
+    isReviewTestModalOpen,
+    selectedReviewCardId,
     backlogCards,
     completedCards,
     reviewCardsLoading,
@@ -25,6 +27,8 @@ const DashboardPage: FC = () => {
     closeConfirmModal,
     openTaskCreationModal,
     closeTaskCreationModal,
+    openReviewTestModal,
+    closeReviewTestModal,
     handleConfirmStop,
     toggleSidebar
   } = useDashboardPage();
@@ -42,6 +46,8 @@ const DashboardPage: FC = () => {
       isConfirmModalOpen={isConfirmModalOpen}
       isConfirmLoading={isConfirmLoading}
       isTaskCreationModalOpen={isTaskCreationModalOpen}
+      isReviewTestModalOpen={isReviewTestModalOpen}
+      selectedReviewCardId={selectedReviewCardId}
       backlogCards={backlogCards}
       completedCards={completedCards}
       reviewCardsLoading={reviewCardsLoading}
@@ -52,6 +58,8 @@ const DashboardPage: FC = () => {
       onCloseConfirmModal={closeConfirmModal}
       onOpenTaskCreationModal={openTaskCreationModal}
       onCloseTaskCreationModal={closeTaskCreationModal}
+      onOpenReviewTestModal={openReviewTestModal}
+      onCloseReviewTestModal={closeReviewTestModal}
       onConfirmStop={handleConfirmStop}
     />
   );

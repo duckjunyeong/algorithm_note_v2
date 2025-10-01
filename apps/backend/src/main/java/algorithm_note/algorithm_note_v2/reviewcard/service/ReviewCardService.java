@@ -1,13 +1,13 @@
 package algorithm_note.algorithm_note_v2.reviewcard.service;
 
 import algorithm_note.algorithm_note_v2.reviewcard.domain.ReviewCard;
-import algorithm_note.algorithm_note_v2.reviewcard.domain.ReviewQuestion;
+import algorithm_note.algorithm_note_v2.reviewQuestion.domain.ReviewQuestion;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateRequestDto;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateResponseDto;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardResponseDto;
 import algorithm_note.algorithm_note_v2.reviewcard.exception.ReviewCardNotFoundException;
 import algorithm_note.algorithm_note_v2.reviewcard.repository.ReviewCardRepository;
-import algorithm_note.algorithm_note_v2.reviewcard.repository.ReviewQuestionRepository;
+import algorithm_note.algorithm_note_v2.reviewQuestion.repository.ReviewQuestionRepository;
 import algorithm_note.algorithm_note_v2.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

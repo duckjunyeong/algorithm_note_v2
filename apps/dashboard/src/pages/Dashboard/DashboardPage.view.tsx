@@ -1,7 +1,7 @@
 // DashboardPage/DashboardPage.view.tsx
 import type { FC } from 'react';
-import type { ReviewCard } from '../../../../../libs/api-types/src';
-import { 
+import type { ReviewCard as ReviewCardType } from '../../../../../libs/api-types/src';
+import {
   RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, Tooltip,
   PieChart, Pie, Cell,
@@ -14,6 +14,8 @@ import { FiArrowDown, FiPlus } from 'react-icons/fi';
 import type { Task, TaskStatus } from './useDashboardPage';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
 import { TaskCreationModal } from './components/TaskCreationModal';
+import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
+import { ReviewTestModal } from './components/ReviewTestModal';
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
@@ -33,8 +35,8 @@ export interface DashboardPageViewProps {
     failCount: number;
   };
   // 복습 카드 관련 props
-  backlogCards: ReviewCard[];
-  completedCards: ReviewCard[];
+  backlogCards: ReviewCardType[];
+  completedCards: ReviewCardType[];
   reviewCardsLoading: boolean;
   reviewCardsError: string | null;
   onToggleSidebar: () => void;
@@ -44,12 +46,16 @@ export interface DashboardPageViewProps {
   isConfirmModalOpen: boolean;
   isConfirmLoading: boolean;
   isTaskCreationModalOpen: boolean;
+  isReviewTestModalOpen: boolean;
+  selectedReviewCardId: number | null;
   onOpenChatModal: () => void;
   onCloseChatModal: () => void;
   onOpenConfirmModal: () => void;
   onCloseConfirmModal: () => void;
   onOpenTaskCreationModal: () => void;
   onCloseTaskCreationModal: () => void;
+  onOpenReviewTestModal: (reviewCardId: number) => void;
+  onCloseReviewTestModal: () => void;
   onConfirmStop: () => void;
 }
 
@@ -70,28 +76,6 @@ const CustomTooltip: FC<any> = ({ active, payload, label }) => {
   return null;
 };
 
-// 복습 카드 컴포넌트
-const ReviewCardComponent: FC<{ card: ReviewCard }> = ({ card }) => {
-  return (
-    <div className="rounded-lg border border-border-primary bg-background-primary p-4 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h3 className="font-medium text-text-primary line-clamp-2">{card.title}</h3>
-          <div className="mt-2 flex items-center gap-4 text-sm text-text-secondary">
-            <span className="inline-flex items-center rounded-md bg-brand/10 px-2 py-1 text-xs font-medium text-brand">
-              {card.category}
-            </span>
-            <span>중요도: {card.importance}/5</span>
-            <span>{card.reviewCycle}일 주기</span>
-          </div>
-          <div className="mt-2 text-xs text-text-tertiary">
-            반복 횟수: {card.reviewCount}회
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isSidebarOpen,
@@ -109,12 +93,13 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isConfirmModalOpen,
   isConfirmLoading,
   isTaskCreationModalOpen,
-  onOpenChatModal,
-  onCloseChatModal,
-  onOpenConfirmModal,
+  isReviewTestModalOpen,
+  selectedReviewCardId,
   onCloseConfirmModal,
   onOpenTaskCreationModal,
   onCloseTaskCreationModal,
+  onOpenReviewTestModal,
+  onCloseReviewTestModal,
   onConfirmStop,
 }) => {
   const PIE_COLORS = ['#5E6AD2', '#D1D5DB'];
@@ -227,7 +212,18 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                 </div>
               ) : (
                 backlogCards.map((card) => (
-                  <ReviewCardComponent key={card.reviewCardId} card={card} />
+                  <ReviewCard
+                    key={card.reviewCardId}
+                    id={`R-${card.reviewCardId}`}
+                    category={card.category}
+                    title={card.title}
+                    tags={[
+                      { label: '중요도', value: `${card.importance}/5` },
+                      { label: '주기', value: `${card.reviewCycle}일` },
+                      { label: '반복', value: `${card.reviewCount}회` },
+                    ]}
+                    onTestStart={() => onOpenReviewTestModal(card.reviewCardId)}
+                  />
                 ))
               )}
             </div>
@@ -256,7 +252,18 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                 </div>
               ) : (
                 completedCards.map((card) => (
-                  <ReviewCardComponent key={card.reviewCardId} card={card} />
+                  <ReviewCard
+                    key={card.reviewCardId}
+                    id={`R-${card.reviewCardId}`}
+                    category={card.category}
+                    title={card.title}
+                    tags={[
+                      { label: '중요도', value: `${card.importance}/5` },
+                      { label: '주기', value: `${card.reviewCycle}일` },
+                      { label: '반복', value: `${card.reviewCount}회` },
+                    ]}
+                    onTestStart={() => onOpenReviewTestModal(card.reviewCardId)}
+                  />
                 ))
               )}
             </div>
@@ -278,6 +285,12 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
       <TaskCreationModal
         isOpen={isTaskCreationModalOpen}
         onClose={onCloseTaskCreationModal}
+      />
+
+      <ReviewTestModal
+        isOpen={isReviewTestModalOpen}
+        reviewCardId={selectedReviewCardId}
+        onClose={onCloseReviewTestModal}
       />
     </div>
   );

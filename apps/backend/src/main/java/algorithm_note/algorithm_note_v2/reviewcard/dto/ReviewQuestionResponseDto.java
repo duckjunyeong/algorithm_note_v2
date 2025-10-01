@@ -1,6 +1,6 @@
 package algorithm_note.algorithm_note_v2.reviewcard.dto;
 
-import algorithm_note.algorithm_note_v2.reviewcard.domain.ReviewQuestion;
+import algorithm_note.algorithm_note_v2.reviewQuestion.domain.ReviewQuestion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

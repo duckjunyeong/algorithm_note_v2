@@ -1,5 +1,6 @@
 package algorithm_note.algorithm_note_v2.reviewcard.domain;
 
+import algorithm_note.algorithm_note_v2.reviewQuestion.domain.ReviewQuestion;
 import algorithm_note.algorithm_note_v2.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

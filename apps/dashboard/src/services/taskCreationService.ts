@@ -14,7 +14,7 @@ export class TaskCreationService {
     const validatedRequest = createAnswerRequestSchema.parse(requestData);
 
     try {
-      const response = await apiClient.post('/answer/create', validatedRequest);
+      const response = await apiClient.post('/review-questions/create', validatedRequest);
       console.log('Raw API Response:', response.data.aiResponse);
 
       // Validate response data
