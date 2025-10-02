@@ -81,4 +81,17 @@ export class ReviewCardService {
       throw error;
     }
   }
+
+  /**
+   * 복습 횟수를 증가시킵니다
+   * @param reviewCardId 복습 카드 ID
+   */
+  static async incrementReviewCount(reviewCardId: number): Promise<void> {
+    try {
+      await apiClient.post(`/reviewCard/${reviewCardId}/review`);
+    } catch (error) {
+      console.error('복습 횟수 증가 실패:', error);
+      throw error;
+    }
+  }
 }

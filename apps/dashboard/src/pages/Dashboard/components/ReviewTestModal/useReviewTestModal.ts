@@ -35,6 +35,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
 
   // Result View states
   const [questionResults, setQuestionResults] = useState<Map<number, { successCount: number; failCount: number }>>(new Map());
+  const [questionAnswers, setQuestionAnswers] = useState<Map<number, string>>(new Map());
   const [localSettings, setLocalSettings] = useState({
     category: '',
     importance: 3,
@@ -68,6 +69,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
         }
       }
       setQuestionResults(new Map());
+      setQuestionAnswers(new Map());
       setDeletedQuestionIds(new Set());
     } else {
       resetModalState();
@@ -108,6 +110,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     setPreviousAnswers([]);
     setCurrentAnswerIndex(0);
     setQuestionResults(new Map());
+    setQuestionAnswers(new Map());
     setDeletedQuestionIds(new Set());
     setCategories([]);
     setSelectedCategoryId(null);
@@ -127,9 +130,17 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     }
 
     const currentQuestion = questions[currentQuestionIndex];
+
+    // 로컬 Map에 답변 저장
+    setQuestionAnswers(prev => {
+      const newMap = new Map(prev);
+      newMap.set(currentQuestion.reviewQuestionId, answerInput.trim());
+      return newMap;
+    });
+
     setCurrentView('evaluation');
 
-    // 이전 질문들 불러온다. 
+    // 이전 질문들 불러온다.
     await loadPreviousAnswers(currentQuestion.reviewQuestionId);
   };
 
@@ -167,32 +178,50 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
 
     const currentQuestion = questions[currentQuestionIndex];
 
-    // 로컬 Map 업데이트 (질문별 카운트 증가)
-    setQuestionResults(prev => {
-      const newMap = new Map(prev);
-      const current = newMap.get(currentQuestion.reviewQuestionId) || { successCount: 0, failCount: 0 };
+    // 저장할 답변 가져오기 (로컬 Map에서 우선 조회, 없으면 현재 answerInput 사용)
+    const answerContent = questionAnswers.get(currentQuestion.reviewQuestionId) || answerInput.trim();
 
-      if (result === 'SUCCESS') {
-        current.successCount++;
+    // 서버에 답변 저장
+    setIsSavingAnswer(true);
+    try {
+      await AnswerService.createAnswer({
+        questionId: currentQuestion.reviewQuestionId,
+        content: answerContent,
+        evaluationResult: result
+      });
+
+      // 로컬 Map 업데이트 (질문별 카운트 증가)
+      setQuestionResults(prev => {
+        const newMap = new Map(prev);
+        const current = newMap.get(currentQuestion.reviewQuestionId) || { successCount: 0, failCount: 0 };
+
+        if (result === 'SUCCESS') {
+          current.successCount++;
+        } else {
+          current.failCount++;
+        }
+
+        newMap.set(currentQuestion.reviewQuestionId, current);
+        return newMap;
+      });
+
+      // 마지막 질문인지 확인
+      if (currentQuestionIndex === questions.length - 1) {
+        // Result View로 전환
+        setCurrentView('result');
+        showSuccessToast('테스트가 종료되었습니다.');
       } else {
-        current.failCount++;
+        // 다음 질문으로 이동
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setAnswerInput('');
+        setCurrentView('input');
+        setPreviousAnswers([]);
       }
-
-      newMap.set(currentQuestion.reviewQuestionId, current);
-      return newMap;
-    });
-
-    // 마지막 질문인지 확인
-    if (currentQuestionIndex === questions.length - 1) {
-      // Result View로 전환
-      setCurrentView('result');
-      showSuccessToast('테스트가 종료되었습니다.');
-    } else {
-      // 다음 질문으로 이동
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setAnswerInput('');
-      setCurrentView('input');
-      setPreviousAnswers([]);
+    } catch (error) {
+      showErrorToast('답변 저장에 실패했습니다.');
+      console.error('답변 저장 실패:', error);
+    } finally {
+      setIsSavingAnswer(false);
     }
   };
 
@@ -274,6 +303,10 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
           deletedQuestionIds: Array.from(deletedQuestionIds),
           questionUpdates
         });
+
+        // 복습 횟수 증가
+        await ReviewCardService.incrementReviewCount(reviewCardId);
+
         showSuccessToast('저장되었습니다.');
       }
 
