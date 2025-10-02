@@ -1,5 +1,6 @@
 package algorithm_note.algorithm_note_v2.reviewcard.domain;
 
+import algorithm_note.algorithm_note_v2.category.domain.Category;
 import algorithm_note.algorithm_note_v2.reviewQuestion.domain.ReviewQuestion;
 import algorithm_note.algorithm_note_v2.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -35,8 +36,9 @@ public class ReviewCard {
     @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(length = 100)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @Column(nullable = false)
     private Integer importance;
@@ -101,7 +103,7 @@ public class ReviewCard {
      * @param importance 중요도
      * @param reviewCycle 반복 주기
      */
-    public void updateCardInfo(String title, String category, Integer importance, Integer reviewCycle) {
+    public void updateCardInfo(String title, Category category, Integer importance, Integer reviewCycle) {
         if (title != null) this.title = title;
         if (category != null) this.category = category;
         if (importance != null) this.importance = importance;

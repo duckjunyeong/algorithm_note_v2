@@ -5,10 +5,12 @@ interface UseQuestionSettingsPanelProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  categoryColor: string;
-  setCategoryColor: (value: string) => void;
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
 }
 
 export function useQuestionSettingsPanel({
@@ -16,10 +18,12 @@ export function useQuestionSettingsPanel({
   setRepetitionCycle,
   importance,
   setImportance,
-  category,
-  setCategory,
-  categoryColor,
-  setCategoryColor
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  onCategorySelect,
+  onAddCategoryClick,
 }: UseQuestionSettingsPanelProps) {
   const handleRepetitionCycleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setRepetitionCycle(parseInt(e.target.value, 10));
@@ -29,19 +33,9 @@ export function useQuestionSettingsPanel({
     setImportance(parseInt(e.target.value, 10));
   }, [setImportance]);
 
-  const handleCategoryChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCategory(e.target.value);
-  }, [setCategory]);
-
-  const handleCategoryColorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCategoryColor(e.target.value);
-  }, [setCategoryColor]);
-
   return {
     handleRepetitionCycleChange,
     handleImportanceChange,
-    handleCategoryChange,
-    handleCategoryColorChange
   };
 }
 
@@ -50,8 +44,10 @@ export interface QuestionSettingsPanelProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  categoryColor: string;
-  setCategoryColor: (value: string) => void;
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
 }

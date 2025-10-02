@@ -7,37 +7,41 @@ export function QuestionSettingsPanel({
   setRepetitionCycle,
   importance,
   setImportance,
-  category,
-  setCategory,
-  categoryColor,
-  setCategoryColor
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  onCategorySelect,
+  onAddCategoryClick,
 }: QuestionSettingsPanelProps) {
   const {
     handleRepetitionCycleChange,
     handleImportanceChange,
-    handleCategoryChange,
-    handleCategoryColorChange
   } = useQuestionSettingsPanel({
     repetitionCycle,
     setRepetitionCycle,
     importance,
     setImportance,
-    category,
-    setCategory,
-    categoryColor,
-    setCategoryColor
+    categories,
+    selectedCategoryId,
+    isLoadingCategories,
+    categoryError,
+    onCategorySelect,
+    onAddCategoryClick,
   });
 
   return (
     <QuestionSettingsPanelView
       repetitionCycle={repetitionCycle}
       importance={importance}
-      category={category}
-      categoryColor={categoryColor}
+      categories={categories}
+      selectedCategoryId={selectedCategoryId}
+      isLoadingCategories={isLoadingCategories}
+      categoryError={categoryError}
       onRepetitionCycleChange={handleRepetitionCycleChange}
       onImportanceChange={handleImportanceChange}
-      onCategoryChange={handleCategoryChange}
-      onCategoryColorChange={handleCategoryColorChange}
+      onCategorySelect={onCategorySelect}
+      onAddCategoryClick={onAddCategoryClick}
     />
   );
 }

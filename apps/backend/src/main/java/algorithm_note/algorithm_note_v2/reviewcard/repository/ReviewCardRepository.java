@@ -62,14 +62,6 @@ public interface ReviewCardRepository extends JpaRepository<ReviewCard, Long> {
             @Param("user") User user
     );
 
-    /**
-     * 특정 사용자의 카테고리별 복습 카드를 조회합니다.
-     *
-     * @param user 복습 카드를 조회할 사용자
-     * @param category 카테고리명
-     * @return 해당 카테고리의 복습 카드 목록
-     */
-    List<ReviewCard> findAllByUserAndCategoryOrderByCreatedAtDesc(User user, String category);
 
     /**
      * 특정 사용자의 중요도별 복습 카드를 조회합니다.

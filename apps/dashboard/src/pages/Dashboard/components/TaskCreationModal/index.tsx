@@ -1,13 +1,27 @@
 import { useTaskCreationModal } from './useTaskCreationModal';
 import { TaskCreationModalView } from './TaskCreationModal.view';
+import { useCategoryStore } from '../../../../store/useCategoryStore';
 
 interface TaskCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
+
   onBackgroundClick?: () => void;
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
 }
 
-export function TaskCreationModal({ isOpen, onClose, onBackgroundClick }: TaskCreationModalProps) {
+export function TaskCreationModal({
+  isOpen,
+  onClose,
+  onBackgroundClick,
+  categories,
+  isLoadingCategories,
+  categoryError,
+  onSaveCategory
+}: TaskCreationModalProps) {
   const {
     currentView,
     inputValue,
@@ -21,19 +35,21 @@ export function TaskCreationModal({ isOpen, onClose, onBackgroundClick }: TaskCr
     setRepetitionCycle,
     importance,
     setImportance,
-    category,
-    setCategory,
-    categoryColor,
-    setCategoryColor,
+    showCategoryForm,
     handleContinue,
     handleQuestionToggle,
     handleQuestionEdit,
     handleQuestionSave,
     handleQuestionDelete,
     handleEditModalClose,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
     handleRegisterSelectedQuestions,
     resetModal
   } = useTaskCreationModal();
+
+  const { selectedCategoryId } = useCategoryStore();
 
   const handleClose = () => {
     resetModal();
@@ -65,10 +81,14 @@ export function TaskCreationModal({ isOpen, onClose, onBackgroundClick }: TaskCr
       setRepetitionCycle={setRepetitionCycle}
       importance={importance}
       setImportance={setImportance}
-      category={category}
-      setCategory={setCategory}
-      categoryColor={categoryColor}
-      setCategoryColor={setCategoryColor}
+
+      categories={categories}
+      selectedCategoryId={selectedCategoryId}
+      isLoadingCategories={isLoadingCategories}
+      categoryError={categoryError}
+      onCategorySelect={handleCategorySelect}
+      onAddCategoryClick={handleAddCategoryClick}
+
       onContinue={handleContinue}
       onQuestionToggle={handleQuestionToggle}
       onQuestionEdit={handleQuestionEdit}

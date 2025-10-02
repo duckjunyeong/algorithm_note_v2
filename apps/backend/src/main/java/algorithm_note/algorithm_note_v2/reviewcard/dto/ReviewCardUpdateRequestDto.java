@@ -21,7 +21,7 @@ public class ReviewCardUpdateRequestDto {
 
     private String title;
 
-    private String category;
+    private Long categoryId;
 
     @Min(value = 1, message = "중요도는 1 이상이어야 합니다")
     @Max(value = 5, message = "중요도는 5 이하여야 합니다")

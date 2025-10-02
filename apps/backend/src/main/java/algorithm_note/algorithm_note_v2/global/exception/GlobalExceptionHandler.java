@@ -1,5 +1,7 @@
 package algorithm_note.algorithm_note_v2.global.exception;
 
+import algorithm_note.algorithm_note_v2.category.exception.CategoryNotFoundException;
+import algorithm_note.algorithm_note_v2.category.exception.DuplicateCategoryException;
 import algorithm_note.algorithm_note_v2.global.dto.ClerkWebhookResponseDto;
 import algorithm_note.algorithm_note_v2.reviewcard.exception.ReviewCardNotFoundException;
 import algorithm_note.algorithm_note_v2.user.dto.UserResponseDto;
@@ -71,5 +73,27 @@ public class GlobalExceptionHandler {
                 "status", HttpStatus.NOT_FOUND.value()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleCategoryNotFoundException(CategoryNotFoundException ex) {
+        log.warn("Category not found: {}", ex.getMessage());
+        Map<String, Object> errorResponse = Map.of(
+                "error", "Category not found",
+                "message", ex.getMessage(),
+                "status", HttpStatus.NOT_FOUND.value()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(DuplicateCategoryException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateCategoryException(DuplicateCategoryException ex) {
+        log.warn("Duplicate category: {}", ex.getMessage());
+        Map<String, Object> errorResponse = Map.of(
+                "error", "Duplicate category",
+                "message", ex.getMessage(),
+                "status", HttpStatus.CONFLICT.value()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 }

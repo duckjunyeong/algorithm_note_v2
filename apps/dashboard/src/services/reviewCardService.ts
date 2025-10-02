@@ -4,8 +4,9 @@ import type {
   CreateReviewCardResponse,
   GetReviewCardsResponse,
   ReviewCard,
-  UpdateReviewResultRequest
 } from '../../../../libs/api-types/src';
+
+import type { UpdateReviewResultRequest } from '../../../../libs/api-types/src/review-card.types';
 
 /**
  * 복습 카드 관련 API 호출 서비스

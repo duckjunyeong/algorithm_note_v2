@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react';
 import { useQuestionStore } from '../../../../store/useQuestionStore';
 import { useReviewCardStore } from '../../../../store/useReviewCardStore';
+import { useCategoryStore } from '../../../../store/useCategoryStore';
 import { taskCreationService } from '../../../../services/taskCreationService';
 import { showSuccessToast, showErrorToast } from '../../../../utils/toast';
 
-type ViewType = 'input' | 'select';
+type ViewType = 'input' | 'select' | 'category';
 
 export function useTaskCreationModal() {
   const [currentView, setCurrentView] = useState<ViewType>('input');
@@ -19,11 +20,11 @@ export function useTaskCreationModal() {
   // 질문 설정 상태 관리
   const [repetitionCycle, setRepetitionCycle] = useState(3);
   const [importance, setImportance] = useState(5);
-  const [category, setCategory] = useState('');
-  const [categoryColor, setCategoryColor] = useState('#3B82F6');
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
 
   const { questions, setQuestions, clearQuestions } = useQuestionStore();
   const { createReviewCard } = useReviewCardStore();
+  const { selectedCategoryId, selectCategory } = useCategoryStore();
 
   const resetModal = useCallback(() => {
     setCurrentView('input');
@@ -34,10 +35,10 @@ export function useTaskCreationModal() {
     setEditingQuestion(null);
     setRepetitionCycle(3);
     setImportance(5);
-    setCategory('');
-    setCategoryColor('#3B82F6');
+    setShowCategoryForm(false);
+    selectCategory(null);
     clearQuestions();
-  }, [clearQuestions]);
+  }, [clearQuestions, selectCategory]);
 
   const handleContinue = useCallback(async () => {
     const trimmedValue = inputValue.trim();
@@ -129,6 +130,22 @@ export function useTaskCreationModal() {
     setEditingQuestion(null);
   }, []);
 
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = useCallback((categoryId: number) => {
+    selectCategory(categoryId);
+    setShowCategoryForm(false);
+  }, [selectCategory]);
+
+  // 카테고리 추가 버튼 클릭 핸들러
+  const handleAddCategoryClick = useCallback(() => {
+    setShowCategoryForm(true);
+  }, []);
+
+  // 카테고리 생성 폼 닫기 핸들러
+  const handleCloseCategoryForm = useCallback(() => {
+    setShowCategoryForm(false);
+  }, []);
+
   // 선택된 질문들 등록
   const handleRegisterSelectedQuestions = useCallback(async () => {
     if (selectedQuestions.size === 0) {
@@ -141,8 +158,8 @@ export function useTaskCreationModal() {
       return;
     }
 
-    if (!category.trim()) {
-      setErrorMessage('카테고리를 입력해주세요');
+    if (!selectedCategoryId) {
+      setErrorMessage('카테고리를 선택해주세요');
       return;
     }
 
@@ -158,7 +175,7 @@ export function useTaskCreationModal() {
       // 복습 카드 생성 요청 데이터 구성
       const reviewCardData = {
         title: questions.title,
-        category: category.trim(),
+        categoryId: selectedCategoryId,
         importance,
         reviewCycle: repetitionCycle,
         questions: selectedQuestionTexts
@@ -180,7 +197,7 @@ export function useTaskCreationModal() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedQuestions, questions, category, importance, repetitionCycle, createReviewCard, resetModal]);
+  }, [selectedQuestions, questions, selectedCategoryId, importance, repetitionCycle, createReviewCard, resetModal]);
 
   return {
     currentView,
@@ -195,16 +212,16 @@ export function useTaskCreationModal() {
     setRepetitionCycle,
     importance,
     setImportance,
-    category,
-    setCategory,
-    categoryColor,
-    setCategoryColor,
+    showCategoryForm,
     handleContinue,
     handleQuestionToggle,
     handleQuestionEdit,
     handleQuestionSave,
     handleQuestionDelete,
     handleEditModalClose,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
     handleRegisterSelectedQuestions,
     resetModal
   };

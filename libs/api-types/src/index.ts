@@ -12,3 +12,11 @@ export type {
   GetReviewCardsResponse,
   ApiErrorResponse
 } from './review-card.types';
+
+// 카테고리 관련 타입
+export type {
+  Category,
+  CreateCategoryRequest,
+  CreateCategoryResponse,
+  GetCategoriesResponse
+} from './category.types';

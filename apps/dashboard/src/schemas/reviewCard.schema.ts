@@ -17,9 +17,9 @@ export const createReviewCardRequestSchema = z.object({
     .min(1, "제목을 입력해주세요")
     .max(100, "제목은 100자 이내로 작성해주세요"),
 
-  category: z.string()
-    .min(1, "카테고리를 입력해주세요")
-    .max(50, "카테고리는 50자 이내로 작성해주세요"),
+  categoryId: z.number()
+    .int("카테고리 ID는 정수여야 합니다")
+    .positive("카테고리를 선택해주세요"),
 
   importance: z.number()
     .int("중요도는 정수여야 합니다")

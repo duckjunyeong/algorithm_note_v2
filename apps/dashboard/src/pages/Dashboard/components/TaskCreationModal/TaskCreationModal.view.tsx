@@ -8,7 +8,7 @@ interface TaskCreationModalViewProps {
   isOpen: boolean;
   onClose: () => void;
   onBackgroundClick?: () => void;
-  currentView: 'input' | 'select';
+  currentView: 'input' | 'select' | 'category';
   inputValue: string;
   setInputValue: (value: string) => void;
   errorMessage: string;
@@ -20,10 +20,14 @@ interface TaskCreationModalViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  categoryColor: string;
-  setCategoryColor: (value: string) => void;
+  // --- 수정된 부분 시작 ---
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
+  // --- 수정된 부분 끝 ---
   onContinue: () => void;
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
@@ -49,10 +53,14 @@ export function TaskCreationModalView({
   setRepetitionCycle,
   importance,
   setImportance,
-  category,
-  setCategory,
-  categoryColor,
-  setCategoryColor,
+  // --- 추가된 props ---
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  onCategorySelect,
+  onAddCategoryClick,
+  // ---
   onContinue,
   onQuestionToggle,
   onQuestionEdit,
@@ -70,56 +78,60 @@ export function TaskCreationModalView({
         onClick={onBackgroundClick}
       />
       <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">
-            추가 태스크 생성
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+          <div className="flex items-center justify-between p-6 border-b">
+            <h2 className="text-xl font-semibold text-gray-900">
+              추가 태스크 생성
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
 
-        <div className="p-6">
-          {currentView === 'input' && (
-            <InputView
-              value={inputValue}
-              onChange={setInputValue}
-              errorMessage={errorMessage}
-              isLoading={isLoading}
-              onContinue={onContinue}
-            />
-          )}
-          {currentView === 'select' && (
-            <>
-              {isLoading && !questions ? (
-                <LoadingView />
-              ) : questions ? (
-                <SelectView
-                  title={questions.title}
-                  questions={questions.questions}
-                  selectedQuestions={selectedQuestions}
-                  repetitionCycle={repetitionCycle}
-                  setRepetitionCycle={setRepetitionCycle}
-                  importance={importance}
-                  setImportance={setImportance}
-                  category={category}
-                  setCategory={setCategory}
-                  categoryColor={categoryColor}
-                  setCategoryColor={setCategoryColor}
-                  onQuestionToggle={onQuestionToggle}
-                  onQuestionEdit={onQuestionEdit}
-                  onQuestionDelete={onQuestionDelete}
-                  onRegisterSelectedQuestions={onRegisterSelectedQuestions}
-                  errorMessage={errorMessage}
-                />
-              ) : null}
-            </>
-          )}
+          <div className="p-6">
+            {currentView === 'input' && (
+              <InputView
+                value={inputValue}
+                onChange={setInputValue}
+                errorMessage={errorMessage}
+                isLoading={isLoading}
+                onContinue={onContinue}
+              />
+            )}
+            {currentView === 'select' && (
+              <>
+                {isLoading && !questions ? (
+                  <LoadingView />
+                ) : questions ? (
+                  <SelectView
+                    title={questions.title}
+                    questions={questions.questions}
+                    selectedQuestions={selectedQuestions}
+                    repetitionCycle={repetitionCycle}
+                    setRepetitionCycle={setRepetitionCycle}
+                    importance={importance}
+                    setImportance={setImportance}
+                    // --- 수정된 부분 시작 ---
+                    categories={categories}
+                    selectedCategoryId={selectedCategoryId}
+                    isLoadingCategories={isLoadingCategories}
+                    categoryError={categoryError}
+                    onCategorySelect={onCategorySelect}
+                    onAddCategoryClick={onAddCategoryClick}
+                    // --- 수정된 부분 끝 ---
+                    onQuestionToggle={onQuestionToggle}
+                    onQuestionEdit={onQuestionEdit}
+                    onQuestionDelete={onQuestionDelete}
+                    onRegisterSelectedQuestions={onRegisterSelectedQuestions}
+                    errorMessage={errorMessage}
+                  />
+                ) : null}
+              </>
+            )}
         </div>
       </div>
 
@@ -134,6 +146,8 @@ export function TaskCreationModalView({
     </div>
   );
 }
+
+// ... InputView, LoadingView 컴포넌트는 변경 없음 ...
 
 interface InputViewProps {
   value: string;
@@ -192,10 +206,14 @@ interface SelectViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  categoryColor: string;
-  setCategoryColor: (value: string) => void;
+  // --- 수정된 부분 시작 ---
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
+  // --- 수정된 부분 끝 ---
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
   onQuestionDelete: (questionId: number) => void;
@@ -211,10 +229,14 @@ function SelectView({
   setRepetitionCycle,
   importance,
   setImportance,
-  category,
-  setCategory,
-  categoryColor,
-  setCategoryColor,
+  // --- 추가된 props ---
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  onCategorySelect,
+  onAddCategoryClick,
+  // ---
   onQuestionToggle,
   onQuestionEdit,
   onQuestionDelete,
@@ -268,16 +290,20 @@ function SelectView({
 
         {/* Settings Panel */}
         <div className="w-64 flex-shrink-0">
+          {/* --- 수정된 부분 시작 --- */}
           <QuestionSettingsPanel
             repetitionCycle={repetitionCycle}
             setRepetitionCycle={setRepetitionCycle}
             importance={importance}
             setImportance={setImportance}
-            category={category}
-            setCategory={setCategory}
-            categoryColor={categoryColor}
-            setCategoryColor={setCategoryColor}
+            categories={categories}
+            selectedCategoryId={selectedCategoryId}
+            isLoadingCategories={isLoadingCategories}
+            categoryError={categoryError}
+            onCategorySelect={onCategorySelect}
+            onAddCategoryClick={onAddCategoryClick}
           />
+          {/* --- 수정된 부분 끝 --- */}
         </div>
       </div>
 

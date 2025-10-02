@@ -1,0 +1,4531 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+eslint.config.js
+index.html
+package.json
+postcss.config.js
+public/vite.svg
+README.md
+src/App.tsx
+src/components/AuthProvider/AuthProvider.view.tsx
+src/components/AuthProvider/index.tsx
+src/components/AuthProvider/useAuthProvider.ts
+src/components/FeatureSection/FeatureSection.view.tsx
+src/components/FeatureSection/index.tsx
+src/components/FeatureSection/useFeatureSection.ts
+src/components/Header/Header.view.tsx
+src/components/Header/index.tsx
+src/components/Header/useHeader.ts
+src/components/ProtectedRoute/index.tsx
+src/components/ProtectedRoute/ProtectedRoute.view.tsx
+src/components/ProtectedRoute/useProtectedRoute.ts
+src/components/SidebarNav/icons.tsx
+src/components/SidebarNav/index.tsx
+src/components/SidebarNav/SidebarNav.view.tsx
+src/components/SidebarNav/useSidebarNavData.ts
+src/constants/api.ts
+src/constants/messages.ts
+src/constants/paths.ts
+src/hooks/useApiClient.ts
+src/index.css
+src/main.tsx
+src/pages/Dashboard/components/HeroContent/HeroContent.view.tsx
+src/pages/Dashboard/components/HeroContent/index.tsx
+src/pages/Dashboard/components/HeroContent/useHeroContent.ts
+src/pages/Dashboard/components/ReviewTestModal/index.tsx
+src/pages/Dashboard/components/ReviewTestModal/ReviewTestModal.view.tsx
+src/pages/Dashboard/components/ReviewTestModal/useReviewTestModal.ts
+src/pages/Dashboard/components/TaskCard/index.tsx
+src/pages/Dashboard/components/TaskCard/TaskCard.view.tsx
+src/pages/Dashboard/components/TaskCard/useTaskCard.ts
+src/pages/Dashboard/components/TaskCreationModal/index.tsx
+src/pages/Dashboard/components/TaskCreationModal/TaskCreationModal.view.tsx
+src/pages/Dashboard/components/TaskCreationModal/useTaskCreationModal.ts
+src/pages/Dashboard/DashboardPage.view.tsx
+src/pages/Dashboard/index.tsx
+src/pages/Dashboard/useDashboardPage.ts
+src/schemas/answer.schema.ts
+src/schemas/category.schema.ts
+src/schemas/reviewCard.schema.ts
+src/schemas/taskCreation.schema.ts
+src/services/answerService.ts
+src/services/apiClient.ts
+src/services/categoryService.ts
+src/services/reviewCardService.ts
+src/services/reviewQuestionService.ts
+src/services/taskCreationService.ts
+src/store/useAuthStore.ts
+src/store/useCategoryStore.ts
+src/store/useQuestionStore.ts
+src/store/useReviewCardStore.ts
+src/types/api.ts
+src/utils/toast.ts
+src/vite-env.d.ts
+tailwind.config.js
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+</file>
+
+<file path="eslint.config.js">
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs['recommended-latest'],
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+  },
+])
+</file>
+
+<file path="index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="package.json">
+{
+  "name": "dashboard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@clerk/clerk-react": "^5.2.8",
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-java": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/lang-python": "^6.2.1",
+    "@codemirror/view": "^6.38.2",
+    "@uiw/codemirror-theme-vscode": "^4.25.1",
+    "@uiw/react-codemirror": "^4.25.1",
+    "axios": "^1.12.1",
+    "framer-motion": "^11.18.2",
+    "lucide-react": "^0.417.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "6.25.1",
+    "react-toastify": "^11.0.5",
+    "recharts": "^2.15.4",
+    "zod": "^3.23.8",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.35.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.4.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.43.0",
+    "vite": "^7.1.6"
+  }
+}
+</file>
+
+<file path="postcss.config.js">
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  }
+}
+</file>
+
+<file path="public/vite.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="31.88" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 257"><defs><linearGradient id="IconifyId1813088fe1fbc01fb466" x1="-.828%" x2="57.636%" y1="7.652%" y2="78.411%"><stop offset="0%" stop-color="#41D1FF"></stop><stop offset="100%" stop-color="#BD34FE"></stop></linearGradient><linearGradient id="IconifyId1813088fe1fbc01fb467" x1="43.376%" x2="50.316%" y1="2.242%" y2="89.03%"><stop offset="0%" stop-color="#FFEA83"></stop><stop offset="8.333%" stop-color="#FFDD35"></stop><stop offset="100%" stop-color="#FFA800"></stop></linearGradient></defs><path fill="url(#IconifyId1813088fe1fbc01fb466)" d="M255.153 37.938L134.897 252.976c-2.483 4.44-8.862 4.466-11.382.048L.875 37.958c-2.746-4.814 1.371-10.646 6.827-9.67l120.385 21.517a6.537 6.537 0 0 0 2.322-.004l117.867-21.483c5.438-.991 9.574 4.796 6.877 9.62Z"></path><path fill="url(#IconifyId1813088fe1fbc01fb467)" d="M185.432.063L96.44 17.501a3.268 3.268 0 0 0-2.634 3.014l-5.474 92.456a3.268 3.268 0 0 0 3.997 3.378l24.777-5.718c2.318-.535 4.413 1.507 3.936 3.838l-7.361 36.047c-.495 2.426 1.782 4.5 4.151 3.78l15.304-4.649c2.372-.72 4.652 1.36 4.15 3.788l-11.698 56.621c-.732 3.542 3.979 5.473 5.943 2.437l1.313-2.028l72.516-144.72c1.215-2.423-.88-5.186-3.54-4.672l-25.505 4.922c-2.396.462-4.435-1.77-3.759-4.114l16.646-57.705c.677-2.35-1.37-4.583-3.769-4.113Z"></path></svg>
+</file>
+
+<file path="README.md">
+# React + TypeScript + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
+</file>
+
+<file path="src/App.tsx">
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import DashboardPage from './pages/Dashboard';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthProvider } from './components/AuthProvider';
+import { useApiClient } from './hooks/useApiClient';
+import 'react-toastify/dist/ReactToastify.css';
+
+function App() {
+  useApiClient();
+
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={ <ProtectedRoute> <DashboardPage /></ProtectedRoute>} />
+        </Routes>
+        <ToastContainer />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+</file>
+
+<file path="src/components/AuthProvider/AuthProvider.view.tsx">
+import type { ReactNode } from 'react';
+
+interface AuthProviderViewProps {
+  children: ReactNode;
+  isLoaded: boolean;
+}
+
+export function AuthProviderView({ children, isLoaded }: AuthProviderViewProps) {
+  // Show loading indicator while Clerk initializes
+  console.log("In AuthProvider.view.tsx : isLoaded " + isLoaded);
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+</file>
+
+<file path="src/components/AuthProvider/index.tsx">
+import type { ReactNode } from 'react';
+import { useAuthProvider } from './useAuthProvider';
+import { AuthProviderView } from './AuthProvider.view';
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+  const { isLoaded } = useAuthProvider();
+
+  return <AuthProviderView isLoaded={isLoaded}>{children}</AuthProviderView>;
+}
+</file>
+
+<file path="src/components/AuthProvider/useAuthProvider.ts">
+import { useEffect } from 'react';
+import { useAuth, useUser } from '@clerk/clerk-react';
+import { useAuthStore } from '../../store/useAuthStore';
+import type { User } from '../../store/useAuthStore';
+
+
+// 최신화된 데이터가 아닌 브라우저에 저장된 데이터를 가공한다.
+export function useAuthProvider() {
+  const { isLoaded: clerkIsLoaded, isSignedIn: clerkIsSignedIn } = useAuth();
+  const { user: clerkUser } = useUser();
+  const { setAuthState, setUser, clearAuth, isLoaded } = useAuthStore();
+
+  useEffect(() => {
+    console.log("In useAuthProvider: isLoaded " + isLoaded);
+    setAuthState({
+      isLoaded: clerkIsLoaded,
+      isSignedIn: clerkIsSignedIn,
+    });
+
+    if (clerkIsLoaded) {
+      if (clerkIsSignedIn && clerkUser) {
+        const user: User = {
+          id: clerkUser.id,
+          emailAddress: clerkUser.primaryEmailAddress?.emailAddress || '',
+          firstName: clerkUser.firstName || undefined,
+          lastName: clerkUser.lastName || undefined,
+          imageUrl: clerkUser.imageUrl || undefined,
+          publicMetadata: {
+            role: clerkUser.publicMetadata?.role as string | undefined,
+          },
+        };
+        setUser(user);
+      } else {
+          setAuthState({
+            isLoaded: true,
+            isSignedIn: false,
+          });
+      }
+    }
+  }, [clerkIsLoaded, clerkIsSignedIn, clerkUser, setAuthState, setUser, clearAuth]);
+
+  return {
+    isLoaded: clerkIsLoaded,
+  };
+}
+</file>
+
+<file path="src/components/FeatureSection/FeatureSection.view.tsx">
+// FeatureSection/FeatureSection.view.tsx
+import type { FC } from 'react';
+import type { AccordionItem } from './useFeatureSection';
+
+interface FeatureSectionViewProps {
+  title: string;
+  description: string;
+  imageUrl: string;
+  imageAlt: string;
+  accordionItems: AccordionItem[];
+  openId: string | null;
+  onAccordionToggle: (id: string) => void;
+}
+
+/**
+ * 서비스의 핵심 기능을 소개하는 섹션의 UI 뷰 컴포넌트입니다.
+ */
+export const FeatureSectionView: FC<FeatureSectionViewProps> = ({
+  title,
+  description,
+  imageUrl,
+  imageAlt,
+  accordionItems,
+  openId,
+  onAccordionToggle,
+}) => {
+  return (
+    <section className="py-24 sm:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-16 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+          
+          {/* 왼쪽: 텍스트 콘텐츠 */}
+          <div className="lg:pt-4">
+            <h2 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
+              {title}
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-text-secondary">
+              {description}
+            </p>
+            
+            {/* 아코디언 */}
+            <dl className="mt-10 space-y-4 divide-y divide-neutral-300/60 border-t border-neutral-300/60">
+              {accordionItems.map(item => (
+                <div key={item.id} className="pt-4">
+                  <dt>
+                    <button
+                      onClick={() => onAccordionToggle(item.id)}
+                      className="flex w-full items-start justify-between text-left text-text-primary"
+                    >
+                      <span className="flex items-center gap-4 text-base font-semibold leading-7">
+                        <item.icon className="h-5 w-5 flex-none text-brand" aria-hidden="true" />
+                        {item.title}
+                      </span>
+                      <span className="ml-6 flex h-7 items-center">
+                        {openId === item.id ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-6 w-6"><path fillRule="evenodd" d="M4 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H4.75A.75.75 0 0 1 4 10Z" clipRule="evenodd" /></svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-6 w-6"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>
+                        )}
+                      </span>
+                    </button>
+                  </dt>
+                  {/* 아코디언 내용: transition으로 부드러운 효과 적용 */}
+                  <dd className={`overflow-hidden transition-all duration-300 ease-in-out ${openId === item.id ? 'mt-2 max-h-40' : 'max-h-0'}`}>
+                    <p className="pl-9 text-base leading-7 text-text-secondary">
+                      {item.content}
+                    </p>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          {/* 오른쪽: 이미지 */}
+          <div>
+            <img
+              src={imageUrl}
+              alt={imageAlt}
+              className="w-full max-w-none rounded-xl shadow-xl ring-1 ring-neutral-900/10"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+</file>
+
+<file path="src/components/FeatureSection/index.tsx">
+// FeatureSection/index.tsx
+import { FeatureSectionView } from './FeatureSection.view';
+import { useFeatureSection } from './useFeatureSection';
+
+export const FeatureSection = () => {
+  // 훅에서 반환된 객체를 구조 분해하여 받아옵니다.
+  const { handleAccordionToggle, ...otherProps } = useFeatureSection();
+
+  return (
+    <FeatureSectionView
+      // onAccordionToggle prop에 handleAccordionToggle 함수를 명시적으로 전달합니다.
+      onAccordionToggle={handleAccordionToggle}
+      // 나머지 props는 그대로 전달합니다.
+      {...otherProps}
+    />
+  );
+};
+</file>
+
+<file path="src/components/FeatureSection/useFeatureSection.ts">
+import { useState } from 'react';
+import type { IconType } from 'react-icons';
+import { BsKanban } from 'react-icons/bs';
+import { IoIosAddCircleOutline } from 'react-icons/io';
+import { FiDownload } from 'react-icons/fi';
+import LandingImage from '../../assets/landing_image.jpg';
+
+export interface AccordionItem {
+  id: string;
+  title: string;
+  content: string;
+  icon: IconType;
+}
+
+// 아코디언에 표시될 실제 데이터입니다. icon 속성에 react-icons 컴포넌트를 직접 할당합니다.
+const accordionItemsData: AccordionItem[] = [
+  {
+    id: 'workspaces',
+    title: 'Project workspaces',
+    content: 'Organize projects into list, grid, and board views. Customize workspaces into stages that match your writing process.',
+    icon: BsKanban,
+  },
+  {
+    id: 'focus',
+    title: 'Deep focus modes',
+    content: 'Eliminate distractions and concentrate on your writing with customizable focus modes. Tailor your environment to your creative needs.',
+    icon: IoIosAddCircleOutline,
+  },
+  {
+    id: 'desktop',
+    title: 'Desktop app',
+    content: 'Access all your projects and tools seamlessly with our native desktop applications for both Mac and Windows.',
+    icon: FiDownload,
+  },
+];
+
+/**
+ * FeatureSection 컴포넌트의 로직과 상태를 관리하는 훅입니다.
+ */
+export const useFeatureSection = () => {
+  const [openId, setOpenId] = useState<string | null>(accordionItemsData[0].id);
+
+  const title = 'Focused writing meets project management';
+  const description = 'Glide between focused writing, document collaboration, and project management. Strut brings your tools together to keep your writing process moving forward.';
+  const imageUrl = LandingImage;
+  const imageAlt = 'Screenshot of the application dashboard showing project management boards.';
+
+  const handleAccordionToggle = (id: string) => {
+    setOpenId(prevId => (prevId === id ? null : id));
+  };
+
+  return {
+    title,
+    description,
+    imageUrl,
+    imageAlt,
+    accordionItems: accordionItemsData,
+    openId,
+    handleAccordionToggle,
+  };
+};
+</file>
+
+<file path="src/components/Header/Header.view.tsx">
+// Header/Header.view.tsx
+import React from 'react';
+import type { IconType } from 'react-icons';
+import type { BreadcrumbItem } from './useHeader';
+import { FiMenu, FiGlobe, FiChevronDown } from 'react-icons/fi';
+
+interface HeaderViewProps {
+  appName: string;
+  userName: string;
+  breadcrumbs: BreadcrumbItem[];
+  onToggleSidebar: () => void; // 사이드바 토글 함수
+}
+
+export const HeaderView: React.FC<HeaderViewProps> = ({
+  appName,
+  userName,
+  breadcrumbs,
+  onToggleSidebar,
+}) => {
+  // 사용자 이름의 첫 글자를 따서 아바타 이니셜로 사용
+  const userInitial = userName.charAt(0) || 'U';
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-30 bg-background-secondary border-b border-neutral-100 font-sans">
+      <div className="flex h-16 items-center justify-between px-6">
+        {/* 왼쪽 섹션 */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={onToggleSidebar}
+            className="text-text-secondary hover:text-text-primary"
+            aria-label="Toggle Sidebar"
+          >
+            <FiMenu size={22} />
+          </button>
+          <div className="h-6 w-px bg-neutral-100"></div>
+          <span className="font-bold text-text-primary">{appName}</span>
+          <div className="flex items-center gap-2 text-sm">
+          {breadcrumbs.map((item, index) => (
+            <React.Fragment key={index}>
+              <div className="flex cursor-pointer items-center gap-2 rounded-md p-2 text-text-secondary hover:bg-neutral-50">
+                <item.icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </div>
+              {index < breadcrumbs.length - 1 && <FiChevronDown className="h-4 w-4 text-neutral-300" />}
+            </React.Fragment>
+          ))}
+          </div>
+        </div>
+
+        {/* 오른쪽 섹션 */}
+        <div className="flex items-center gap-4">
+          <button className="text-text-secondary hover:text-text-primary">
+            <FiGlobe size={20} />
+          </button>
+          <div className="h-8 w-8 flex items-center justify-center rounded-full bg-orange-400 text-sm font-bold text-white">
+            {userInitial}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+</file>
+
+<file path="src/components/Header/index.tsx">
+// Header/index.tsx
+import React from 'react';
+import { useHeader } from './useHeader';
+import { HeaderView } from './Header.view';
+
+interface HeaderProps {
+  onToggleSidebar: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
+  const { appName, userName, breadcrumbs } = useHeader();
+
+  return (
+    <HeaderView
+      appName={appName}
+      userName={userName}
+      breadcrumbs={breadcrumbs}
+      onToggleSidebar={onToggleSidebar}
+    />
+  );
+};
+</file>
+
+<file path="src/components/Header/useHeader.ts">
+// Header/useHeader.ts
+import { FiFile } from 'react-icons/fi';
+import type { IconType } from 'react-icons';
+
+// 브레드크럼 아이템의 타입 정의
+export interface BreadcrumbItem {
+  icon: IconType;
+  label: string;
+}
+
+/**
+ * Header 컴포넌트에 필요한 정적 데이터를 제공하는 훅
+ */
+export const useHeader = () => {
+  // 예시를 위한 목업(mockup) 데이터
+  const appName = "Vercel AI";
+  const userName = "강준영";
+  const breadcrumbs: BreadcrumbItem[] = [
+    { icon: FiFile, label: "junyeongand's space" },
+    { icon: FiFile, label: "프로필과/비밀번호" },
+  ];
+
+  return {
+    appName,
+    userName,
+    breadcrumbs,
+  };
+};
+</file>
+
+<file path="src/components/ProtectedRoute/index.tsx">
+import type { ReactNode } from 'react';
+import { useProtectedRoute } from './useProtectedRoute';
+import { ProtectedRouteView } from './ProtectedRoute.view';
+
+interface ProtectedRouteProps {
+  children: ReactNode;
+  requiredRole?: string;
+  redirectTo?: string;
+}
+
+export function ProtectedRoute({
+  children,
+  requiredRole = 'member',
+  redirectTo = 'http://localhost:5174/sign-in'
+}: ProtectedRouteProps) {
+  const { shouldShowContent, shouldShowLoading } = useProtectedRoute({
+    requiredRole,
+    redirectTo
+  });
+
+  return (
+    <ProtectedRouteView
+      shouldShowContent={shouldShowContent}
+      shouldShowLoading={shouldShowLoading}
+    >
+      {children}
+    </ProtectedRouteView>
+  );
+}
+</file>
+
+<file path="src/components/ProtectedRoute/ProtectedRoute.view.tsx">
+import type { ReactNode } from 'react';
+
+interface ProtectedRouteViewProps {
+  children: ReactNode;
+  shouldShowContent: boolean;
+  shouldShowLoading: boolean;
+}
+
+export function ProtectedRouteView({
+  children,
+  shouldShowContent,
+  shouldShowLoading
+}: ProtectedRouteViewProps) {
+  // Show loading spinner while authentication is being checked
+  if (shouldShowLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <span className="ml-3 text-gray-600">Loading...</span>
+      </div>
+    );
+  }
+
+  // Only render children if user is properly authenticated and authorized
+  if (shouldShowContent) {
+    return <>{children}</>;
+  }
+
+  // Return null while redirecting (to prevent flash of content)
+  return null;
+}
+</file>
+
+<file path="src/components/ProtectedRoute/useProtectedRoute.ts">
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/useAuthStore';
+
+interface UseProtectedRouteProps {
+  requiredRole?: string;
+  redirectTo?: string;
+}
+
+export function useProtectedRoute({
+  requiredRole = 'member',
+  redirectTo = '/sign-in'
+}: UseProtectedRouteProps = {}) {
+  const navigate = useNavigate();
+  const { isLoaded, isSignedIn, role } = useAuthStore();
+  
+  useEffect(() => {
+
+    console.log("isLoaded: " + isLoaded);
+    if (!isLoaded) return;
+
+    if (!isSignedIn) {
+      window.location.replace(redirectTo);
+      return;
+    }
+
+    if (requiredRole && role !== requiredRole) {
+      navigate('/unauthorized');
+      return;
+    }
+  }, [isLoaded, isSignedIn, role, requiredRole, navigate, redirectTo]);
+
+  const shouldShowContent = isLoaded && isSignedIn && (!requiredRole || role === requiredRole);
+  const shouldShowLoading = !isLoaded;
+
+  return {
+    shouldShowContent,
+    shouldShowLoading,
+    isLoaded,
+    isSignedIn,
+    role,
+  };
+}
+</file>
+
+<file path="src/components/SidebarNav/icons.tsx">
+// SidebarNav/icons.tsx
+import React from 'react';
+
+type IconProps = React.SVGProps<SVGSVGElement>;
+
+/**
+ * Skyscape Systems의 커스텀 로고 SVG 컴포넌트
+ */
+export const CompanyLogo: React.FC<IconProps> = (props) => (
+  <svg {...props} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="20" r="18" fill="url(#paint0_linear_1_2)" />
+    <defs>
+      <linearGradient id="paint0_linear_1_2" x1="20" y1="2" x2="20" y2="38" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#A8B1FF" />
+        <stop offset="1" stopColor="#7B83EB" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+</file>
+
+<file path="src/components/SidebarNav/index.tsx">
+// SidebarNav/index.tsx
+import React, { useState } from 'react';
+import { useSidebarNavData } from './useSidebarNavData';
+import { SidebarNavView } from './SidebarNav.view';
+
+interface SidebarNavProps {
+  isOpen: boolean; // 부모로부터 isOpen 상태를 받습니다.
+}
+
+export const SidebarNav: React.FC<SidebarNavProps> = ({ isOpen }) => {
+  const { mainNavItems, workflowItems } = useSidebarNavData();
+  const [activeItemId, setActiveItemId] = useState('home');
+
+  const handleItemClick = (id: string) => {
+    setActiveItemId(id);
+  };
+
+  return (
+    <SidebarNavView
+      isOpen={isOpen}
+      activeItemId={activeItemId}
+      onItemClick={handleItemClick}
+      mainNavItems={mainNavItems}
+      workflowItems={workflowItems}
+    />
+  );
+};
+</file>
+
+<file path="src/components/SidebarNav/SidebarNav.view.tsx">
+// SidebarNav/SidebarNav.view.tsx
+import React from 'react';
+import type { NavItem } from './useSidebarNavData';
+import { FiChevronDown } from 'react-icons/fi';
+
+interface SidebarNavViewProps {
+  isOpen: boolean;
+  activeItemId: string;
+  onItemClick: (id: string) => void;
+  mainNavItems: NavItem[];
+  workflowItems: NavItem[];
+}
+
+export const SidebarNavView: React.FC<SidebarNavViewProps> = ({
+  isOpen,
+  activeItemId,
+  onItemClick,
+  mainNavItems,
+  workflowItems,
+}) => {
+  const renderNavItem = (item: NavItem) => {
+    const isActive = activeItemId === item.id;
+    return (
+      <li key={item.id}>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onItemClick(item.id);
+          }}
+          className={`
+            flex items-center p-2 rounded-md transition-colors duration-200
+            ${
+              isActive
+                ? 'bg-neutral-50 text-text-primary font-semibold'
+                : 'text-text-secondary hover:bg-neutral-50 hover:text-text-primary'
+            }
+          `}
+        >
+          <item.icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? 'text-brand-DEFAULT' : 'text-neutral-400'}`} />
+          <span className="ml-3 flex-1 whitespace-nowrap text-xs">{item.label}</span>
+          {item.badge && (
+            <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-text-secondary">
+              {item.badge}
+            </span>
+          )}
+          {item.isDropdown && <FiChevronDown className="ml-auto h-2 w-2 text-neutral-400" />}
+        </a>
+      </li>
+    );
+  };
+
+  return (
+    <nav
+      className={`
+        fixed left-0 z-40 flex-col bg-background-primary p-4 font-sans
+        transform transition-transform duration-300 ease-in-out
+        w-[175px]
+        top-[65px] h-screen 
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}
+    >
+
+      {/* 메인 네비게이션 */}
+      <div className="flex-grow">
+        <ul className="space-y-1">
+          {mainNavItems.map(renderNavItem)}
+        </ul>
+      </div>
+
+      {/* 워크플로우 섹션 */}
+      <div>
+        <h3 className="px-2 pt-4 pb-2 text-xs font-semibold uppercase text-text-tertiary">
+          Workflows
+        </h3>
+        <ul className="space-y-1">
+          {workflowItems.map(renderNavItem)}
+        </ul>
+      </div>
+    </nav>
+  );
+};
+</file>
+
+<file path="src/components/SidebarNav/useSidebarNavData.ts">
+// SidebarNav/useSidebarNavData.ts
+import type { IconType } from 'react-icons';
+import {
+  FiHome,
+  FiCheckSquare,
+  FiList,
+  FiRepeat,
+  FiCreditCard,
+  FiTrendingUp,
+  FiBriefcase,
+  FiDollarSign,
+  FiFileText,
+  FiRotateCcw,
+  FiBookOpen,
+} from 'react-icons/fi';
+
+export interface NavItem {
+  id: string;
+  label: string;
+  icon: IconType;
+  badge?: number;
+  isDropdown?: boolean;
+}
+
+const mainNavItems: NavItem[] = [
+  { id: 'home', label: 'Home', icon: FiHome },
+  { id: 'tasks', label: 'Tasks', icon: FiCheckSquare, badge: 10 },
+  { id: 'transactions', label: 'Transactions', icon: FiList },
+  { id: 'payments', label: 'Payments', icon: FiRepeat, isDropdown: true },
+  { id: 'cards', label: 'Cards', icon: FiCreditCard },
+  { id: 'capital', label: 'Capital', icon: FiTrendingUp },
+  { id: 'accounts', label: 'Accounts', icon: FiBriefcase, isDropdown: true },
+];
+
+const workflowItems: NavItem[] = [
+  { id: 'bill-pay', label: 'Bill Pay', icon: FiDollarSign },
+  { id: 'invoicing', label: 'Invoicing', icon: FiFileText, isDropdown: true },
+  { id: 'reimbursements', label: 'Reimbursements', icon: FiRotateCcw },
+  { id: 'accounting', label: 'Accounting', icon: FiBookOpen },
+];
+
+/**
+ * SidebarNav에 필요한 메뉴 데이터를 제공하는 훅
+ */
+export const useSidebarNavData = () => {
+  return {
+    mainNavItems,
+    workflowItems,
+  };  
+};
+</file>
+
+<file path="src/constants/api.ts">
+export const API_CONFIG = {
+  DEFAULT_BASE_URL: 'http://localhost:8085/api',
+  TIMEOUT: 3000000,
+  HEADERS: {
+    CONTENT_TYPE: 'application/json',
+  },
+} as const;
+
+export const API_ENDPOINTS = {
+  PROBLEMS: {
+    REGISTER_URL: '/problems/register/url',
+    REGISTER_MANUAL: '/problems/register/manual',
+    SAVE: '/problems/save',
+    CLEANUP: '/problems/cleanup',
+    CODE_ANALYZE: '/problems/code/analyze',
+  },
+} as const;
+
+export const HTTP_HEADERS = {
+  AUTHORIZATION: 'Authorization',
+  CONTENT_TYPE: 'Content-Type',
+  BEARER_PREFIX: 'Bearer',
+} as const;
+</file>
+
+<file path="src/constants/messages.ts">
+export const ERROR_MESSAGES = {
+  AUTH_TOKEN_FAILED: 'Failed to get authentication token:',
+  MISSING_PUBLISHABLE_KEY: 'Missing Publishable Key',
+  PROBLEM_REGISTRATION_FAILED: 'Problem registration failed',
+  PROBLEM_SAVE_FAILED: 'Failed to save problem',
+  CLEANUP_FAILED: 'Failed to cleanup problem data',
+} as const;
+
+export const UI_TEXT = {
+  APP_NAME: 'AlgorNote',
+  DASHBOARD: {
+    WELCOME: 'Welcome to Dashboard',
+    NO_PROBLEMS: 'No problems registered yet',
+  },
+  PROBLEMS: {
+    REGISTER_TITLE: 'Register Problem',
+    REGISTER_SUCCESS: 'Problem registered successfully',
+    SAVE_SUCCESS: 'Problem saved successfully',
+  },
+} as const;
+</file>
+
+<file path="src/constants/paths.ts">
+export const PATHS = {
+  HOME: '/',
+  DASHBOARD: '/dashboard',
+  SIGN_IN: 'http://localhost:5174/sign-in',
+  SIGN_UP: 'http://localhost:5174/sign-up',
+} as const;
+</file>
+
+<file path="src/hooks/useApiClient.ts">
+import { useEffect } from 'react';
+import { useAuth } from '@clerk/clerk-react';
+import { initializeApiClient } from '../services/apiClient';
+
+export function useApiClient() {
+  const { getToken } = useAuth();
+
+  useEffect(() => {
+    initializeApiClient(getToken);
+  }, [getToken]);
+}
+</file>
+
+<file path="src/index.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</file>
+
+<file path="src/main.tsx">
+import { createRoot } from 'react-dom/client'
+import { ClerkProvider } from '@clerk/clerk-react';
+import { ERROR_MESSAGES } from './constants/messages';
+
+import './index.css'
+import App from './App.tsx'
+
+const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+createRoot(document.getElementById('root')!).render(
+  <ClerkProvider
+      publishableKey={publishableKey}
+      signInUrl={import.meta.env.VITE_CLERK_SIGN_IN_URL}
+      signUpUrl={import.meta.env.VITE_CLERK_SIGN_UP_URL}
+    >
+      <App />
+  </ClerkProvider>,
+)
+</file>
+
+<file path="src/pages/Dashboard/components/HeroContent/HeroContent.view.tsx">
+interface HeroContentViewProps {
+  title: string;
+  description: string;
+  onStartClick: () => void;
+  onCommunityClick: () => void;
+}
+
+export const HeroContentView = ({
+  title,
+  description,
+  onStartClick,
+  onCommunityClick,
+}: HeroContentViewProps) => {
+  return (
+    <section className="relative isolate w-full bg-background-primary py-24 sm:py-32">
+      {/* 배경 그라데이션 효과 */}
+      <div
+        className="absolute inset-0 -z-10 transform-gpu overflow-hidden"
+        aria-hidden="true"
+      >
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[40rem] w-[80rem] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand/20 via-background-primary to-background-primary"
+        />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          {/* 메인 제목 */}
+          <h1 className="mt-8 text-4xl font-bold tracking-tight text-text-primary sm:text-6xl">
+            {title}
+          </h1>
+
+          {/* 부제목 */}
+          <p className="mt-6 whitespace-pre-line text-lg leading-8 text-text-secondary">
+            {description}
+          </p>
+
+          {/* CTA 버튼 그룹 */}
+          <div className="mt-10 flex items-center justify-center gap-x-4">
+            <button
+              type="button"
+              onClick={onStartClick}
+              className="flex items-center gap-2 rounded-md bg-neutral-black px-4 py-2.5 text-sm font-semibold text-text-inverse shadow-sm transition-colors duration-200 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              무료로 시작하기
+            </button>
+            <button
+              type="button"
+              onClick={onCommunityClick}
+              className="flex items-center gap-2 rounded-md bg-background-secondary px-4 py-2.5 text-sm font-semibold text-text-primary shadow-sm ring-1 ring-inset ring-neutral-100 transition-colors duration-200 hover:bg-neutral-50"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="M8 17.929A4 4 0 0 1 7.129 18a4 4 0 0 1-2.26-7.252"/><path d="M16 18a4 4 0 0 0-1.871-.871"/></svg>
+              커뮤니티
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+</file>
+
+<file path="src/pages/Dashboard/components/HeroContent/index.tsx">
+import { HeroContentView } from './HeroContent.view';
+import { useHeroContent } from './useHeroContent';
+
+export const HeroContent = () => {
+  const {
+    title,
+    description,
+    handleStartClick,
+    handleCommunityClick,
+  } = useHeroContent();
+
+  return (
+    <HeroContentView
+      title={title}
+      description={description}
+      onStartClick={handleStartClick}
+      onCommunityClick={handleCommunityClick}
+    />
+  );
+};
+</file>
+
+<file path="src/pages/Dashboard/components/HeroContent/useHeroContent.ts">
+export const useHeroContent = () => {
+  const badgeText = '🎉 정식 출시!';
+  const title = '알고리즘 오답 관리 AlgorNote';
+  const description =
+    '바이브코딩을 시작하는 가장 체계적인 방법.\n코드베이스, 문서화, 구현계획 모두 Vooster가 해결할게요.';
+
+  const handleStartClick = () => {
+    console.log('Start for free button clicked');
+  };
+
+  const handleCommunityClick = () => {
+    console.log('Community button clicked');
+  };
+
+  return {
+    badgeText,
+    title,
+    description,
+    handleStartClick,
+    handleCommunityClick,
+  };
+};
+</file>
+
+<file path="src/pages/Dashboard/components/ReviewTestModal/index.tsx">
+import { useReviewTestModal, type UseReviewTestModalProps } from './useReviewTestModal';
+import { ReviewTestModalView } from './ReviewTestModal.view';
+
+export interface ReviewTestModalProps extends UseReviewTestModalProps {}
+
+export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: ReviewTestModalProps) {
+  const {
+    currentView,
+    currentQuestion,
+    answerInput,
+    setAnswerInput,
+    previousAnswers,
+    currentAnswerIndex,
+    isLoadingQuestions,
+    isLoadingAnswers,
+    isSavingAnswer,
+    isPrevAnswerDisabled,
+    isNextAnswerDisabled,
+    handleSubmitAnswer,
+    handlePrevAnswer,
+    handleNextAnswer,
+    handleEvaluate,
+    questions,
+    deletedQuestionIds,
+    localSettings,
+    questionResults,
+    handleDeleteQuestion,
+    handleSettingChange,
+    handleSave,
+    isSaving,
+  } = useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose });
+
+  return (
+    <ReviewTestModalView
+      isOpen={isOpen}
+      onClose={onClose}
+      currentView={currentView}
+      currentQuestion={currentQuestion}
+      answerInput={answerInput}
+      setAnswerInput={setAnswerInput}
+      previousAnswers={previousAnswers}
+      currentAnswerIndex={currentAnswerIndex}
+      isLoadingQuestions={isLoadingQuestions}
+      isLoadingAnswers={isLoadingAnswers}
+      isSavingAnswer={isSavingAnswer}
+      isPrevAnswerDisabled={isPrevAnswerDisabled}
+      isNextAnswerDisabled={isNextAnswerDisabled}
+      onSubmitAnswer={handleSubmitAnswer}
+      onPrevAnswer={handlePrevAnswer}
+      onNextAnswer={handleNextAnswer}
+      onEvaluate={handleEvaluate}
+      questions={questions}
+      deletedQuestionIds={deletedQuestionIds}
+      localSettings={localSettings}
+      questionResults={questionResults}
+      onDeleteQuestion={handleDeleteQuestion}
+      onSettingChange={handleSettingChange}
+      onSave={handleSave}
+      isSaving={isSaving}
+    />
+  );
+}
+</file>
+
+<file path="src/pages/Dashboard/components/ReviewTestModal/ReviewTestModal.view.tsx">
+import { FiX, FiChevronLeft, FiChevronRight, FiTrash } from 'react-icons/fi';
+import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
+
+interface ReviewQuestion {
+  reviewQuestionId: number;
+  questionText: string;
+}
+
+export interface ReviewTestModalViewProps {
+  isOpen: boolean;
+  onClose: () => void;
+  currentView: 'input' | 'evaluation' | 'result';
+  currentQuestion: ReviewQuestion | null;
+  answerInput: string;
+  setAnswerInput: (value: string) => void;
+  previousAnswers: Answer[];
+  currentAnswerIndex: number;
+  isLoadingQuestions: boolean;
+  isLoadingAnswers: boolean;
+  isSavingAnswer: boolean;
+  isPrevAnswerDisabled: boolean;
+  isNextAnswerDisabled: boolean;
+  onSubmitAnswer: () => void;
+  onPrevAnswer: () => void;
+  onNextAnswer: () => void;
+  onEvaluate: (result: EvaluationResult) => void;
+  // Result View props
+  questions?: ReviewQuestion[];
+  deletedQuestionIds?: Set<number>;
+  localSettings?: {
+    category: string;
+    importance: number;
+    reviewCycle: number;
+  };
+  questionResults?: Map<number, { successCount: number; failCount: number }>;
+  onDeleteQuestion?: (questionId: number) => void;
+  onSettingChange?: (field: string, value: string | number) => void;
+  onSave?: () => void;
+  isSaving?: boolean;
+}
+
+export function ReviewTestModalView({
+  isOpen,
+  onClose,
+  currentView,
+  currentQuestion,
+  answerInput,
+  setAnswerInput,
+  previousAnswers,
+  currentAnswerIndex,
+  isLoadingQuestions,
+  isLoadingAnswers,
+  isSavingAnswer,
+  isPrevAnswerDisabled,
+  isNextAnswerDisabled,
+  onSubmitAnswer,
+  onPrevAnswer,
+  onNextAnswer,
+  onEvaluate,
+  questions,
+  deletedQuestionIds,
+  localSettings,
+  questionResults,
+  onDeleteQuestion,
+  onSettingChange,
+  onSave,
+  isSaving,
+}: ReviewTestModalViewProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="absolute inset-0" onClick={onClose} />
+      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b">
+          <h2 className="text-xl font-semibold text-gray-900">복습 테스트</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <FiX size={24} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {isLoadingQuestions ? (
+            <LoadingView message="질문을 불러오고 있습니다..." />
+          ) : currentView === 'result' ? (
+            <ResultView
+              questions={questions || []}
+              deletedQuestionIds={deletedQuestionIds || new Set()}
+              localSettings={localSettings || { category: '', importance: 3, reviewCycle: 7 }}
+              questionResults={questionResults || new Map()}
+              onDeleteQuestion={onDeleteQuestion || (() => {})}
+              onSettingChange={onSettingChange || (() => {})}
+              onSave={onSave || (() => {})}
+              isSaving={isSaving || false}
+            />
+          ) : currentQuestion ? (
+            currentView === 'input' ? (
+              <InputView
+                questionText={currentQuestion.questionText}
+                answerInput={answerInput}
+                setAnswerInput={setAnswerInput}
+                onSubmit={onSubmitAnswer}
+              />
+            ) : (
+              <EvaluationView
+                currentAnswer={answerInput}
+                previousAnswers={previousAnswers}
+                currentAnswerIndex={currentAnswerIndex}
+                isLoadingAnswers={isLoadingAnswers}
+                isSavingAnswer={isSavingAnswer}
+                isPrevDisabled={isPrevAnswerDisabled}
+                isNextDisabled={isNextAnswerDisabled}
+                onPrev={onPrevAnswer}
+                onNext={onNextAnswer}
+                onEvaluate={onEvaluate}
+              />
+            )
+          ) : (
+            <EmptyView />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Input View Component */
+interface InputViewProps {
+  questionText: string;
+  answerInput: string;
+  setAnswerInput: (value: string) => void;
+  onSubmit: () => void;
+}
+
+function InputView({ questionText, answerInput, setAnswerInput, onSubmit }: InputViewProps) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      e.preventDefault();
+      onSubmit();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Question */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 className="text-sm font-medium text-blue-800 mb-2">질문</h3>
+        <p className="text-gray-900">{questionText}</p>
+      </div>
+
+      {/* Answer Input */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          답변을 입력하세요
+        </label>
+        <textarea
+          value={answerInput}
+          onChange={(e) => setAnswerInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="답변을 입력하세요... (Ctrl+Enter로 제출)"
+          rows={8}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+        />
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-xs text-gray-500">Ctrl + Enter</span>
+          <button
+            onClick={onSubmit}
+            disabled={!answerInput.trim()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          >
+            제출하기
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Evaluation View Component */
+interface EvaluationViewProps {
+  currentAnswer: string;
+  previousAnswers: Answer[];
+  currentAnswerIndex: number;
+  isLoadingAnswers: boolean;
+  isSavingAnswer: boolean;
+  isPrevDisabled: boolean;
+  isNextDisabled: boolean;
+  onPrev: () => void;
+  onNext: () => void;
+  onEvaluate: (result: EvaluationResult) => void;
+}
+
+function EvaluationView({
+  currentAnswer,
+  previousAnswers,
+  currentAnswerIndex,
+  isLoadingAnswers,
+  isSavingAnswer,
+  isPrevDisabled,
+  isNextDisabled,
+  onPrev,
+  onNext,
+  onEvaluate,
+}: EvaluationViewProps) {
+  const displayedPreviousAnswer = previousAnswers[currentAnswerIndex];
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4 min-h-[400px]">
+        {/* Left: Previous Answers */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <h3 className="text-sm font-medium text-gray-700 mb-3">이전 답변</h3>
+          {isLoadingAnswers ? (
+            <LoadingView message="이전 답변을 불러오는 중..." />
+          ) : previousAnswers.length === 0 ? (
+            <div className="flex items-center justify-center h-64 text-gray-500">
+              이전 답변이 없습니다.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="bg-white border border-gray-200 rounded p-3">
+                <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                  {displayedPreviousAnswer.content}
+                </p>
+                <div className="mt-2 flex items-center justify-between">
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${
+                      displayedPreviousAnswer.evaluationResult === 'SUCCESS'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {displayedPreviousAnswer.evaluationResult === 'SUCCESS' ? '성공' : '실패'}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(displayedPreviousAnswer.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={onPrev}
+                  disabled={isPrevDisabled}
+                  className="flex items-center gap-1 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FiChevronLeft size={16} />
+                  이전
+                </button>
+                <span className="text-xs text-gray-600">
+                  {currentAnswerIndex + 1} / {previousAnswers.length}
+                </span>
+                <button
+                  onClick={onNext}
+                  disabled={isNextDisabled}
+                  className="flex items-center gap-1 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  다음
+                  <FiChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Current Answer */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-white">
+          <h3 className="text-sm font-medium text-gray-700 mb-3">현재 답변</h3>
+          <div className="bg-blue-50 border border-blue-200 rounded p-3">
+            <p className="text-sm text-gray-900 whitespace-pre-wrap">{currentAnswer}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Evaluation Buttons */}
+      <div className="flex justify-end gap-3 pt-4 border-t">
+        <button
+          onClick={() => onEvaluate('FAILURE')}
+          disabled={isSavingAnswer}
+          className="px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          {isSavingAnswer ? '저장 중...' : '실패'}
+        </button>
+        <button
+          onClick={() => onEvaluate('SUCCESS')}
+          disabled={isSavingAnswer}
+          className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          {isSavingAnswer ? '저장 중...' : '성공'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* Loading View */
+interface LoadingViewProps {
+  message?: string;
+}
+
+function LoadingView({ message = '로딩 중...' }: LoadingViewProps) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+      <p className="text-sm text-gray-600">{message}</p>
+    </div>
+  );
+}
+
+/* Empty View */
+function EmptyView() {
+  return (
+    <div className="flex flex-col items-center justify-center py-12">
+      <p className="text-gray-600">질문이 없습니다.</p>
+    </div>
+  );
+}
+
+/* Result View Component */
+interface ResultViewProps {
+  questions: ReviewQuestion[];
+  deletedQuestionIds: Set<number>;
+  localSettings: {
+    category: string;
+    importance: number;
+    reviewCycle: number;
+  };
+  questionResults: Map<number, { successCount: number; failCount: number }>;
+  onDeleteQuestion: (questionId: number) => void;
+  onSettingChange: (field: string, value: string | number) => void;
+  onSave: () => void;
+  isSaving: boolean;
+}
+
+function ResultView({
+  questions,
+  deletedQuestionIds,
+  localSettings,
+  questionResults,
+  onDeleteQuestion,
+  onSettingChange,
+  onSave,
+  isSaving,
+}: ResultViewProps) {
+  const remainingQuestions = questions.filter(q => !deletedQuestionIds.has(q.reviewQuestionId));
+  const isAllQuestionsDeleted = remainingQuestions.length === 0;
+
+  return (
+    <div className="space-y-4">
+      {/* Main Content: Questions + Settings */}
+      <div className="grid grid-cols-2 gap-4 min-h-[400px]">
+        {/* Left: Question List */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 overflow-y-auto max-h-[500px]">
+          <h3 className="text-sm font-medium text-gray-700 mb-3">질문 목록</h3>
+          {questions.length === 0 ? (
+            <EmptyView />
+          ) : (
+            <div className="space-y-2">
+              {questions.map((question) => {
+                const isDeleted = deletedQuestionIds.has(question.reviewQuestionId);
+                const result = questionResults.get(question.reviewQuestionId) || { successCount: 0, failCount: 0 };
+
+                // Determine background color based on results
+                let bgColor = 'bg-white';
+                if (!isDeleted) {
+                  if (result.successCount > 0 && result.failCount === 0) {
+                    bgColor = 'bg-green-50';
+                  } else if (result.failCount > 0 && result.successCount === 0) {
+                    bgColor = 'bg-red-50';
+                  } else if (result.successCount > 0 && result.failCount > 0) {
+                    bgColor = 'bg-yellow-50';
+                  }
+                }
+                if (isDeleted) bgColor = 'bg-gray-100';
+
+                return (
+                  <div
+                    key={question.reviewQuestionId}
+                    className={`${bgColor} p-3 rounded-lg border ${
+                      isDeleted ? 'border-gray-300 opacity-60' : 'border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p
+                          className={`text-sm mb-2 ${
+                            isDeleted ? 'line-through text-gray-500' : 'text-gray-900'
+                          }`}
+                        >
+                          {question.questionText}
+                        </p>
+
+                        {/* Display counts for each question */}
+                        {!isDeleted && (result.successCount > 0 || result.failCount > 0) && (
+                          <div className="flex gap-2 mt-2">
+                            {result.successCount > 0 && (
+                              <span className="inline-flex items-center text-xs px-2 py-1 bg-green-100 text-green-800 rounded">
+                                성공 {result.successCount}회
+                              </span>
+                            )}
+                            {result.failCount > 0 && (
+                              <span className="inline-flex items-center text-xs px-2 py-1 bg-red-100 text-red-800 rounded">
+                                실패 {result.failCount}회
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {isDeleted && (
+                          <span className="inline-block text-xs px-2 py-1 bg-red-100 text-red-700 rounded">
+                            삭제됨
+                          </span>
+                        )}
+                      </div>
+
+                      {!isDeleted && (
+                        <button
+                          onClick={() => onDeleteQuestion(question.reviewQuestionId)}
+                          className="ml-2 text-red-500 hover:text-red-700 transition-colors"
+                        >
+                          <FiTrash size={16} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Warning for all deleted */}
+          {isAllQuestionsDeleted && (
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                ⚠️ 모든 질문이 삭제되었습니다. 저장 시 이 카드는 영구히 삭제됩니다.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Settings Panel */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-white">
+          <h3 className="text-sm font-medium text-gray-700 mb-4">설정</h3>
+          <div className="space-y-4">
+            {/* Category */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-2">
+                카테고리
+              </label>
+              <input
+                type="text"
+                value={localSettings.category}
+                onChange={(e) => onSettingChange('category', e.target.value)}
+                placeholder="카테고리 입력"
+                className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Importance Slider */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-2">
+                중요도: {localSettings.importance}/5
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="5"
+                value={localSettings.importance}
+                onChange={(e) => onSettingChange('importance', Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>1</span>
+                <span>5</span>
+              </div>
+            </div>
+
+            {/* Review Cycle Slider */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-2">
+                복습 주기: {localSettings.reviewCycle}일
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="365"
+                value={localSettings.reviewCycle}
+                onChange={(e) => onSettingChange('reviewCycle', Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>1일</span>
+                <span>365일</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Save Button */}
+      <div className="flex justify-end pt-4 border-t">
+        <button
+          onClick={onSave}
+          disabled={isSaving}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+        >
+          {isSaving && (
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          )}
+          {isSaving ? '저장 중...' : '저장하기'}
+        </button>
+      </div>
+
+      {/* Slider Styles */}
+      <style jsx>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #3B82F6;
+          cursor: pointer;
+          border: 2px solid #ffffff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #3B82F6;
+          cursor: pointer;
+          border: 2px solid #ffffff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider::-webkit-slider-track {
+          background: #E5E7EB;
+          border-radius: 8px;
+          height: 8px;
+        }
+
+        .slider::-moz-range-track {
+          background: #E5E7EB;
+          border-radius: 8px;
+          height: 8px;
+        }
+      `}</style>
+    </div>
+  );
+}
+</file>
+
+<file path="src/pages/Dashboard/components/ReviewTestModal/useReviewTestModal.ts">
+import { useState, useEffect } from 'react';
+import { AnswerService } from '../../../../services/answerService';
+import { ReviewQuestionService } from '../../../../services/reviewQuestionService';
+import { ReviewCardService } from '../../../../services/reviewCardService';
+import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
+import { showErrorToast, showSuccessToast } from '../../../../utils/toast';
+
+export interface ReviewQuestion {
+  reviewQuestionId: number;
+  questionText: string;
+}
+
+export interface UseReviewTestModalProps {
+  isOpen: boolean;
+  reviewCardId: number | null;
+  reviewCard: any | null;
+  onClose: () => void;
+}
+
+export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: UseReviewTestModalProps) {
+  const [currentView, setCurrentView] = useState<'input' | 'evaluation' | 'result'>('input');
+  const [questions, setQuestions] = useState<ReviewQuestion[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [answerInput, setAnswerInput] = useState<string>('');
+  const [previousAnswers, setPreviousAnswers] = useState<Answer[]>([]);
+  const [currentAnswerIndex, setCurrentAnswerIndex] = useState<number>(0);
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState<boolean>(false);
+  const [isLoadingAnswers, setIsLoadingAnswers] = useState<boolean>(false);
+  const [isSavingAnswer, setIsSavingAnswer] = useState<boolean>(false);
+
+  // Result View states
+  const [questionResults, setQuestionResults] = useState<Map<number, { successCount: number; failCount: number }>>(new Map());
+  const [localSettings, setLocalSettings] = useState({
+    category: '',
+    importance: 3,
+    reviewCycle: 7
+  });
+  const [deletedQuestionIds, setDeletedQuestionIds] = useState<Set<number>>(new Set());
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
+  // 모달이 열릴 때 질문 목록 및 카드 설정 로드
+  useEffect(() => {
+    if (isOpen && reviewCardId) {
+      loadQuestions(reviewCardId);
+      if (reviewCard) {
+        setLocalSettings({
+          category: reviewCard.category || '',
+          importance: reviewCard.importance || 3,
+          reviewCycle: reviewCard.reviewCycle || 7
+        });
+      }
+      setQuestionResults(new Map());
+      setDeletedQuestionIds(new Set());
+    } else {
+      resetModalState();
+    }
+  }, [isOpen, reviewCardId, reviewCard]);
+
+  const loadQuestions = async (cardId: number) => {
+    setIsLoadingQuestions(true);
+    try {
+      const questions = await ReviewQuestionService.getQuestionsByReviewCardId(cardId);
+      setQuestions(questions);
+    } catch (error) {
+      showErrorToast('질문을 불러오는데 실패했습니다.');
+      onClose();
+    } finally {
+      setIsLoadingQuestions(false);
+    }
+  };
+
+  const resetModalState = () => {
+    setCurrentView('input');
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
+    setAnswerInput('');
+    setPreviousAnswers([]);
+    setCurrentAnswerIndex(0);
+    setQuestionResults(new Map());
+    setDeletedQuestionIds(new Set());
+  };
+
+  const handleSubmitAnswer = async () => {
+    if (!answerInput.trim()) {
+      showErrorToast('답변을 입력해주세요.');
+      return;
+    }
+
+    if (questions.length === 0) {
+      showErrorToast('질문이 없습니다.');
+      return;
+    }
+
+    const currentQuestion = questions[currentQuestionIndex];
+    setCurrentView('evaluation');
+    await loadPreviousAnswers(currentQuestion.reviewQuestionId);
+  };
+
+  const loadPreviousAnswers = async (questionId: number) => {
+    setIsLoadingAnswers(true);
+    try {
+      const answers = await AnswerService.getAnswersByQuestionId(questionId);
+      setPreviousAnswers(answers);
+      setCurrentAnswerIndex(0);
+    } catch (error) {
+      showErrorToast('이전 답변을 불러오는데 실패했습니다.');
+      setPreviousAnswers([]);
+    } finally {
+      setIsLoadingAnswers(false);
+    }
+  };
+
+  const handlePrevAnswer = () => {
+    if (currentAnswerIndex < previousAnswers.length - 1) {
+      setCurrentAnswerIndex(currentAnswerIndex + 1);
+    }
+  };
+
+  const handleNextAnswer = () => {
+    if (currentAnswerIndex > 0) {
+      setCurrentAnswerIndex(currentAnswerIndex - 1);
+    }
+  };
+
+  const handleEvaluate = async (result: EvaluationResult) => {
+    if (questions.length === 0) {
+      showErrorToast('질문이 없습니다.');
+      return;
+    }
+
+    const currentQuestion = questions[currentQuestionIndex];
+
+    // 로컬 Map 업데이트 (질문별 카운트 증가)
+    setQuestionResults(prev => {
+      const newMap = new Map(prev);
+      const current = newMap.get(currentQuestion.reviewQuestionId) || { successCount: 0, failCount: 0 };
+
+      if (result === 'SUCCESS') {
+        current.successCount++;
+      } else {
+        current.failCount++;
+      }
+
+      newMap.set(currentQuestion.reviewQuestionId, current);
+      return newMap;
+    });
+
+    // 마지막 질문인지 확인
+    if (currentQuestionIndex === questions.length - 1) {
+      // Result View로 전환
+      setCurrentView('result');
+      showSuccessToast('테스트가 종료되었습니다.');
+    } else {
+      // 다음 질문으로 이동
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setAnswerInput('');
+      setCurrentView('input');
+      setPreviousAnswers([]);
+    }
+  };
+
+  // Result View handlers
+  const handleDeleteQuestion = (questionId: number) => {
+    setDeletedQuestionIds(prev => new Set(prev).add(questionId));
+  };
+
+  const handleSettingChange = (field: string, value: string | number) => {
+    setLocalSettings(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!reviewCardId) return;
+
+    setIsSaving(true);
+    try {
+      const remainingQuestions = questions.filter(
+        q => !deletedQuestionIds.has(q.reviewQuestionId)
+      );
+      const isCardDeleted = remainingQuestions.length === 0;
+
+      if (isCardDeleted) {
+        // 카드 전체 삭제
+        await ReviewCardService.deleteReviewCard(reviewCardId);
+        showSuccessToast('복습 카드가 삭제되었습니다.');
+      } else {
+        // Map을 questionUpdates 배열로 변환
+        const questionUpdates = Array.from(questionResults.entries()).map(([questionId, counts]) => ({
+          reviewQuestionId: questionId,
+          successCount: counts.successCount,
+          failCount: counts.failCount
+        }));
+
+        // 카드 업데이트
+        await ReviewCardService.updateReviewResult(reviewCardId, {
+          title: reviewCard?.title,
+          category: localSettings.category,
+          importance: localSettings.importance,
+          reviewCycle: localSettings.reviewCycle,
+          isActive: false,
+          deletedQuestionIds: Array.from(deletedQuestionIds),
+          questionUpdates
+        });
+        showSuccessToast('저장되었습니다.');
+      }
+
+      onClose();
+    } catch (error) {
+      showErrorToast('저장에 실패했습니다.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const currentQuestion = questions.length > 0 ? questions[currentQuestionIndex] : null;
+  const isPrevAnswerDisabled = currentAnswerIndex >= previousAnswers.length - 1;
+  const isNextAnswerDisabled = currentAnswerIndex <= 0;
+
+  return {
+    currentView,
+    currentQuestion,
+    answerInput,
+    setAnswerInput,
+    previousAnswers,
+    currentAnswerIndex,
+    isLoadingQuestions,
+    isLoadingAnswers,
+    isSavingAnswer,
+    isPrevAnswerDisabled,
+    isNextAnswerDisabled,
+    handleSubmitAnswer,
+    handlePrevAnswer,
+    handleNextAnswer,
+    handleEvaluate,
+    // Result View
+    questions,
+    deletedQuestionIds,
+    localSettings,
+    questionResults,
+    handleDeleteQuestion,
+    handleSettingChange,
+    handleSave,
+    isSaving,
+  };
+}
+</file>
+
+<file path="src/pages/Dashboard/components/TaskCard/index.tsx">
+// TaskCard/index.tsx
+import { useTaskCard } from './useTaskCard';
+import { TaskCardView } from './TaskCard.view';
+import type { TaskCardViewProps } from './TaskCard.view';
+
+type TaskCardProps = Omit<TaskCardViewProps, 'onMouseEnter' | 'onMouseLeave'>;
+
+const TaskCard = (props : TaskCardProps) => {
+  const { handleMouseEnter, handleMouseLeave } = useTaskCard();
+
+  const dummyTags = [
+    { label: '중요도', value: `3` },
+    { label: '반복주기', value: `3 일` },
+    {
+      label: '반복 횟수',
+      value: `0 회`,
+    },
+  ];
+
+  return (
+    <TaskCardView
+      {...props}
+      tags={props.tags || dummyTags}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    />
+  );
+};
+
+export default TaskCard;
+</file>
+
+<file path="src/pages/Dashboard/components/TaskCard/TaskCard.view.tsx">
+import { FiCircle } from 'react-icons/fi'; 
+
+interface Tag {
+  label: string;
+  value: string | number;
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+export interface TaskCardViewProps {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  tags?: Tag[];
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}
+
+export const TaskCardView = ({
+  id,
+  category,
+  title,
+  description,
+  tags,
+  onMouseEnter,
+  onMouseLeave,
+} : TaskCardViewProps) => {
+  return (
+    <div
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className="flex cursor-pointer flex-col gap-4 rounded-lg border border-neutral-100 bg-background-secondary p-4 shadow-sm transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1"
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-text-secondary">{id}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-text-tertiary">{category}</span>
+          <FiCircle className="text-text-tertiary" size={16} />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h3 className="font-bold text-text-primary">{title}</h3> 
+        <div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {tags?.map((tag) => (
+          <span
+            key={tag.label}
+            className={`rounded px-2 py-1 text-xs font-medium ${
+              tag.backgroundColor || 'bg-neutral-50'
+            } ${tag.textColor || 'text-text-secondary'}`}
+          >
+            {tag.label}: {tag.value}
+          </span>
+        ))}
+      </div>
+
+    </div>
+  );
+};
+</file>
+
+<file path="src/pages/Dashboard/components/TaskCard/useTaskCard.ts">
+// TaskCard/useTaskCard.ts
+import { useState } from 'react';
+
+export const useTaskCard = () => {
+  const [isHovering, setIsHovering] = useState<boolean>(false);
+
+  const handleMouseEnter = () => setIsHovering(true);
+  const handleMouseLeave = () => setIsHovering(false);
+
+
+  return {
+    isHovering,
+    handleMouseEnter,
+    handleMouseLeave,
+  };
+};
+</file>
+
+<file path="src/pages/Dashboard/components/TaskCreationModal/index.tsx">
+import { useTaskCreationModal } from './useTaskCreationModal';
+import { TaskCreationModalView } from './TaskCreationModal.view';
+import { useCategoryStore } from '../../../../store/useCategoryStore';
+
+interface TaskCreationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onBackgroundClick?: () => void;
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
+}
+
+export function TaskCreationModal({
+  isOpen,
+  onClose,
+  onBackgroundClick,
+  categories,
+  isLoadingCategories,
+  categoryError,
+  onSaveCategory
+}: TaskCreationModalProps) {
+  const {
+    currentView,
+    inputValue,
+    setInputValue,
+    errorMessage,
+    isLoading,
+    questions,
+    selectedQuestions,
+    editingQuestion,
+    repetitionCycle,
+    setRepetitionCycle,
+    importance,
+    setImportance,
+    showCategoryForm,
+    handleContinue,
+    handleQuestionToggle,
+    handleQuestionEdit,
+    handleQuestionSave,
+    handleQuestionDelete,
+    handleEditModalClose,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
+    handleRegisterSelectedQuestions,
+    resetModal
+  } = useTaskCreationModal();
+
+  const { selectedCategoryId } = useCategoryStore();
+
+  const handleClose = () => {
+    resetModal();
+    onClose();
+  };
+
+  const handleBackgroundClick = () => {
+    if (onBackgroundClick) {
+      onBackgroundClick();
+    } else {
+      handleClose();
+    }
+  };
+
+  return (
+    <TaskCreationModalView
+      isOpen={isOpen}
+      onClose={handleClose}
+      onBackgroundClick={handleBackgroundClick}
+      currentView={currentView}
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      errorMessage={errorMessage}
+      isLoading={isLoading}
+      questions={questions}
+      selectedQuestions={selectedQuestions}
+      editingQuestion={editingQuestion}
+      repetitionCycle={repetitionCycle}
+      setRepetitionCycle={setRepetitionCycle}
+      importance={importance}
+      setImportance={setImportance}
+      category={category}
+      setCategory={setCategory}
+      categoryColor={categoryColor}
+      setCategoryColor={setCategoryColor}
+      onContinue={handleContinue}
+      onQuestionToggle={handleQuestionToggle}
+      onQuestionEdit={handleQuestionEdit}
+      onQuestionSave={handleQuestionSave}
+      onQuestionDelete={handleQuestionDelete}
+      onEditModalClose={handleEditModalClose}
+      onRegisterSelectedQuestions={handleRegisterSelectedQuestions}
+    />
+  );
+}
+
+export type { TaskCreationModalProps };
+</file>
+
+<file path="src/pages/Dashboard/components/TaskCreationModal/TaskCreationModal.view.tsx">
+import { Button } from '../../../../../../../libs/ui-components/src/components/Button';
+import { QuestionCard } from '../../../../../../../libs/ui-components/src/components/QuestionCard';
+import { QuestionEditModal } from '../../../../../../../libs/ui-components/src/components/QuestionEditModal';
+import { QuestionSettingsPanel } from '../../../../../../../libs/ui-components/src/components/QuestionSettingsPanel';
+import type { CreateAnswerResponse } from '../../../../schemas/taskCreation.schema';
+
+interface TaskCreationModalViewProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onBackgroundClick?: () => void;
+  currentView: 'input' | 'select';
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  errorMessage: string;
+  isLoading: boolean;
+  questions: CreateAnswerResponse | null;
+  selectedQuestions: Set<number>;
+  editingQuestion: { id: number; text: string } | null;
+  repetitionCycle: number;
+  setRepetitionCycle: (value: number) => void;
+  importance: number;
+  setImportance: (value: number) => void;
+  category: string;
+  setCategory: (value: string) => void;
+  categoryColor: string;
+  setCategoryColor: (value: string) => void;
+  onContinue: () => void;
+  onQuestionToggle: (questionId: number) => void;
+  onQuestionEdit: (questionId: number) => void;
+  onQuestionSave: (questionId: number, newText: string) => void;
+  onQuestionDelete: (questionId: number) => void;
+  onEditModalClose: () => void;
+  onRegisterSelectedQuestions: () => void;
+}
+
+export function TaskCreationModalView({
+  isOpen,
+  onClose,
+  onBackgroundClick,
+  currentView,
+  inputValue,
+  setInputValue,
+  errorMessage,
+  isLoading,
+  questions,
+  selectedQuestions,
+  editingQuestion,
+  repetitionCycle,
+  setRepetitionCycle,
+  importance,
+  setImportance,
+  category,
+  setCategory,
+  categoryColor,
+  setCategoryColor,
+  onContinue,
+  onQuestionToggle,
+  onQuestionEdit,
+  onQuestionSave,
+  onQuestionDelete,
+  onEditModalClose,
+  onRegisterSelectedQuestions
+}: TaskCreationModalViewProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div
+        className="absolute inset-0"
+        onClick={onBackgroundClick}
+      />
+      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b">
+          <h2 className="text-xl font-semibold text-gray-900">
+            추가 태스크 생성
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-6">
+          {currentView === 'input' && (
+            <InputView
+              value={inputValue}
+              onChange={setInputValue}
+              errorMessage={errorMessage}
+              isLoading={isLoading}
+              onContinue={onContinue}
+            />
+          )}
+          {currentView === 'select' && (
+            <>
+              {isLoading && !questions ? (
+                <LoadingView />
+              ) : questions ? (
+                <SelectView
+                  title={questions.title}
+                  questions={questions.questions}
+                  selectedQuestions={selectedQuestions}
+                  repetitionCycle={repetitionCycle}
+                  setRepetitionCycle={setRepetitionCycle}
+                  importance={importance}
+                  setImportance={setImportance}
+                  category={category}
+                  setCategory={setCategory}
+                  categoryColor={categoryColor}
+                  setCategoryColor={setCategoryColor}
+                  onQuestionToggle={onQuestionToggle}
+                  onQuestionEdit={onQuestionEdit}
+                  onQuestionDelete={onQuestionDelete}
+                  onRegisterSelectedQuestions={onRegisterSelectedQuestions}
+                  errorMessage={errorMessage}
+                />
+              ) : null}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Question Edit Modal */}
+      <QuestionEditModal
+        isOpen={!!editingQuestion}
+        questionId={editingQuestion?.id}
+        initialQuestion={editingQuestion?.text}
+        onSave={onQuestionSave}
+        onClose={onEditModalClose}
+      />
+    </div>
+  );
+}
+
+interface InputViewProps {
+  value: string;
+  onChange: (value: string) => void;
+  errorMessage: string;
+  isLoading: boolean;
+  onContinue: () => void;
+}
+
+function InputView({ value, onChange, errorMessage, isLoading, onContinue }: InputViewProps) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      e.preventDefault();
+      onContinue();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          학습하신 내용을 작성해주세요
+        </label>
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="예: React Hook의 useEffect 사용법에 대해 학습했습니다... (Ctrl+Enter로 제출)"
+          rows={6}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          disabled={isLoading}
+        />
+        {errorMessage && (
+          <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
+        )}
+      </div>
+      <div className="flex justify-between items-end">
+        <span className="text-xs text-gray-500">Ctrl + Enter</span>
+        <Button
+          onClick={onContinue}
+          disabled={isLoading || !value.trim()}
+          variant="primary"
+        >
+          {isLoading ? '처리 중...' : '계속하기'}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+interface SelectViewProps {
+  title: string;
+  questions: Array<{ id: number; text: string }>;
+  selectedQuestions: Set<number>;
+  repetitionCycle: number;
+  setRepetitionCycle: (value: number) => void;
+  importance: number;
+  setImportance: (value: number) => void;
+  category: string;
+  setCategory: (value: string) => void;
+  categoryColor: string;
+  setCategoryColor: (value: string) => void;
+  onQuestionToggle: (questionId: number) => void;
+  onQuestionEdit: (questionId: number) => void;
+  onQuestionDelete: (questionId: number) => void;
+  onRegisterSelectedQuestions: () => void;
+  errorMessage: string;
+}
+
+function SelectView({
+  title,
+  questions,
+  selectedQuestions,
+  repetitionCycle,
+  setRepetitionCycle,
+  importance,
+  setImportance,
+  category,
+  setCategory,
+  categoryColor,
+  setCategoryColor,
+  onQuestionToggle,
+  onQuestionEdit,
+  onQuestionDelete,
+  onRegisterSelectedQuestions,
+  errorMessage
+}: SelectViewProps) {
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="mb-4">
+        <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
+        <p className="text-sm text-gray-600">
+          생성된 질문을 클릭하여 선택하거나 수정/삭제할 수 있습니다.
+        </p>
+      </div>
+
+      {/* Main Content Area - Flex Layout */}
+      <div className="flex gap-4 flex-1 min-h-[400px]">
+        {/* Questions List */}
+        <div className="flex-1 overflow-y-auto pr-2 space-y-3">
+          {questions.map((question) => (
+            <div
+              key={question.id}
+              className="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              onClick={() => onQuestionToggle(question.id)}
+            >
+              <input
+                type="checkbox"
+                id={`question-${question.id}`}
+                checked={selectedQuestions.has(question.id)}
+                onChange={() => onQuestionToggle(question.id)}
+                onClick={(e) => e.stopPropagation()}
+                className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+              />
+              <div className="flex-1" onClick={(e) => e.stopPropagation()}>
+                <QuestionCard
+                  questionId={question.id}
+                  question={question.text}
+                  onEdit={onQuestionEdit}
+                  onDelete={onQuestionDelete}
+                />
+              </div>
+            </div>
+          ))}
+          {questions.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              표시할 질문이 없습니다.
+            </div>
+          )}
+        </div>
+
+        {/* Settings Panel */}
+        <div className="w-64 flex-shrink-0">
+          <QuestionSettingsPanel
+            repetitionCycle={repetitionCycle}
+            setRepetitionCycle={setRepetitionCycle}
+            importance={importance}
+            setImportance={setImportance}
+            category={category}
+            setCategory={setCategory}
+            categoryColor={categoryColor}
+            setCategoryColor={setCategoryColor}
+          />
+        </div>
+      </div>
+
+      {/* Bottom Action Bar - Sticky */}
+      <div className="border-t mt-4 pt-4 pb-4 bg-white sticky bottom-0">
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            {selectedQuestions.size}개 질문 선택됨
+          </div>
+          <Button
+            onClick={onRegisterSelectedQuestions}
+            disabled={selectedQuestions.size === 0}
+            variant="primary"
+          >
+            선택한 질문 등록하기
+          </Button>
+        </div>
+        {errorMessage && (
+          <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function LoadingView() {
+  return (
+    <div className="flex flex-col items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">질문을 생성하고 있습니다</h3>
+      <p className="text-sm text-gray-600 text-center">
+        입력하신 내용을 바탕으로 복습용 질문을 생성하고 있습니다.<br />
+        잠시만 기다려주세요.
+      </p>
+    </div>
+  );
+}
+</file>
+
+<file path="src/pages/Dashboard/components/TaskCreationModal/useTaskCreationModal.ts">
+import { useState, useCallback } from 'react';
+import { useQuestionStore } from '../../../../store/useQuestionStore';
+import { useReviewCardStore } from '../../../../store/useReviewCardStore';
+import { useCategoryStore } from '../../../../store/useCategoryStore';
+import { taskCreationService } from '../../../../services/taskCreationService';
+import { showSuccessToast, showErrorToast } from '../../../../utils/toast';
+
+type ViewType = 'input' | 'select' | 'category';
+
+export function useTaskCreationModal() {
+  const [currentView, setCurrentView] = useState<ViewType>('input');
+  const [inputValue, setInputValue] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 수정/삭제 상태 관리
+  const [selectedQuestions, setSelectedQuestions] = useState<Set<number>>(new Set());
+  const [editingQuestion, setEditingQuestion] = useState<{ id: number; text: string } | null>(null);
+
+  // 질문 설정 상태 관리
+  const [repetitionCycle, setRepetitionCycle] = useState(3);
+  const [importance, setImportance] = useState(5);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+
+  const { questions, setQuestions, clearQuestions } = useQuestionStore();
+  const { createReviewCard } = useReviewCardStore();
+  const { selectedCategoryId, selectCategory } = useCategoryStore();
+
+  const resetModal = useCallback(() => {
+    setCurrentView('input');
+    setInputValue('');
+    setErrorMessage('');
+    setIsLoading(false);
+    setSelectedQuestions(new Set());
+    setEditingQuestion(null);
+    setRepetitionCycle(3);
+    setImportance(5);
+    setShowCategoryForm(false);
+    selectCategory(null);
+    clearQuestions();
+  }, [clearQuestions, selectCategory]);
+
+  const handleContinue = useCallback(async () => {
+    const trimmedValue = inputValue.trim();
+
+    if (!trimmedValue) {
+      setErrorMessage('학습하신 내용을 작성해주세요');
+      return;
+    }
+
+    setErrorMessage('');
+    setIsLoading(true);
+    setCurrentView('select'); // 즉시 select view로 전환
+
+    try {
+      const result = await taskCreationService.createAnswer(trimmedValue);
+      console.log('API Response:', result);
+      setQuestions(result);
+    } catch (error) {
+      const errorMsg = error instanceof Error
+        ? error.message
+        : '요청 처리 중 오류가 발생했습니다. 다시 시도해주세요.';
+      setErrorMessage(errorMsg);
+      showErrorToast(errorMsg);
+      setCurrentView('input'); // 에러 발생시 input view로 되돌리기
+    } finally {
+      setIsLoading(false);
+    }
+  }, [inputValue, setQuestions]);
+
+  // 질문 선택/해제
+  const handleQuestionToggle = useCallback((questionId: number) => {
+    setSelectedQuestions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(questionId)) {
+        newSet.delete(questionId);
+      } else {
+        newSet.add(questionId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  // 질문 수정 시작
+  const handleQuestionEdit = useCallback((questionId: number) => {
+    if (!questions) return;
+
+    const question = questions.questions.find(q => q.id === questionId);
+    if (question) {
+      setEditingQuestion({ id: question.id, text: question.text });
+    }
+  }, [questions]);
+
+  // 질문 수정 저장
+  const handleQuestionSave = useCallback((questionId: number, newText: string) => {
+    if (!questions) return;
+
+    const updatedQuestions = {
+      ...questions,
+      questions: questions.questions.map(q =>
+        q.id === questionId ? { ...q, text: newText } : q
+      )
+    };
+
+    setQuestions(updatedQuestions);
+    setEditingQuestion(null);
+  }, [questions, setQuestions]);
+
+  // 질문 삭제
+  const handleQuestionDelete = useCallback((questionId: number) => {
+    if (!questions) return;
+
+    const updatedQuestions = {
+      ...questions,
+      questions: questions.questions.filter(q => q.id !== questionId)
+    };
+
+    setQuestions(updatedQuestions);
+
+    // 선택 목록에서도 제거
+    setSelectedQuestions(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(questionId);
+      return newSet;
+    });
+  }, [questions, setQuestions]);
+
+  // 수정 모달 닫기
+  const handleEditModalClose = useCallback(() => {
+    setEditingQuestion(null);
+  }, []);
+
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = useCallback((categoryId: number) => {
+    selectCategory(categoryId);
+    setShowCategoryForm(false);
+  }, [selectCategory]);
+
+  // 카테고리 추가 버튼 클릭 핸들러
+  const handleAddCategoryClick = useCallback(() => {
+    setShowCategoryForm(true);
+  }, []);
+
+  // 카테고리 생성 폼 닫기 핸들러
+  const handleCloseCategoryForm = useCallback(() => {
+    setShowCategoryForm(false);
+  }, []);
+
+  // 선택된 질문들 등록
+  const handleRegisterSelectedQuestions = useCallback(async () => {
+    if (selectedQuestions.size === 0) {
+      setErrorMessage('등록할 질문을 선택해주세요');
+      return;
+    }
+
+    if (!questions) {
+      setErrorMessage('질문 데이터가 없습니다');
+      return;
+    }
+
+    if (!selectedCategoryId) {
+      setErrorMessage('카테고리를 선택해주세요');
+      return;
+    }
+
+    setErrorMessage('');
+    setIsLoading(true);
+
+    try {
+      // 선택된 질문들만 필터링
+      const selectedQuestionTexts = questions.questions
+        .filter(q => selectedQuestions.has(q.id))
+        .map(q => ({ text: q.text }));
+
+      // 복습 카드 생성 요청 데이터 구성
+      const reviewCardData = {
+        title: questions.title,
+        categoryId: selectedCategoryId,
+        importance,
+        reviewCycle: repetitionCycle,
+        questions: selectedQuestionTexts
+      };
+
+      await createReviewCard(reviewCardData);
+
+      // 성공 토스트 표시
+      showSuccessToast('복습 카드가 성공적으로 생성되었습니다');
+
+      // 성공시 모달 상태 리셋
+      resetModal();
+    } catch (error) {
+      const errorMsg = error instanceof Error
+        ? error.message
+        : '복습 카드 생성에 실패했습니다. 다시 시도해주세요.';
+      setErrorMessage(errorMsg);
+      showErrorToast(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedQuestions, questions, selectedCategoryId, importance, repetitionCycle, createReviewCard, resetModal]);
+
+  return {
+    currentView,
+    inputValue,
+    setInputValue,
+    errorMessage,
+    isLoading,
+    questions,
+    selectedQuestions,
+    editingQuestion,
+    repetitionCycle,
+    setRepetitionCycle,
+    importance,
+    setImportance,
+    showCategoryForm,
+    handleContinue,
+    handleQuestionToggle,
+    handleQuestionEdit,
+    handleQuestionSave,
+    handleQuestionDelete,
+    handleEditModalClose,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
+    handleRegisterSelectedQuestions,
+    resetModal
+  };
+}
+</file>
+
+<file path="src/pages/Dashboard/DashboardPage.view.tsx">
+// DashboardPage/DashboardPage.view.tsx
+import type { FC } from 'react';
+import type { ReviewCard as ReviewCardType } from '../../../../../libs/api-types/src';
+import {
+  RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, Tooltip,
+  PieChart, Pie, Cell,
+  LineChart, Line, CartesianGrid, Area
+} from 'recharts';
+// 🔥 수정: 제공해주신 import 경로로 변경
+import { SidebarNav } from '../../components/SidebarNav';
+import { Header } from '../../components/Header';
+import { FiArrowDown, FiPlus } from 'react-icons/fi';
+import type { Task, TaskStatus } from './useDashboardPage';
+import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
+import { TaskCreationModal } from './components/TaskCreationModal';
+import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
+import { ReviewTestModal } from './components/ReviewTestModal';
+
+export interface DashboardPageViewProps {
+  isSidebarOpen: boolean;
+  tasksByStatus: Record<TaskStatus, Task[]>;
+  progressStats: {
+    totalCount: number;
+    doneCount: number;
+    percentage: number;
+    chartData: { name: string; value: number; fill: string }[];
+  };
+  analysisStats: {
+    successRate: number;
+    barChartData: { name: string; value: number; fill: string }[];
+    pieChartData: { name: string; value: number }[];
+    growthData: { date: string; rate: number }[];
+    doneCount: number;
+    failCount: number;
+  };
+  // 복습 카드 관련 props
+  backlogCards: ReviewCardType[];
+  completedCards: ReviewCardType[];
+  reviewCardsLoading: boolean;
+  reviewCardsError: string | null;
+  onToggleSidebar: () => void;
+  isChatModalOpen: boolean;
+  selectedTask: Task | null;
+  chatSessionKey: string;
+  isConfirmModalOpen: boolean;
+  isConfirmLoading: boolean;
+  isTaskCreationModalOpen: boolean;
+  isReviewTestModalOpen: boolean;
+  selectedReviewCardId: number | null;
+  onOpenChatModal: () => void;
+  onCloseChatModal: () => void;
+  onOpenConfirmModal: () => void;
+  onCloseConfirmModal: () => void;
+  onOpenTaskCreationModal: () => void;
+  onCloseTaskCreationModal: () => void;
+  onOpenReviewTestModal: (reviewCardId: number) => void;
+  onCloseReviewTestModal: () => void;
+  onConfirmStop: () => void;
+}
+
+const columnStyles: Record<TaskStatus, { bg: string; text: string; dot: string }> = {
+  backlog: { bg: 'bg-neutral-800', text: 'text-text-inverse', dot: 'bg-neutral-400' },
+  failed: { bg: 'bg-brand', text: 'text-text-inverse', dot: 'bg-brand-light' },
+  done: { bg: 'bg-semantic-success', text: 'text-text-inverse', dot: 'bg-green-300' },
+};
+
+const CustomTooltip: FC<any> = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-md bg-neutral-900 p-2 px-3 text-sm text-neutral-50 shadow-lg">
+        <span className="font-semibold">{`${label} 성공률: ${payload[0].value}%`}</span>
+      </div>
+    );
+  }
+  return null;
+};
+
+
+export const DashboardPageView: FC<DashboardPageViewProps> = ({
+  isSidebarOpen,
+  tasksByStatus,
+  progressStats,
+  analysisStats,
+  backlogCards,
+  completedCards,
+  reviewCardsLoading,
+  reviewCardsError,
+  onToggleSidebar,
+  isChatModalOpen,
+  selectedTask,
+  chatSessionKey,
+  isConfirmModalOpen,
+  isConfirmLoading,
+  isTaskCreationModalOpen,
+  isReviewTestModalOpen,
+  selectedReviewCardId,
+  onCloseConfirmModal,
+  onOpenTaskCreationModal,
+  onCloseTaskCreationModal,
+  onOpenReviewTestModal,
+  onCloseReviewTestModal,
+  onConfirmStop,
+}) => {
+  const PIE_COLORS = ['#5E6AD2', '#D1D5DB'];
+
+  return (
+    <div className="relative min-h-screen bg-background-tertiary">
+      <SidebarNav isOpen={isSidebarOpen} />
+      <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
+        <Header onToggleSidebar={onToggleSidebar} />
+        <main className="p-8 pt-24">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-text-primary">알고리바 태스크 목록</h1>
+              <p className="mt-1 text-text-secondary">태스크 진행 상황을 한눈에 확인하세요</p>
+            </div>
+            <button
+              onClick={onOpenTaskCreationModal}
+              className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
+            >
+              <FiPlus size={16} />
+              추가 태스크 생성
+            </button>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-6 lg:flex-row">
+            <div className="flex w-full flex-col justify-between rounded-lg bg-background-secondary p-4 lg:w-1/3">
+              <h2 className="text-base font-semibold text-text-primary">전체 진행률</h2>
+              <div className="relative mx-auto h-24 w-24">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart innerRadius="70%" outerRadius="100%" data={progressStats.chartData} startAngle={180} endAngle={0} barSize={8}>
+                    <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
+                    <RadialBar background dataKey="value" cornerRadius={10} className="fill-brand"/>
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-2xl font-bold text-text-primary">{progressStats.percentage}%</span>
+                  <span className="mt-1 text-xs text-text-secondary">{progressStats.doneCount} / {progressStats.totalCount}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex w-full flex-col gap-4 rounded-lg bg-background-secondary p-4 lg:w-2/3">
+              <div className="flex items-center justify-between">
+                 <h2 className="text-base font-semibold text-text-primary">주간 성공률</h2>
+              </div>
+              <div className="h-full flex-grow">
+                 <ResponsiveContainer width="100%" height={125}>
+                  <LineChart data={analysisStats.growthData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorSuccessRate" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#5E6AD2" stopOpacity={0.2}/>
+                        <stop offset="95%" stopColor="#5E6AD2" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="transparent" />
+                    <XAxis 
+                      dataKey="date" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#9CA3AF', fontSize: 10 }} 
+                      padding={{ left: 10, right: 10 }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#9CA3AF', fontSize: 10 }} 
+                      tickFormatter={(value) => `${value}%`}
+                    />
+                    <Tooltip 
+                      content={<CustomTooltip />} 
+                      cursor={{ stroke: '#9CA3AF', strokeDasharray: '3 3' }}
+                    />
+                    <Area type="monotone" dataKey="rate" stroke="transparent" fill="url(#colorSuccessRate)" />
+                    <Line 
+                      type="monotone" 
+                      dataKey="rate" 
+                      stroke="#5E6AD2"
+                      strokeWidth={2} 
+                      dot={false}
+                      activeDot={{ r: 4, strokeWidth: 2 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* 백로그 복습 카드 컬럼 */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between rounded-lg px-4 py-2 bg-neutral-800 text-text-inverse">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-neutral-400" />
+                  <span className="font-semibold">백로그</span>
+                  <span>{backlogCards.length}</span>
+                </div>
+                <FiArrowDown size={16} />
+              </div>
+              {reviewCardsLoading ? (
+                <div className="text-center py-8 text-text-secondary">
+                  복습 카드를 불러오는 중...
+                </div>
+              ) : reviewCardsError ? (
+                <div className="text-center py-8 text-red-500">
+                  {reviewCardsError}
+                </div>
+              ) : backlogCards.length === 0 ? (
+                <div className="text-center py-8 text-text-secondary">
+                  백로그에 복습 카드가 없습니다.
+                </div>
+              ) : (
+                backlogCards.map((card) => (
+                  <ReviewCard
+                    key={card.reviewCardId}
+                    id={`R-${card.reviewCardId}`}
+                    category={card.category}
+                    title={card.title}
+                    tags={[
+                      { label: '중요도', value: `${card.importance}/5` },
+                      { label: '주기', value: `${card.reviewCycle}일` },
+                      { label: '반복', value: `${card.reviewCount}회` },
+                    ]}
+                    onTestStart={() => onOpenReviewTestModal(card.reviewCardId)}
+                  />
+                ))
+              )}
+            </div>
+
+            {/* 완료 복습 카드 컬럼 */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between rounded-lg px-4 py-2 bg-brand text-text-inverse">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-brand-light" />
+                  <span className="font-semibold">완료</span>
+                  <span>{completedCards.length}</span>
+                </div>
+                <FiArrowDown size={16} />
+              </div>
+              {reviewCardsLoading ? (
+                <div className="text-center py-8 text-text-secondary">
+                  복습 카드를 불러오는 중...
+                </div>
+              ) : reviewCardsError ? (
+                <div className="text-center py-8 text-red-500">
+                  {reviewCardsError}
+                </div>
+              ) : completedCards.length === 0 ? (
+                <div className="text-center py-8 text-text-secondary">
+                  완료된 복습 카드가 없습니다.
+                </div>
+              ) : (
+                completedCards.map((card) => (
+                  <ReviewCard
+                    key={card.reviewCardId}
+                    id={`R-${card.reviewCardId}`}
+                    category={card.category}
+                    title={card.title}
+                    tags={[
+                      { label: '중요도', value: `${card.importance}/5` },
+                      { label: '주기', value: `${card.reviewCycle}일` },
+                      { label: '반복', value: `${card.reviewCount}회` },
+                    ]}
+                    onTestStart={() => onOpenReviewTestModal(card.reviewCardId)}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        title="작업을 중단하시겠습니까?"
+        message="진행 중인 채팅이 취소되고 입력한 내용이 사라집니다."
+        onConfirm={onConfirmStop}
+        onCancel={onCloseConfirmModal}
+        isLoading={isConfirmLoading}
+        confirmText="중단하기"
+        cancelText="취소"
+      />
+
+      <TaskCreationModal
+        isOpen={isTaskCreationModalOpen}
+        onClose={onCloseTaskCreationModal}
+      />
+
+      <ReviewTestModal
+        isOpen={isReviewTestModalOpen}
+        reviewCardId={selectedReviewCardId}
+        onClose={onCloseReviewTestModal}
+      />
+    </div>
+  );
+};
+</file>
+
+<file path="src/pages/Dashboard/index.tsx">
+// DashboardPage/index.tsx
+import type { FC } from 'react';
+import { useDashboardPage } from './useDashboardPage';
+import { DashboardPageView } from './DashboardPage.view';
+
+const DashboardPage: FC = () => {
+  const {
+    isSidebarOpen,
+    tasksByStatus,
+    progressStats,
+    analysisStats,
+    isChatModalOpen,
+    selectedTask,
+    chatSessionKey,
+    isConfirmModalOpen,
+    isConfirmLoading,
+    isTaskCreationModalOpen,
+    isReviewTestModalOpen,
+    selectedReviewCardId,
+    backlogCards,
+    completedCards,
+    reviewCardsLoading,
+    reviewCardsError,
+    openChatModal,
+    closeChatModal,
+    openConfirmModal,
+    closeConfirmModal,
+    openTaskCreationModal,
+    closeTaskCreationModal,
+    openReviewTestModal,
+    closeReviewTestModal,
+    handleConfirmStop,
+    toggleSidebar
+  } = useDashboardPage();
+
+  return (
+    <DashboardPageView
+      isSidebarOpen={isSidebarOpen}
+      tasksByStatus={tasksByStatus}
+      progressStats={progressStats}
+      analysisStats={analysisStats}
+      onToggleSidebar={toggleSidebar}
+      isChatModalOpen={isChatModalOpen}
+      selectedTask={selectedTask}
+      chatSessionKey={chatSessionKey}
+      isConfirmModalOpen={isConfirmModalOpen}
+      isConfirmLoading={isConfirmLoading}
+      isTaskCreationModalOpen={isTaskCreationModalOpen}
+      isReviewTestModalOpen={isReviewTestModalOpen}
+      selectedReviewCardId={selectedReviewCardId}
+      backlogCards={backlogCards}
+      completedCards={completedCards}
+      reviewCardsLoading={reviewCardsLoading}
+      reviewCardsError={reviewCardsError}
+      onOpenChatModal={openChatModal}
+      onCloseChatModal={closeChatModal}
+      onOpenConfirmModal={openConfirmModal}
+      onCloseConfirmModal={closeConfirmModal}
+      onOpenTaskCreationModal={openTaskCreationModal}
+      onCloseTaskCreationModal={closeTaskCreationModal}
+      onOpenReviewTestModal={openReviewTestModal}
+      onCloseReviewTestModal={closeReviewTestModal}
+      onConfirmStop={handleConfirmStop}
+    />
+  );
+};
+
+export default DashboardPage;
+</file>
+
+<file path="src/pages/Dashboard/useDashboardPage.ts">
+// DashboardPage/useDashboardPage.ts
+import { useState, useMemo, useEffect } from 'react';
+import { useReviewCardStore } from '../../store/useReviewCardStore';
+
+export type TaskStatus = 'backlog' | 'failed' | 'done';
+export interface Task { id: string; type: string; title: string; description: string; status: TaskStatus; }
+
+export const useDashboardPage = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [isChatModalOpen, setIsChatModalOpen] = useState<boolean>(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [chatSessionKey, setChatSessionKey] = useState<string>('');
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
+  const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
+  const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
+  const [isReviewTestModalOpen, setIsReviewTestModalOpen] = useState<boolean>(false);
+  const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
+
+  // 복습 카드 store 사용
+  const {
+    backlogCards,
+    completedCards,
+    isLoading: reviewCardsLoading,
+    error: reviewCardsError,
+    fetchReviewCards,
+    clearError
+  } = useReviewCardStore();
+
+  // 페이지 마운트 시 복습 카드 목록 조회
+  useEffect(() => {
+    fetchReviewCards();
+  }, [fetchReviewCards]);
+
+  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+
+  const openChatModal = (task?: Task) => {
+    setSelectedTask(task || null);
+    setChatSessionKey(task ? `task-${task.id}-${Date.now()}` : `new-task-${Date.now()}`);
+    setIsChatModalOpen(true);
+  };
+
+  const closeChatModal = () => {
+    setIsChatModalOpen(false);
+    setSelectedTask(null);
+    setChatSessionKey('');
+  };
+
+  const openConfirmModal = () => setIsConfirmModalOpen(true);
+  const closeConfirmModal = () => setIsConfirmModalOpen(false);
+
+  const openTaskCreationModal = () => setIsTaskCreationModalOpen(true);
+  const closeTaskCreationModal = () => {
+    setIsTaskCreationModalOpen(false);
+    // 복습 카드 에러 상태 초기화
+    if (reviewCardsError) {
+      clearError();
+    }
+  };
+
+  const openReviewTestModal = (reviewCardId: number) => {
+    setSelectedReviewCardId(reviewCardId);
+    setIsReviewTestModalOpen(true);
+  };
+
+  const closeReviewTestModal = () => {
+    setIsReviewTestModalOpen(false);
+    setSelectedReviewCardId(null);
+  };
+
+  const handleConfirmStop = async () => {
+    // 중복 클릭 방지
+    if (isConfirmLoading) return;
+
+    setIsConfirmLoading(true);
+
+    try {
+      // ChatModal 관련 데이터 정리
+      closeChatModal();
+      console.log('ChatModal 데이터 정리 완료');
+    } catch (error) {
+      console.warn('ChatModal 데이터 정리 실패:', error);
+    } finally {
+      setIsConfirmLoading(false);
+      closeConfirmModal();
+    }
+  };
+
+  const allTasks: Task[] = [
+    { id: 'T-001', type: '서브태스크', title: '[frontend] Clerk 기반 소셜 로그인/회원가입 기능 구현', description: '...', status: 'done' },
+    { id: 'T-002', type: '서브태스크', title: '[backend] 문제 등록 및 AI 분석 파이프라인 구축', description: '...', status: 'backlog' },
+    { id: 'T-003', type: '주요태스크', title: '[infra] CI/CD 파이프라인 개선', description: '...', status: 'backlog' },
+    { id: 'T-004', type: '서브태스크', title: '[frontend] 회원 프로필 페이지 UI 개발', description: '...', status: 'backlog' },
+    { id: 'T-005', type: '버그수정', title: '[backend] 로그인 시 간헐적 500 에러 수정', description: '...', status: 'failed' },
+    { id: 'T-006', type: '주요태스크', title: '[DB] 데이터베이스 스키마 최적화', description: '...', status: 'done' },
+    { id: 'T-007', type: '버그수정', title: '[frontend] 모바일에서 UI 깨짐 현상 수정', description: '...', status: 'failed' },
+  ];
+  const tasksByStatus = useMemo(() => {
+    return allTasks.reduce((acc, task) => {
+      if (!acc[task.status]) {
+        acc[task.status] = [];
+      }
+      acc[task.status].push(task);
+      return acc;
+    }, {} as Record<TaskStatus, Task[]>);
+  }, [allTasks]);
+
+  const progressStats = useMemo(() => {
+    const totalCount = allTasks.length;
+    const doneCount = tasksByStatus.done?.length || 0;
+    const percentage = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+    const chartData = [{ name: 'Done', value: percentage, fill: '#5E6AD2' }];
+    return { totalCount, doneCount, percentage, chartData };
+  }, [allTasks, tasksByStatus]);
+
+  const analysisStats = useMemo(() => {
+    const doneCount = tasksByStatus.done?.length || 0;
+    const failCount = tasksByStatus.failed?.length || 0;
+    const completedCount = doneCount + failCount;
+    const successRate = completedCount > 0 ? Math.round((doneCount / completedCount) * 100) : 0;
+    const barChartData = [
+      { name: '실패', value: failCount, fill: '#6B7280' },
+      { name: '완료', value: doneCount, fill: '#5E6AD2' },
+    ];
+    
+    const pieChartData = [
+      { name: '완료', value: doneCount },
+      { name: '실패', value: failCount },
+    ];
+    const today = new Date();
+    const growthData = Array.from({ length: 7 }).map((_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (6 - i));
+      const rate = (6 - i) > 0 
+        ? Math.floor(Math.random() * (75 - 40 + 1) + 40)
+        : successRate;
+      return {
+        date: `${date.getMonth() + 1}/${date.getDate()}`,
+        rate: rate,
+      };
+    });
+    return { successRate, barChartData, pieChartData, growthData, doneCount, failCount };
+  }, [tasksByStatus]);
+  
+  return {
+    isSidebarOpen,
+    tasksByStatus,
+    progressStats,
+    analysisStats,
+    isChatModalOpen,
+    selectedTask,
+    chatSessionKey,
+    isConfirmModalOpen,
+    isConfirmLoading,
+    isTaskCreationModalOpen,
+    isReviewTestModalOpen,
+    selectedReviewCardId,
+    // 복습 카드 관련 상태 추가
+    backlogCards,
+    completedCards,
+    reviewCardsLoading,
+    reviewCardsError,
+    openChatModal,
+    closeChatModal,
+    openConfirmModal,
+    closeConfirmModal,
+    openTaskCreationModal,
+    closeTaskCreationModal,
+    openReviewTestModal,
+    closeReviewTestModal,
+    handleConfirmStop,
+    toggleSidebar,
+  };
+};
+</file>
+
+<file path="src/schemas/answer.schema.ts">
+import { z } from 'zod';
+
+/**
+ * 답변 평가 결과 스키마
+ */
+export const evaluationResultSchema = z.enum(['SUCCESS', 'FAILURE']);
+
+/**
+ * 답변 스키마
+ */
+export const answerSchema = z.object({
+  answerId: z.number(),
+  questionId: z.number(),
+  content: z.string(),
+  evaluationResult: evaluationResultSchema,
+  createdAt: z.string(),
+});
+
+/**
+ * 답변 생성 요청 스키마
+ */
+export const createAnswerRequestSchema = z.object({
+  questionId: z.number(),
+  content: z.string().min(1, '답변 내용은 필수입니다.'),
+  evaluationResult: evaluationResultSchema,
+});
+
+/**
+ * 답변 생성 응답 스키마
+ */
+export const createAnswerResponseSchema = z.object({
+  answerId: z.number(),
+  message: z.string(),
+});
+
+/**
+ * 답변 목록 조회 응답 스키마
+ */
+export const getAnswersResponseSchema = z.array(answerSchema);
+
+/**
+ * TypeScript 타입 추론
+ */
+export type Answer = z.infer<typeof answerSchema>;
+export type CreateAnswerRequest = z.infer<typeof createAnswerRequestSchema>;
+export type CreateAnswerResponse = z.infer<typeof createAnswerResponseSchema>;
+export type GetAnswersResponse = z.infer<typeof getAnswersResponseSchema>;
+export type EvaluationResult = z.infer<typeof evaluationResultSchema>;
+</file>
+
+<file path="src/schemas/category.schema.ts">
+import { z } from 'zod';
+
+/**
+ * 카테고리 관련 Zod 검증 스키마 정의
+ */
+
+// 카테고리 스키마
+export const categorySchema = z.object({
+  categoryId: z.number().int().positive(),
+  name: z.string().min(1).max(100),
+  color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional()
+});
+
+// 카테고리 생성 요청 스키마
+export const createCategoryRequestSchema = z.object({
+  name: z.string()
+    .min(1, "카테고리 이름을 입력해주세요")
+    .max(100, "카테고리 이름은 100자 이내로 작성해주세요"),
+
+  color: z.string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "유효한 색상 코드를 입력해주세요 (예: #3B82F6)")
+});
+
+// 카테고리 목록 조회 응답 스키마
+export const getCategoriesResponseSchema = z.array(categorySchema);
+
+// 타입 추론
+export type Category = z.infer<typeof categorySchema>;
+export type CreateCategoryRequest = z.infer<typeof createCategoryRequestSchema>;
+export type GetCategoriesResponse = z.infer<typeof getCategoriesResponseSchema>;
+</file>
+
+<file path="src/schemas/reviewCard.schema.ts">
+import { z } from 'zod';
+
+/**
+ * 복습 카드 관련 Zod 검증 스키마 정의
+ */
+
+// 복습 질문 스키마
+export const reviewQuestionSchema = z.object({
+  text: z.string()
+    .min(1, "질문 내용을 입력해주세요")
+    .max(500, "질문은 500자 이내로 작성해주세요")
+});
+
+// 복습 카드 생성 요청 스키마
+export const createReviewCardRequestSchema = z.object({
+  title: z.string()
+    .min(1, "제목을 입력해주세요")
+    .max(100, "제목은 100자 이내로 작성해주세요"),
+
+  categoryId: z.number()
+    .int("카테고리 ID는 정수여야 합니다")
+    .positive("카테고리를 선택해주세요"),
+
+  importance: z.number()
+    .int("중요도는 정수여야 합니다")
+    .min(1, "중요도는 1 이상이어야 합니다")
+    .max(5, "중요도는 5 이하여야 합니다"),
+
+  reviewCycle: z.number()
+    .int("반복 주기는 정수여야 합니다")
+    .min(1, "반복 주기는 1일 이상이어야 합니다")
+    .max(365, "반복 주기는 365일 이하여야 합니다"),
+
+  questions: z.array(reviewQuestionSchema)
+    .min(1, "최소 1개의 질문을 추가해주세요")
+    .max(10, "질문은 최대 10개까지 추가할 수 있습니다")
+});
+
+// 복습 카드 생성 응답 스키마
+export const createReviewCardResponseSchema = z.object({
+  reviewCardId: z.number().int().positive(),
+  message: z.string()
+});
+
+// 복습 카드 스키마
+export const reviewCardSchema = z.object({
+  reviewCardId: z.number().int().positive(),
+  title: z.string(),
+  category: z.string(),
+  importance: z.number().int().min(1).max(5),
+  reviewCycle: z.number().int().positive(),
+  isActive: z.boolean(),
+  reviewCount: z.number().int().min(0),
+  successCount: z.number().int().min(0),
+  failCount: z.number().int().min(0),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional()
+});
+
+// 복습 카드 목록 조회 응답 스키마
+export const getReviewCardsResponseSchema = z.array(reviewCardSchema);
+
+// 복습 카드 상태 업데이트 요청 스키마
+export const updateReviewCardStatusRequestSchema = z.object({
+  isActive: z.boolean()
+});
+
+// API 에러 응답 스키마
+export const apiErrorResponseSchema = z.object({
+  status: z.number().int(),
+  message: z.string(),
+  timestamp: z.string().optional()
+});
+
+// 타입 추론
+export type CreateReviewCardRequest = z.infer<typeof createReviewCardRequestSchema>;
+export type CreateReviewCardResponse = z.infer<typeof createReviewCardResponseSchema>;
+export type ReviewCard = z.infer<typeof reviewCardSchema>;
+export type GetReviewCardsResponse = z.infer<typeof getReviewCardsResponseSchema>;
+export type UpdateReviewCardStatusRequest = z.infer<typeof updateReviewCardStatusRequestSchema>;
+export type ApiErrorResponse = z.infer<typeof apiErrorResponseSchema>;
+export type ReviewQuestion = z.infer<typeof reviewQuestionSchema>;
+</file>
+
+<file path="src/schemas/taskCreation.schema.ts">
+import { z } from 'zod';
+
+// Request schema for creating answer
+export const createAnswerRequestSchema = z.object({
+  message: z.string().min(1, "학습하신 내용을 작성해주세요")
+});
+
+// Response schema from server
+export const createAnswerResponseSchema = z.object({
+  title: z.string(),
+  questions: z.array(z.object({
+    id: z.number(),
+    text: z.string()
+  }))
+});
+
+// Inferred types
+export type CreateAnswerRequest = z.infer<typeof createAnswerRequestSchema>;
+export type CreateAnswerResponse = z.infer<typeof createAnswerResponseSchema>;
+export type Question = z.infer<typeof createAnswerResponseSchema>['questions'][0];
+</file>
+
+<file path="src/services/answerService.ts">
+import apiClient from './apiClient';
+import type {
+  CreateAnswerRequest,
+  CreateAnswerResponse,
+  Answer
+} from '../schemas/answer.schema';
+import { createAnswerResponseSchema, getAnswersResponseSchema } from '../schemas/answer.schema';
+
+/**
+ * Answer 관련 API 호출 서비스
+ */
+export class AnswerService {
+  /**
+   * 답변 생성
+   * @param data 답변 생성 요청 데이터
+   * @returns 생성된 답변 정보
+   */
+  static async createAnswer(data: CreateAnswerRequest): Promise<CreateAnswerResponse> {
+    try {
+      const response = await apiClient.post<CreateAnswerResponse>('/answers/create', data);
+
+      // Zod 스키마로 응답 검증
+      const validatedData = createAnswerResponseSchema.parse(response.data);
+
+      return validatedData;
+    } catch (error) {
+      console.error('답변 생성 실패:', error);
+      throw new Error('답변 생성에 실패했습니다.');
+    }
+  }
+
+  /**
+   * 특정 질문에 대한 답변 목록 조회
+   * @param questionId 질문 ID
+   * @returns 답변 목록 (최신순)
+   */
+  static async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
+    try {
+      const response = await apiClient.get<Answer[]>(`/answers/question/${questionId}`);
+
+      // Zod 스키마로 응답 검증
+      const validatedData = getAnswersResponseSchema.parse(response.data);
+
+      return validatedData;
+    } catch (error) {
+      console.error('답변 목록 조회 실패:', error);
+      throw new Error('답변 목록을 불러오는데 실패했습니다.');
+    }
+  }
+}
+</file>
+
+<file path="src/services/apiClient.ts">
+import axios from 'axios';
+import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '../store/useAuthStore';
+import { API_CONFIG, HTTP_HEADERS } from '../constants/api';
+import { ERROR_MESSAGES } from '../constants/messages';
+import { PATHS } from '../constants/paths';
+
+const apiClient: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || API_CONFIG.DEFAULT_BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
+  headers: {
+    [HTTP_HEADERS.CONTENT_TYPE]: API_CONFIG.HEADERS.CONTENT_TYPE,
+  },
+});
+
+let getTokenFn: (() => Promise<string | null>) | null = null;
+
+export function initializeApiClient(getToken: () => Promise<string | null>) {
+  getTokenFn = getToken;
+}
+
+// Request interceptor to add authentication token
+apiClient.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    if (getTokenFn) {
+      try {
+        const token = await getTokenFn();
+        if (token) {
+          config.headers[HTTP_HEADERS.AUTHORIZATION] = `${HTTP_HEADERS.BEARER_PREFIX} ${token}`;
+        }
+      } catch (error) {
+        console.warn(ERROR_MESSAGES.AUTH_TOKEN_FAILED, error);
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle authentication errors
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      // Clear auth state when authentication fails
+      const { clearAuth } = useAuthStore.getState();
+      clearAuth();
+
+      // Redirect to sign-in page
+      window.location.href = PATHS.SIGN_IN;
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default apiClient;
+</file>
+
+<file path="src/services/categoryService.ts">
+import apiClient from './apiClient';
+import {
+  categorySchema,
+  createCategoryRequestSchema,
+  getCategoriesResponseSchema,
+  type Category,
+  type CreateCategoryRequest
+} from '../schemas/category.schema';
+
+/**
+ * Category API Service
+ * apiClient를 사용하여 카테고리 관련 API 호출
+ */
+export class CategoryService {
+  /**
+   * 사용자의 모든 카테고리 조회
+   */
+  async fetchCategories(): Promise<Category[]> {
+    try {
+      const response = await apiClient.get('/categories');
+      return getCategoriesResponseSchema.parse(response.data);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`카테고리 목록 조회 실패: ${error.message}`);
+      }
+      throw new Error('카테고리 목록 조회 중 알 수 없는 오류가 발생했습니다.');
+    }
+  }
+
+  /**
+   * 신규 카테고리 생성
+   */
+  async createCategory(data: CreateCategoryRequest): Promise<Category> {
+    // 요청 데이터 검증
+    const validatedRequest = createCategoryRequestSchema.parse(data);
+
+    try {
+      const response = await apiClient.post('/categories', validatedRequest);
+      return categorySchema.parse(response.data);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`카테고리 생성 실패: ${error.message}`);
+      }
+      throw new Error('카테고리 생성 중 알 수 없는 오류가 발생했습니다.');
+    }
+  }
+
+  /**
+   * 특정 카테고리 조회
+   */
+  async getCategoryById(categoryId: number): Promise<Category> {
+    try {
+      const response = await apiClient.get(`/categories/${categoryId}`);
+      return categorySchema.parse(response.data);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`카테고리 조회 실패: ${error.message}`);
+      }
+      throw new Error('카테고리 조회 중 알 수 없는 오류가 발생했습니다.');
+    }
+  }
+
+  /**
+   * 카테고리 삭제
+   */
+  async deleteCategory(categoryId: number): Promise<void> {
+    try {
+      await apiClient.delete(`/categories/${categoryId}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`카테고리 삭제 실패: ${error.message}`);
+      }
+      throw new Error('카테고리 삭제 중 알 수 없는 오류가 발생했습니다.');
+    }
+  }
+}
+
+export const categoryService = new CategoryService();
+</file>
+
+<file path="src/services/reviewCardService.ts">
+import apiClient from './apiClient';
+import type {
+  CreateReviewCardRequest,
+  CreateReviewCardResponse,
+  GetReviewCardsResponse,
+  ReviewCard,
+  UpdateReviewResultRequest
+} from '../../../../libs/api-types/src';
+
+/**
+ * 복습 카드 관련 API 호출 서비스
+ */
+export class ReviewCardService {
+  /**
+   * 신규 복습 카드 생성
+   * @param data 복습 카드 생성 요청 데이터
+   * @returns 생성된 복습 카드 정보
+   */
+  static async createReviewCard(data: CreateReviewCardRequest): Promise<CreateReviewCardResponse> {
+    try {
+      const response = await apiClient.post<CreateReviewCardResponse>('/reviewCard/create', data);
+      return response.data;
+    } catch (error) {
+      console.error('복습 카드 생성 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 사용자의 모든 복습 카드 목록 조회
+   * @returns 복습 카드 목록
+   */
+  static async getReviewCards(): Promise<ReviewCard[]> {
+    try {
+      const response = await apiClient.get<ReviewCard[]>('/reviewCard');
+      return response.data;
+    } catch (error) {
+      console.error('복습 카드 목록 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 복습 카드 상태 업데이트 (활성화/비활성화)
+   * @param reviewCardId 복습 카드 ID
+   * @param isActive 활성화 상태
+   */
+  static async updateReviewCardStatus(reviewCardId: number, isActive: boolean): Promise<void> {
+    try {
+      await apiClient.patch(`/api/reviewCard/${reviewCardId}/status`, { isActive });
+    } catch (error) {
+      console.error('복습 카드 상태 업데이트 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 복습 테스트 결과를 저장합니다
+   * @param reviewCardId 복습 카드 ID
+   * @param data 업데이트 요청 데이터
+   */
+  static async updateReviewResult(reviewCardId: number, data: UpdateReviewResultRequest): Promise<void> {
+    try {
+      await apiClient.put(`/reviewCard/${reviewCardId}/result`, data);
+    } catch (error) {
+      console.error('복습 결과 저장 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 복습 카드를 삭제합니다
+   * @param reviewCardId 복습 카드 ID
+   */
+  static async deleteReviewCard(reviewCardId: number): Promise<void> {
+    try {
+      await apiClient.delete(`/reviewCard/${reviewCardId}`);
+    } catch (error) {
+      console.error('복습 카드 삭제 실패:', error);
+      throw error;
+    }
+  }
+}
+</file>
+
+<file path="src/services/reviewQuestionService.ts">
+import apiClient from './apiClient';
+
+/**
+ * ReviewQuestion 관련 API 호출 서비스
+ */
+
+export interface ReviewQuestionResponseDto {
+  reviewQuestionId: number;
+  questionText: string;
+  createdAt: string;
+}
+
+export class ReviewQuestionService {
+  /**
+   * 특정 복습 카드의 모든 질문 조회
+   * @param reviewCardId 복습 카드 ID
+   * @returns 질문 목록
+   */
+  static async getQuestionsByReviewCardId(reviewCardId: number): Promise<ReviewQuestionResponseDto[]> {
+    try {
+      const response = await apiClient.get<ReviewQuestionResponseDto[]>(
+        `/review-questions/review-card/${reviewCardId}`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error('질문 목록 조회 실패:', error);
+      throw new Error('질문 목록을 불러오는데 실패했습니다.');
+    }
+  }
+}
+</file>
+
+<file path="src/services/taskCreationService.ts">
+import apiClient from './apiClient';
+import {
+  createAnswerRequestSchema,
+  createAnswerResponseSchema,
+  type CreateAnswerRequest,
+  type CreateAnswerResponse
+} from '../schemas/taskCreation.schema';
+
+export class TaskCreationService {
+  async createAnswer(message: string): Promise<CreateAnswerResponse> {
+    const requestData: CreateAnswerRequest = { message };
+
+    // Validate request data
+    const validatedRequest = createAnswerRequestSchema.parse(requestData);
+
+    try {
+      const response = await apiClient.post('/review-questions/create', validatedRequest);
+      console.log('Raw API Response:', response.data.aiResponse);
+
+      // Validate response data
+      return createAnswerResponseSchema.parse(response.data.aiResponse);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`질문 생성 요청 실패: ${error.message}`);
+      }
+      throw new Error('질문 생성 중 알 수 없는 오류가 발생했습니다.');
+    }
+  }
+}
+
+export const taskCreationService = new TaskCreationService();
+</file>
+
+<file path="src/store/useAuthStore.ts">
+import { create } from 'zustand';
+
+export interface User {
+  id: string;
+  emailAddress: string;
+  firstName?: string;
+  lastName?: string;
+  imageUrl?: string;
+  publicMetadata: {
+    role?: string;
+  };
+}
+
+interface AuthState {
+  isLoaded: boolean;
+  isSignedIn: boolean;
+  user: User | null;
+  role: string | null;
+}
+
+interface AuthActions {
+  setAuthState: (state: Partial<AuthState>) => void;
+  setUser: (user: User | null) => void;
+  clearAuth: () => void;
+}
+
+type AuthStore = AuthState & AuthActions;
+
+const initialState: AuthState = {
+  isLoaded: false,
+  isSignedIn: false,
+  user: null,
+  role: null,
+};
+
+export const useAuthStore = create<AuthStore>((set) => ({
+  ...initialState,
+
+  setAuthState: (newState) =>
+    set((state) => {
+      const updatedState = { ...state, ...newState };
+      // Extract role from user's publicMetadata when user is set
+      if (newState.user) {
+        updatedState.role = newState.user.publicMetadata?.role || null;
+      }
+      return updatedState;
+    }),
+
+  setUser: (user) =>
+    set((state) => ({
+      ...state,
+      user,
+      role: user?.publicMetadata?.role || null,
+      isSignedIn: !!user,
+    })),
+
+  clearAuth: () => set(initialState),
+}));
+</file>
+
+<file path="src/store/useCategoryStore.ts">
+import { create } from 'zustand';
+import type { Category } from '../schemas/category.schema';
+
+interface CategoryState {
+  categories: Category[];
+  selectedCategoryId: number | null;
+}
+
+interface CategoryActions {
+  setCategories: (categories: Category[]) => void;
+  selectCategory: (id: number | null) => void;
+  addCategory: (category: Category) => void;
+  clearSelection: () => void;
+  removeCategory: (categoryId: number) => void;
+}
+
+type CategoryStore = CategoryState & CategoryActions;
+
+const initialState: CategoryState = {
+  categories: [],
+  selectedCategoryId: null,
+};
+
+export const useCategoryStore = create<CategoryStore>((set) => ({
+  ...initialState,
+
+  setCategories: (categories) =>
+    set(() => ({
+      categories,
+    })),
+
+  selectCategory: (id) =>
+    set(() => ({
+      selectedCategoryId: id,
+    })),
+
+  addCategory: (category) =>
+    set((state) => ({
+      categories: [category, ...state.categories],
+      selectedCategoryId: category.categoryId, // 자동 선택
+    })),
+
+  clearSelection: () =>
+    set(() => ({
+      selectedCategoryId: null,
+    })),
+
+  removeCategory: (categoryId) =>
+    set((state) => ({
+      categories: state.categories.filter((cat) => cat.categoryId !== categoryId),
+      selectedCategoryId: state.selectedCategoryId === categoryId ? null : state.selectedCategoryId,
+    })),
+}));
+</file>
+
+<file path="src/store/useQuestionStore.ts">
+import { create } from 'zustand';
+import type { CreateAnswerResponse } from '../schemas/taskCreation.schema';
+
+interface QuestionState {
+  questions: CreateAnswerResponse | null;
+  setQuestions: (data: CreateAnswerResponse) => void;
+  clearQuestions: () => void;
+}
+
+export const useQuestionStore = create<QuestionState>((set) => ({
+  questions: null,
+  setQuestions: (data) => set({ questions: data }),
+  clearQuestions: () => set({ questions: null })
+}));
+</file>
+
+<file path="src/store/useReviewCardStore.ts">
+import { create } from 'zustand';
+import type { ReviewCard, CreateReviewCardRequest } from '../../../../libs/api-types/src';
+import { ReviewCardService } from '../services/reviewCardService';
+
+interface ReviewCardState {
+  // 상태
+  reviewCards: ReviewCard[];
+  isLoading: boolean;
+  error: string | null;
+
+  // 필터된 데이터
+  backlogCards: ReviewCard[];
+  completedCards: ReviewCard[];
+}
+
+interface ReviewCardActions {
+  // 복습 카드 목록 조회
+  fetchReviewCards: () => Promise<void>;
+
+  // 복습 카드 생성
+  createReviewCard: (data: CreateReviewCardRequest) => Promise<void>;
+
+  // 복습 카드 상태 업데이트
+  updateCardStatus: (reviewCardId: number, isActive: boolean) => Promise<void>;
+
+  // 상태 초기화
+  clearError: () => void;
+  reset: () => void;
+}
+
+type ReviewCardStore = ReviewCardState & ReviewCardActions;
+
+const initialState: ReviewCardState = {
+  reviewCards: [],
+  isLoading: false,
+  error: null,
+  backlogCards: [],
+  completedCards: [],
+};
+
+export const useReviewCardStore = create<ReviewCardStore>((set, get) => ({
+  ...initialState,
+
+  fetchReviewCards: async () => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const reviewCards = await ReviewCardService.getReviewCards();
+
+      // isActive 기준으로 필터링
+      const backlogCards = reviewCards.filter(card => card.isActive);
+      const completedCards = reviewCards.filter(card => !card.isActive);
+
+      set({
+        reviewCards,
+        backlogCards,
+        completedCards,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : '복습 카드 목록을 불러오는 데 실패했습니다.';
+
+      set({
+        isLoading: false,
+        error: errorMessage,
+      });
+    }
+  },
+
+  createReviewCard: async (data: CreateReviewCardRequest) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      await ReviewCardService.createReviewCard(data);
+
+      // 생성 후 목록 새로고침
+      await get().fetchReviewCards();
+
+      set({ isLoading: false, error: null });
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : '복습 카드 생성에 실패했습니다.';
+
+      set({
+        isLoading: false,
+        error: errorMessage,
+      });
+      throw error; // 호출자에게 에러를 전파하여 UI에서 처리
+    }
+  },
+
+  updateCardStatus: async (reviewCardId: number, isActive: boolean) => {
+    try {
+      await ReviewCardService.updateReviewCardStatus(reviewCardId, isActive);
+
+      // 로컬 상태 업데이트
+      const { reviewCards } = get();
+      const updatedCards = reviewCards.map(card =>
+        card.reviewCardId === reviewCardId
+          ? { ...card, isActive }
+          : card
+      );
+
+      const backlogCards = updatedCards.filter(card => card.isActive);
+      const completedCards = updatedCards.filter(card => !card.isActive);
+
+      set({
+        reviewCards: updatedCards,
+        backlogCards,
+        completedCards,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : '복습 카드 상태 업데이트에 실패했습니다.';
+
+      set({ error: errorMessage });
+      throw error;
+    }
+  },
+
+  clearError: () => {
+    set({ error: null });
+  },
+
+  reset: () => {
+    set(initialState);
+  },
+}));
+</file>
+
+<file path="src/types/api.ts">
+// Common API Response Types
+export interface ApiResponse<T = any> {
+  message: string;
+  status: 'success' | 'error';
+  data?: T;
+}
+
+// Error Types
+export interface ApiError {
+  message: string;
+  status: string;
+  statusCode: number;
+}
+</file>
+
+<file path="src/utils/toast.ts">
+import { toast } from 'react-toastify';
+import type { ToastOptions } from 'react-toastify';
+
+const defaultOptions: ToastOptions = {
+  position: 'top-center',
+  autoClose: 1000,
+  hideProgressBar: true,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: false,
+  className: 'custom-toast',
+  style: {
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    fontSize: '14px',
+    minHeight: '48px',
+    padding: '12px 16px'
+  }
+};
+
+export const showSuccessToast = (message: string, options?: Partial<ToastOptions>) => {
+  return toast.success(message, {
+    ...defaultOptions,
+    ...options,
+    style: {
+      ...defaultOptions.style,
+      borderLeft: '4px solid #22c55e'
+    }
+  });
+};
+
+export const showErrorToast = (message: string, options?: Partial<ToastOptions>) => {
+  return toast.error(message, {
+    ...defaultOptions,
+    ...options,
+    style: {
+      ...defaultOptions.style,
+      borderLeft: '4px solid #ef4444'
+    }
+  });
+};
+
+export const showInfoToast = (message: string, options?: Partial<ToastOptions>) => {
+  return toast.info(message, {
+    ...defaultOptions,
+    ...options,
+    style: {
+      ...defaultOptions.style,
+      borderLeft: '4px solid #3b82f6'
+    }
+  });
+};
+
+export const showWarningToast = (message: string, options?: Partial<ToastOptions>) => {
+  return toast.warn(message, {
+    ...defaultOptions,
+    ...options,
+    style: {
+      ...defaultOptions.style,
+      borderLeft: '4px solid #f59e0b'
+    }
+  });
+};
+</file>
+
+<file path="src/vite-env.d.ts">
+/// <reference types="vite/client" />
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+     "../../libs/ui-components/src/**/*.{js,jsx,ts,tsx}",],
+   theme: {
+    extend: {
+      colors: {
+        brand: {
+          DEFAULT: "#5E6AD2",
+          light: "#7B83EB",
+          dark: "#4C5AA8"
+        },
+        neutral: {
+          black: "#0D0E10",
+          900: "#16181D",
+          800: "#1C1F26",
+          700: "#22252C",
+          600: "#2A2D34",
+          500: "#35393F",
+          400: "#4E5158",
+          300: "#6B7280",
+          100: "#D1D5DB",
+          50: "#F3F4F6",
+          white: "#FFFFFF"
+        },
+        semantic: {
+          success: "#10B981",
+          warning: "#F59E0B",
+          error: "#EF4444",
+          info: "#3B82F6"
+        },
+        background: {
+          primary: "#FAFBFC",
+          secondary: "#FFFFFF",
+          tertiary: "#F8F9FA",
+          paper: "#e5dfd5",
+        },
+        text: {
+          primary: "#0D0E10",
+          secondary: "#6B7280",
+          tertiary: "#9CA3AF",
+          inverse: "#FFFFFF"
+        }
+      },
+      fontFamily: {
+        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "Roboto", "sans-serif"],
+        mono: ["'SF Mono'", "Monaco", "'Cascadia Code'", "'Roboto Mono'", "Consolas", "'Courier New'", "monospace"]
+      },
+      fontSize: {
+        xs: "12px",
+        sm: "14px",
+        base: "16px",
+        lg: "18px",
+        xl: "20px",
+        "2xl": "24px",
+        "3xl": "30px",
+        "4xl": "36px",
+        "5xl": "48px",
+        "6xl": "64px"
+      },
+      fontWeight: {
+        light: "300",
+        normal: "400",
+        medium: "500",
+        semibold: "600",
+        bold: "700"
+      },
+      lineHeight: {
+        tight: "1.25",
+        snug: "1.375",
+        normal: "1.5",
+        relaxed: "1.625",
+        loose: "2"
+      },
+      spacing: {
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "20px",
+        "6": "24px",
+        "8": "32px",
+        "10": "40px",
+        "12": "48px",
+        "16": "64px",
+        "20": "80px",
+        "24": "96px",
+        "32": "128px"
+      },
+      borderRadius: {
+        sm: "2px",
+        DEFAULT: "6px",
+        md: "8px",
+        lg: "12px",
+        xl: "16px"
+      },
+      boxShadow: {
+        xs: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        sm: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
+        md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
+        lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
+        xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+      }
+    },
+  },
+  plugins: [],
+}
+</file>
+
+<file path="tsconfig.app.json">
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}
+</file>
+
+<file path="tsconfig.json">
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+</file>
+
+<file path="tsconfig.node.json">
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+</file>
+
+<file path="vite.config.ts">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173
+  }
+})
+</file>
+
+</files>

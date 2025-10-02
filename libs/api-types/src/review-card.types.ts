@@ -28,7 +28,7 @@ export interface ReviewQuestion {
 // 복습 카드 생성 요청 인터페이스
 export interface CreateReviewCardRequest {
   title: string;
-  category: string;
+  categoryId: number;
   importance: number;
   reviewCycle: number;
   questions: Array<{
@@ -50,7 +50,7 @@ export interface GetReviewCardsResponse {
 // 복습 결과 업데이트 요청 인터페이스
 export interface UpdateReviewResultRequest {
   title?: string;
-  category?: string;
+  categoryId?: number;
   importance?: number;
   reviewCycle?: number;
   isActive: boolean;

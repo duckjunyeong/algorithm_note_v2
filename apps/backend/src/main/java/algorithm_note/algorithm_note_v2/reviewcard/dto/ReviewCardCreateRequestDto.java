@@ -22,9 +22,8 @@ public class ReviewCardCreateRequestDto {
     @Size(max = 255, message = "제목은 255자 이내로 작성해주세요")
     private String title;
 
-    @NotBlank(message = "카테고리를 입력해주세요")
-    @Size(max = 100, message = "카테고리는 100자 이내로 작성해주세요")
-    private String category;
+    @NotNull(message = "카테고리를 선택해주세요")
+    private Long categoryId;
 
     @NotNull(message = "중요도를 입력해주세요")
     @Min(value = 1, message = "중요도는 1 이상이어야 합니다")

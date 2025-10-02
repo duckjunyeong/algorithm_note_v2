@@ -1,5 +1,7 @@
 package algorithm_note.algorithm_note_v2.reviewcard.service;
 
+import algorithm_note.algorithm_note_v2.category.domain.Category;
+import algorithm_note.algorithm_note_v2.category.service.CategoryService;
 import algorithm_note.algorithm_note_v2.reviewcard.domain.ReviewCard;
 import algorithm_note.algorithm_note_v2.reviewQuestion.domain.ReviewQuestion;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateRequestDto;
@@ -32,6 +34,7 @@ public class ReviewCardService {
     private final ReviewCardRepository reviewCardRepository;
     private final ReviewQuestionRepository reviewQuestionRepository;
     private final ReviewQuestionService reviewQuestionService;
+    private final CategoryService categoryService;
 
     /**
      * 복습 카드를 생성합니다.
@@ -45,19 +48,22 @@ public class ReviewCardService {
         log.info("Creating review card for user: {}, title: {}", user.getId(), requestDto.getTitle());
 
         try {
-            // 1. ReviewCard 생성
+            // 1. Category 조회 및 검증
+            Category category = categoryService.findCategoryByIdAndUser(requestDto.getCategoryId(), user);
+
+            // 2. ReviewCard 생성
             ReviewCard reviewCard = ReviewCard.builder()
                     .user(user)
                     .title(requestDto.getTitle())
-                    .category(requestDto.getCategory())
+                    .category(category)
                     .importance(requestDto.getImportance())
                     .reviewCycle(requestDto.getReviewCycle())
                     .build();
 
-            // 2. ReviewCard 저장
+            // 3. ReviewCard 저장
             ReviewCard savedReviewCard = reviewCardRepository.save(reviewCard);
 
-            // 3. ReviewQuestion 생성 및 저장
+            // 4. ReviewQuestion 생성 및 저장
             List<ReviewQuestion> reviewQuestions = requestDto.getQuestions().stream()
                     .map(questionDto -> ReviewQuestion.createQuestion(savedReviewCard, questionDto.getText()))
                     .collect(Collectors.toList());
@@ -238,9 +244,14 @@ public class ReviewCardService {
         }
 
         // 3. 카드 설정 변경
+        Category newCategory = null;
+        if (requestDto.getCategoryId() != null) {
+            newCategory = categoryService.findCategoryByIdAndUser(requestDto.getCategoryId(), user);
+        }
+
         card.updateCardInfo(
                 requestDto.getTitle(),
-                requestDto.getCategory(),
+                newCategory,
                 requestDto.getImportance(),
                 requestDto.getReviewCycle()
         );

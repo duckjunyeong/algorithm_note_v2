@@ -1,28 +1,34 @@
-## 데이터베이스 관점 데이터플로우
+## 데이터베이스 관점의 데이터플로우
 
-### 테스트 시작 (Read)
+---
 
-* 사용자가 테스트를 시작하면, 시스템은 기존 `ReviewCard` 객체와 여기에 연관된 모든 `Question` 객체 목록을 데이터베이스에서 조회합니다.
+### 카테고리 목록 조회 (플로우 1)
 
-### 질문 평가 (Update)
+*   **Trigger:** 사용자가 `TaskCreationModal`에 진입.
+*   **DB Action:** `SELECT`
+*   **Description:** 현재 로그인된 `user_id`를 기준으로 `categories` 테이블에서 해당 사용자가 소유한 모든 카테고리 레코드(`category_id`, `name`, `color`)를 조회합니다.
 
-* 사용자가 '성공' 또는 '실패'를 클릭할 때마다, 시스템은 `ReviewCard` 객체에 새로 추가된 `success_count` 또는 `fail_count` 필드의 값을 1씩 증가시키는 `UPDATE` 쿼리를 `review_card` 테이블에 실행합니다.
+### 신규 카테고리 중복 검사 및 생성 (플로우 2)
 
-### 테스트 결과 저장 (Update or Delete)
+*   **Trigger:** 사용자가 새로운 카테고리 이름과 색상을 입력 후 '저장' 버튼 클릭.
+*   **DB Action:** `SELECT` (for validation) -> `INSERT` (on success)
+*   **Description:**
+    *   **Validation:** 먼저 `categories` 테이블에 현재 `user_id`와 사용자가 입력한 `name`이 동일한 레코드가 있는지 `SELECT`하여 확인합니다. (중복 방지)
+    *   **Creation:** 중복이 아닐 경우, `categories` 테이블에 새로운 레코드를 `INSERT`합니다. 이 레코드에는 `name`, `color`, 그리고 현재 `user_id`가 포함됩니다.
 
-* 사용자가 '저장하기'를 클릭하면 하나의 트랜잭션(Transaction)이 시작됩니다.
+### Task 생성 시 카테고리 정보 연동 (플로우 1, 2의 최종 결과)
 
-#### Case A: 카드 유지 시 (UPDATE)
+*   **Trigger:** 사용자가 카테고리 선택을 완료하고 최종적으로 Task를 생성.
+*   **DB Action:** `INSERT`
+*   **Description:** `tasks` 테이블에 새로운 레코드를 `INSERT`합니다. 이 레코드에는 Task의 다른 정보들과 함께, 사용자가 선택(또는 방금 생성)한 `category_id`가 외래 키(Foreign Key)로 포함됩니다.
 
-1. `question` 테이블에서 삭제 대상으로 선택된 레코드들을 `DELETE` 합니다.
-2. `review_card` 테이블의 해당 레코드를 `UPDATE` 합니다. 이때 사용자가 수정한 `category`, `importance` 등의 기존 필드와 함께, `is_active` 필드를 `false`로 변경합니다.
+---
 
-#### Case B: 모든 질문 삭제로 카드 삭제 시 (DELETE)
+## 최소 스펙 데이터베이스 스키마 (Spring Data JPA & MySQL)
 
-1. `review_card` 테이블에서 해당 레코드를 `DELETE` 합니다. (`ON DELETE CASCADE` 설정에 의해 연관된 `question` 레코드들도 함께 삭제됩니다.)
+유저플로우에 명시된 사용자, 카테고리, Task 간의 관계를 기반으로 스키마를 구성합니다.
 
-### 데이터베이스 스키마 (기존 객체에 필드 추가)
+*   `User`는 여러 개의 `Category`를 가질 수 있습니다. (1:N)
+*   `Category`는 여러 개의 `Task`에 적용될 수 있습니다. (1:N)
+*   `User`는 여러 개의 `Task`를 가질 수 있습니다. (1:N)
 
-* `Question` 객체는 변경이 없으며, 기존 `ReviewCard` 객체에 `successCount`와 `failCount` 필드를 추가해야 합니다.
-`
-`
