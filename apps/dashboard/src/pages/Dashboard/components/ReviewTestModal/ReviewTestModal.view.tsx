@@ -1,5 +1,7 @@
 import { FiX, FiChevronLeft, FiChevronRight, FiTrash } from 'react-icons/fi';
 import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
+import { CategorySelector } from '../../../../../../../libs/ui-components/src/components/CategorySelector';
+import { CategoryCreationForm } from '../../../../../../../libs/ui-components/src/components/CategoryCreationForm';
 
 interface ReviewQuestion {
   reviewQuestionId: number;
@@ -37,6 +39,16 @@ export interface ReviewTestModalViewProps {
   onSettingChange?: (field: string, value: string | number) => void;
   onSave?: () => void;
   isSaving?: boolean;
+  // Category props
+  categories?: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId?: number | null;
+  isLoadingCategories?: boolean;
+  categoryError?: string | null;
+  showCategoryForm?: boolean;
+  onCategorySelect?: (categoryId: number) => void;
+  onAddCategoryClick?: () => void;
+  onCloseCategoryForm?: () => void;
+  onSaveCategory?: (name: string, color: string) => Promise<void>;
 }
 
 export function ReviewTestModalView({
@@ -65,6 +77,16 @@ export function ReviewTestModalView({
   onSettingChange,
   onSave,
   isSaving,
+  // Category props
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  showCategoryForm,
+  onCategorySelect,
+  onAddCategoryClick,
+  onCloseCategoryForm,
+  onSaveCategory,
 }: ReviewTestModalViewProps) {
   if (!isOpen) return null;
 
@@ -97,6 +119,15 @@ export function ReviewTestModalView({
               onSettingChange={onSettingChange || (() => {})}
               onSave={onSave || (() => {})}
               isSaving={isSaving || false}
+              categories={categories || []}
+              selectedCategoryId={selectedCategoryId ?? null}
+              isLoadingCategories={isLoadingCategories || false}
+              categoryError={categoryError ?? null}
+              showCategoryForm={showCategoryForm || false}
+              onCategorySelect={onCategorySelect || (() => {})}
+              onAddCategoryClick={onAddCategoryClick || (() => {})}
+              onCloseCategoryForm={onCloseCategoryForm || (() => {})}
+              onSaveCategory={onSaveCategory || (async () => {})}
             />
           ) : currentQuestion ? (
             currentView === 'input' ? (
@@ -336,6 +367,16 @@ interface ResultViewProps {
   onSettingChange: (field: string, value: string | number) => void;
   onSave: () => void;
   isSaving: boolean;
+  // Category props
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  showCategoryForm: boolean;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
+  onCloseCategoryForm: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
 }
 
 function ResultView({
@@ -347,6 +388,16 @@ function ResultView({
   onSettingChange,
   onSave,
   isSaving,
+  // Category props
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  showCategoryForm,
+  onCategorySelect,
+  onAddCategoryClick,
+  onCloseCategoryForm,
+  onSaveCategory,
 }: ResultViewProps) {
   const remainingQuestions = questions.filter(q => !deletedQuestionIds.has(q.reviewQuestionId));
   const isAllQuestionsDeleted = remainingQuestions.length === 0;
@@ -450,16 +501,22 @@ function ResultView({
           <div className="space-y-4">
             {/* Category */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">
-                카테고리
-              </label>
-              <input
-                type="text"
-                value={localSettings.category}
-                onChange={(e) => onSettingChange('category', e.target.value)}
-                placeholder="카테고리 입력"
-                className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-              />
+              {showCategoryForm ? (
+                <CategoryCreationForm
+                  onSave={onSaveCategory}
+                  onCancel={onCloseCategoryForm}
+                  existingCategories={categories}
+                />
+              ) : (
+                <CategorySelector
+                  categories={categories}
+                  selectedCategoryId={selectedCategoryId}
+                  isLoading={isLoadingCategories}
+                  error={categoryError}
+                  onCategorySelect={onCategorySelect}
+                  onAddCategoryClick={onAddCategoryClick}
+                />
+              )}
             </div>
 
             {/* Importance Slider */}

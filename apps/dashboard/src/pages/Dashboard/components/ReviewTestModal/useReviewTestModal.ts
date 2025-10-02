@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { AnswerService } from '../../../../services/answerService';
 import { ReviewQuestionService } from '../../../../services/reviewQuestionService';
 import { ReviewCardService } from '../../../../services/reviewCardService';
+import { categoryService } from '../../../../services/categoryService';
 import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
 import { showErrorToast, showSuccessToast } from '../../../../utils/toast';
 
@@ -38,16 +39,28 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
   const [deletedQuestionIds, setDeletedQuestionIds] = useState<Set<number>>(new Set());
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
+  // Category states
+  const [categories, setCategories] = useState<Array<{ categoryId: number; name: string; color: string }>>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [showCategoryForm, setShowCategoryForm] = useState<boolean>(false);
+
   // 모달이 열릴 때 질문 목록 및 카드 설정 로드
   useEffect(() => {
     if (isOpen && reviewCardId) {
       loadQuestions(reviewCardId);
+      loadCategories();
       if (reviewCard) {
         setLocalSettings({
           category: reviewCard.category || '',
           importance: reviewCard.importance || 3,
           reviewCycle: reviewCard.reviewCycle || 7
         });
+        // If reviewCard has categoryId, set it
+        if (reviewCard.categoryId) {
+          setSelectedCategoryId(reviewCard.categoryId);
+        }
       }
       setQuestionResults(new Map());
       setDeletedQuestionIds(new Set());
@@ -69,6 +82,19 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     }
   };
 
+  const loadCategories = async () => {
+    setIsLoadingCategories(true);
+    setCategoryError(null);
+    try {
+      const fetchedCategories = await categoryService.fetchCategories();
+      setCategories(fetchedCategories);
+    } catch (error) {
+      setCategoryError('카테고리를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoadingCategories(false);
+    }
+  };
+
   const resetModalState = () => {
     setCurrentView('input');
     setQuestions([]);
@@ -78,6 +104,10 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     setCurrentAnswerIndex(0);
     setQuestionResults(new Map());
     setDeletedQuestionIds(new Set());
+    setCategories([]);
+    setSelectedCategoryId(null);
+    setShowCategoryForm(false);
+    setCategoryError(null);
   };
 
   const handleSubmitAnswer = async () => {
@@ -171,6 +201,32 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     }));
   };
 
+  // Category handlers
+  const handleCategorySelect = (categoryId: number) => {
+    setSelectedCategoryId(categoryId);
+  };
+
+  const handleAddCategoryClick = () => {
+    setShowCategoryForm(true);
+  };
+
+  const handleCloseCategoryForm = () => {
+    setShowCategoryForm(false);
+  };
+
+  const handleSaveCategory = async (name: string, color: string) => {
+    try {
+      const newCategory = await categoryService.createCategory({ name, color });
+      setCategories(prev => [...prev, newCategory]);
+      setSelectedCategoryId(newCategory.categoryId);
+      setShowCategoryForm(false);
+      showSuccessToast('카테고리가 생성되었습니다.');
+    } catch (error) {
+      showErrorToast('카테고리 생성에 실패했습니다.');
+      throw error;
+    }
+  };
+
   const handleSave = async () => {
     if (!reviewCardId) return;
 
@@ -243,5 +299,15 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     handleSettingChange,
     handleSave,
     isSaving,
+    // Category
+    categories,
+    selectedCategoryId,
+    isLoadingCategories,
+    categoryError,
+    showCategoryForm,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
+    handleSaveCategory,
   };
 }

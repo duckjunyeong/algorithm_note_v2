@@ -28,6 +28,15 @@ export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: R
     handleSettingChange,
     handleSave,
     isSaving,
+    categories,
+    selectedCategoryId,
+    isLoadingCategories,
+    categoryError,
+    showCategoryForm,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
+    handleSaveCategory,
   } = useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose });
 
   return (
@@ -57,6 +66,15 @@ export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: R
       onSettingChange={handleSettingChange}
       onSave={handleSave}
       isSaving={isSaving}
+      categories={categories}
+      selectedCategoryId={selectedCategoryId}
+      isLoadingCategories={isLoadingCategories}
+      categoryError={categoryError}
+      showCategoryForm={showCategoryForm}
+      onCategorySelect={handleCategorySelect}
+      onAddCategoryClick={handleAddCategoryClick}
+      onCloseCategoryForm={handleCloseCategoryForm}
+      onSaveCategory={handleSaveCategory}
     />
   );
 }
