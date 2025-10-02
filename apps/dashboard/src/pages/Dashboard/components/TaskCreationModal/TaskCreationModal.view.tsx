@@ -276,23 +276,22 @@ function SelectView({
           {questions.map((question) => (
             <div
               key={question.id}
-              className="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-              onClick={() => onQuestionToggle(question.id)}
+              className="flex items-start gap-3 p-2 rounded-lg"
             >
               <input
                 type="checkbox"
                 id={`question-${question.id}`}
                 checked={selectedQuestions.has(question.id)}
                 onChange={() => onQuestionToggle(question.id)}
-                onClick={(e) => e.stopPropagation()}
                 className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
               />
-              <div className="flex-1" onClick={(e) => e.stopPropagation()}>
+              <div className="flex-1">
                 <QuestionCard
                   questionId={question.id}
                   question={question.text}
                   onEdit={onQuestionEdit}
                   onDelete={onQuestionDelete}
+                  onQuestionClick={() => onQuestionToggle(question.id)}
                 />
               </div>
             </div>

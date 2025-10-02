@@ -4,9 +4,15 @@ interface UseQuestionCardProps {
   questionId: number;
   onEdit?: (questionId: number) => void;
   onDelete?: (questionId: number) => void;
+  onQuestionClick?: () => void;
 }
 
-export function useQuestionCard({ questionId, onEdit, onDelete }: UseQuestionCardProps) {
+export function useQuestionCard({
+  questionId,
+  onEdit,
+  onDelete,
+  onQuestionClick
+}: UseQuestionCardProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleEdit = useCallback(() => {
@@ -22,7 +28,8 @@ export function useQuestionCard({ questionId, onEdit, onDelete }: UseQuestionCar
   return {
     isLoading,
     handleEdit,
-    handleDelete
+    handleDelete,
+    onQuestionClick
   };
 }
 
@@ -31,4 +38,5 @@ export interface QuestionCardProps {
   question: string;
   onEdit?: (questionId: number) => void;
   onDelete?: (questionId: number) => void;
+  onQuestionClick?: () => void;
 }

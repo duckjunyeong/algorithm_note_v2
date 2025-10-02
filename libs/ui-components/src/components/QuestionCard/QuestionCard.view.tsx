@@ -4,16 +4,26 @@ interface QuestionCardViewProps {
   question: string;
   onEdit: () => void;
   onDelete: () => void;
+  onQuestionClick?: () => void;
   isLoading?: boolean;
 }
 
-export function QuestionCardView({ question, onEdit, onDelete, isLoading = false }: QuestionCardViewProps) {
+export function QuestionCardView({
+  question,
+  onEdit,
+  onDelete,
+  onQuestionClick,
+  isLoading = false
+}: QuestionCardViewProps) {
   return (
     <div className="p-4 border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
-      <p className="text-sm text-gray-700 mb-3 leading-relaxed">
+      <p
+        className={`text-sm text-gray-700 mb-3 leading-relaxed ${onQuestionClick ? 'cursor-pointer hover:text-blue-600 transition-colors' : ''}`}
+        onClick={onQuestionClick}
+      >
         {question}
       </p>
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
         <Button
           onClick={onEdit}
           disabled={isLoading}
