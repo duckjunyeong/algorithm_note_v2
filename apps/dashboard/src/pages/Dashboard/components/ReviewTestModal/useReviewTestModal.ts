@@ -3,6 +3,7 @@ import { AnswerService } from '../../../../services/answerService';
 import { ReviewQuestionService } from '../../../../services/reviewQuestionService';
 import { ReviewCardService } from '../../../../services/reviewCardService';
 import { categoryService } from '../../../../services/categoryService';
+import { useReviewCardStore } from '../../../../store/useReviewCardStore';
 import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
 import { showErrorToast, showSuccessToast } from '../../../../utils/toast';
 
@@ -19,6 +20,9 @@ export interface UseReviewTestModalProps {
 }
 
 export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: UseReviewTestModalProps) {
+  // Store actions for optimistic UI
+  const { moveCardToCompleted, removeCard } = useReviewCardStore();
+
   const [currentView, setCurrentView] = useState<'input' | 'evaluation' | 'result'>('input');
   const [questions, setQuestions] = useState<ReviewQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -51,6 +55,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     if (isOpen && reviewCardId) {
       loadQuestions(reviewCardId);
       loadCategories();
+      console.log('reviewCard in modal:', reviewCard);
       if (reviewCard) {
         setLocalSettings({
           category: reviewCard.category || '',
@@ -123,6 +128,8 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
 
     const currentQuestion = questions[currentQuestionIndex];
     setCurrentView('evaluation');
+
+    // 이전 질문들 불러온다. 
     await loadPreviousAnswers(currentQuestion.reviewQuestionId);
   };
 
@@ -231,12 +238,20 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     if (!reviewCardId) return;
 
     setIsSaving(true);
-    try {
-      const remainingQuestions = questions.filter(
-        q => !deletedQuestionIds.has(q.reviewQuestionId)
-      );
-      const isCardDeleted = remainingQuestions.length === 0;
 
+    const remainingQuestions = questions.filter(
+      q => !deletedQuestionIds.has(q.reviewQuestionId)
+    );
+    const isCardDeleted = remainingQuestions.length === 0;
+
+    // 낙관적 UI 업데이트: API 호출 전에 store 상태 변경
+    if (isCardDeleted) {
+      removeCard(reviewCardId);
+    } else {
+      moveCardToCompleted(reviewCardId);
+    }
+
+    try {
       if (isCardDeleted) {
         // 카드 전체 삭제
         await ReviewCardService.deleteReviewCard(reviewCardId);
@@ -264,7 +279,10 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
 
       onClose();
     } catch (error) {
+      // 롤백: API 실패 시 store 재조회로 원상복구
       showErrorToast('저장에 실패했습니다.');
+      const { fetchReviewCards } = useReviewCardStore.getState();
+      await fetchReviewCards();
     } finally {
       setIsSaving(false);
     }

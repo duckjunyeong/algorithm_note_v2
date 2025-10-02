@@ -527,14 +527,14 @@ function ResultView({
               <input
                 type="range"
                 min="1"
-                max="5"
+                max="10"
                 value={localSettings.importance}
                 onChange={(e) => onSettingChange('importance', Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>1</span>
-                <span>5</span>
+                <span>10</span>
               </div>
             </div>
 
@@ -546,14 +546,14 @@ function ResultView({
               <input
                 type="range"
                 min="1"
-                max="365"
+                max="15"
                 value={localSettings.reviewCycle}
                 onChange={(e) => onSettingChange('reviewCycle', Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>1일</span>
-                <span>365일</span>
+                <span>15일</span>
               </div>
             </div>
           </div>

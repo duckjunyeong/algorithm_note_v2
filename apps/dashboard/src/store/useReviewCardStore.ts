@@ -23,6 +23,12 @@ interface ReviewCardActions {
   // 복습 카드 상태 업데이트
   updateCardStatus: (reviewCardId: number, isActive: boolean) => Promise<void>;
 
+  // 낙관적 UI: 카드를 완료로 이동
+  moveCardToCompleted: (reviewCardId: number) => void;
+
+  // 낙관적 UI: 카드 삭제
+  removeCard: (reviewCardId: number) => void;
+
   // 상태 초기화
   clearError: () => void;
   reset: () => void;
@@ -121,6 +127,38 @@ export const useReviewCardStore = create<ReviewCardStore>((set, get) => ({
       set({ error: errorMessage });
       throw error;
     }
+  },
+
+  moveCardToCompleted: (reviewCardId: number) => {
+    const { reviewCards } = get();
+    const updatedCards = reviewCards.map(card =>
+      card.reviewCardId === reviewCardId
+        ? { ...card, isActive: false }
+        : card
+    );
+
+    const backlogCards = updatedCards.filter(card => card.isActive);
+    const completedCards = updatedCards.filter(card => !card.isActive);
+
+    set({
+      reviewCards: updatedCards,
+      backlogCards,
+      completedCards,
+    });
+  },
+
+  removeCard: (reviewCardId: number) => {
+    const { reviewCards } = get();
+    const updatedCards = reviewCards.filter(card => card.reviewCardId !== reviewCardId);
+
+    const backlogCards = updatedCards.filter(card => card.isActive);
+    const completedCards = updatedCards.filter(card => !card.isActive);
+
+    set({
+      reviewCards: updatedCards,
+      backlogCards,
+      completedCards,
+    });
   },
 
   clearError: () => {

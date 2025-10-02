@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 public class ReviewCardResponseDto {
 
     private Long reviewCardId;
-    private String title;
     private String category;
+    private String title;
     private Integer importance;
     private Integer reviewCycle;
     private Boolean isActive;
