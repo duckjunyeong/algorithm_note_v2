@@ -19,44 +19,35 @@ import { ReviewTestModal } from './components/ReviewTestModal';
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
-  tasksByStatus: Record<TaskStatus, Task[]>;
-  progressStats: {
-    totalCount: number;
-    doneCount: number;
-    percentage: number;
-    chartData: { name: string; value: number; fill: string }[];
-  };
-  analysisStats: {
-    successRate: number;
-    barChartData: { name: string; value: number; fill: string }[];
-    pieChartData: { name: string; value: number }[];
-    growthData: { date: string; rate: number }[];
-    doneCount: number;
-    failCount: number;
-  };
+
   // 복습 카드 관련 props
   backlogCards: ReviewCardType[];
   completedCards: ReviewCardType[];
   reviewCardsLoading: boolean;
   reviewCardsError: string | null;
+  selectedReviewCard: ReviewCardType | null;
+  // Category 관련 props
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
   onToggleSidebar: () => void;
-  isChatModalOpen: boolean;
   selectedTask: Task | null;
-  chatSessionKey: string;
   isConfirmModalOpen: boolean;
   isConfirmLoading: boolean;
   isTaskCreationModalOpen: boolean;
+  isTaskCreationConfirmOpen: boolean;
   isReviewTestModalOpen: boolean;
   selectedReviewCardId: number | null;
-  onOpenChatModal: () => void;
-  onCloseChatModal: () => void;
   onOpenConfirmModal: () => void;
   onCloseConfirmModal: () => void;
   onOpenTaskCreationModal: () => void;
   onCloseTaskCreationModal: () => void;
+  onTaskCreationBackgroundClick: () => void;
+  onConfirmTaskCreationClose: () => void;
+  onCancelTaskCreationClose: () => void;
   onOpenReviewTestModal: (reviewCardId: number) => void;
   onCloseReviewTestModal: () => void;
-  onConfirmStop: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
 }
 
 const columnStyles: Record<TaskStatus, { bg: string; text: string; dot: string }> = {
@@ -79,28 +70,30 @@ const CustomTooltip: FC<any> = ({ active, payload, label }) => {
 
 export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isSidebarOpen,
-  tasksByStatus,
-  progressStats,
-  analysisStats,
   backlogCards,
   completedCards,
   reviewCardsLoading,
   reviewCardsError,
+  selectedReviewCard,
+  categories,
+  isLoadingCategories,
+  categoryError,
   onToggleSidebar,
-  isChatModalOpen,
-  selectedTask,
-  chatSessionKey,
   isConfirmModalOpen,
   isConfirmLoading,
   isTaskCreationModalOpen,
+  isTaskCreationConfirmOpen,
   isReviewTestModalOpen,
   selectedReviewCardId,
   onCloseConfirmModal,
   onOpenTaskCreationModal,
   onCloseTaskCreationModal,
+  onTaskCreationBackgroundClick,
+  onConfirmTaskCreationClose,
+  onCancelTaskCreationClose,
   onOpenReviewTestModal,
   onCloseReviewTestModal,
-  onConfirmStop,
+  onSaveCategory,
 }) => {
   const PIE_COLORS = ['#5E6AD2', '#D1D5DB'];
 
@@ -127,18 +120,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           <div className="mt-6 flex flex-col gap-6 lg:flex-row">
             <div className="flex w-full flex-col justify-between rounded-lg bg-background-secondary p-4 lg:w-1/3">
               <h2 className="text-base font-semibold text-text-primary">전체 진행률</h2>
-              <div className="relative mx-auto h-24 w-24">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadialBarChart innerRadius="70%" outerRadius="100%" data={progressStats.chartData} startAngle={180} endAngle={0} barSize={8}>
-                    <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-                    <RadialBar background dataKey="value" cornerRadius={10} className="fill-brand"/>
-                  </RadialBarChart>
-                </ResponsiveContainer>
-                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-2xl font-bold text-text-primary">{progressStats.percentage}%</span>
-                  <span className="mt-1 text-xs text-text-secondary">{progressStats.doneCount} / {progressStats.totalCount}</span>
-                </div>
-              </div>
+             
             </div>
             
             <div className="flex w-full flex-col gap-4 rounded-lg bg-background-secondary p-4 lg:w-2/3">
@@ -146,43 +128,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                  <h2 className="text-base font-semibold text-text-primary">주간 성공률</h2>
               </div>
               <div className="h-full flex-grow">
-                 <ResponsiveContainer width="100%" height={125}>
-                  <LineChart data={analysisStats.growthData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="colorSuccessRate" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#5E6AD2" stopOpacity={0.2}/>
-                        <stop offset="95%" stopColor="#5E6AD2" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid stroke="transparent" />
-                    <XAxis 
-                      dataKey="date" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: '#9CA3AF', fontSize: 10 }} 
-                      padding={{ left: 10, right: 10 }}
-                    />
-                    <YAxis 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: '#9CA3AF', fontSize: 10 }} 
-                      tickFormatter={(value) => `${value}%`}
-                    />
-                    <Tooltip 
-                      content={<CustomTooltip />} 
-                      cursor={{ stroke: '#9CA3AF', strokeDasharray: '3 3' }}
-                    />
-                    <Area type="monotone" dataKey="rate" stroke="transparent" fill="url(#colorSuccessRate)" />
-                    <Line 
-                      type="monotone" 
-                      dataKey="rate" 
-                      stroke="#5E6AD2"
-                      strokeWidth={2} 
-                      dot={false}
-                      activeDot={{ r: 4, strokeWidth: 2 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+           
               </div>
             </div>
           </div>
@@ -272,24 +218,30 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
       </div>
 
       <ConfirmModal
-        isOpen={isConfirmModalOpen}
-        title="작업을 중단하시겠습니까?"
-        message="진행 중인 채팅이 취소되고 입력한 내용이 사라집니다."
-        onConfirm={onConfirmStop}
-        onCancel={onCloseConfirmModal}
-        isLoading={isConfirmLoading}
-        confirmText="중단하기"
+        isOpen={isTaskCreationConfirmOpen}
+        title="작성을 취소하시겠습니까?"
+        message="작성 중인 내용이 사라집니다."
+        onConfirm={onConfirmTaskCreationClose}
+        onCancel={onCancelTaskCreationClose}
+        isLoading={false}
+        confirmText="확인"
         cancelText="취소"
       />
 
       <TaskCreationModal
         isOpen={isTaskCreationModalOpen}
         onClose={onCloseTaskCreationModal}
+        onBackgroundClick={onTaskCreationBackgroundClick}
+        categories={categories}
+        isLoadingCategories={isLoadingCategories}
+        categoryError={categoryError}
+        onSaveCategory={onSaveCategory}
       />
 
       <ReviewTestModal
         isOpen={isReviewTestModalOpen}
         reviewCardId={selectedReviewCardId}
+        reviewCard={selectedReviewCard}
         onClose={onCloseReviewTestModal}
       />
     </div>

@@ -6,61 +6,63 @@ import { DashboardPageView } from './DashboardPage.view';
 const DashboardPage: FC = () => {
   const {
     isSidebarOpen,
-    tasksByStatus,
-    progressStats,
-    analysisStats,
-    isChatModalOpen,
     selectedTask,
-    chatSessionKey,
     isConfirmModalOpen,
     isConfirmLoading,
     isTaskCreationModalOpen,
+    isTaskCreationConfirmOpen,
     isReviewTestModalOpen,
     selectedReviewCardId,
+    selectedReviewCard,
     backlogCards,
     completedCards,
     reviewCardsLoading,
     reviewCardsError,
-    openChatModal,
-    closeChatModal,
+    categories,
+    isLoadingCategories,
+    categoryError,
     openConfirmModal,
     closeConfirmModal,
     openTaskCreationModal,
     closeTaskCreationModal,
+    handleTaskCreationBackgroundClick,
+    handleConfirmTaskCreationClose,
+    handleCancelTaskCreationClose,
     openReviewTestModal,
     closeReviewTestModal,
-    handleConfirmStop,
+    handleSaveCategory,
     toggleSidebar
   } = useDashboardPage();
 
   return (
     <DashboardPageView
       isSidebarOpen={isSidebarOpen}
-      tasksByStatus={tasksByStatus}
-      progressStats={progressStats}
-      analysisStats={analysisStats}
       onToggleSidebar={toggleSidebar}
-      isChatModalOpen={isChatModalOpen}
       selectedTask={selectedTask}
-      chatSessionKey={chatSessionKey}
       isConfirmModalOpen={isConfirmModalOpen}
       isConfirmLoading={isConfirmLoading}
       isTaskCreationModalOpen={isTaskCreationModalOpen}
+      isTaskCreationConfirmOpen={isTaskCreationConfirmOpen}
       isReviewTestModalOpen={isReviewTestModalOpen}
       selectedReviewCardId={selectedReviewCardId}
+      selectedReviewCard={selectedReviewCard}
       backlogCards={backlogCards}
       completedCards={completedCards}
       reviewCardsLoading={reviewCardsLoading}
       reviewCardsError={reviewCardsError}
-      onOpenChatModal={openChatModal}
-      onCloseChatModal={closeChatModal}
+      categories={categories}
+      isLoadingCategories={isLoadingCategories}
+      categoryError={categoryError}
       onOpenConfirmModal={openConfirmModal}
       onCloseConfirmModal={closeConfirmModal}
       onOpenTaskCreationModal={openTaskCreationModal}
       onCloseTaskCreationModal={closeTaskCreationModal}
+      onTaskCreationBackgroundClick={handleTaskCreationBackgroundClick}
+      onConfirmTaskCreationClose={handleConfirmTaskCreationClose}
+      onCancelTaskCreationClose={handleCancelTaskCreationClose}
       onOpenReviewTestModal={openReviewTestModal}
       onCloseReviewTestModal={closeReviewTestModal}
-      onConfirmStop={handleConfirmStop}
+      onSaveCategory={handleSaveCategory}
     />
   );
 };
