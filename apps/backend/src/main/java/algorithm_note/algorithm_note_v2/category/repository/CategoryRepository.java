@@ -48,4 +48,13 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
      * @return true if exists, false otherwise
      */
     boolean existsByUserAndName(User user, String name);
+
+    /**
+     * Check if a category with the given color exists for the user.
+     *
+     * @param user User entity
+     * @param color Category color
+     * @return true if exists, false otherwise
+     */
+    boolean existsByUserAndColor(User user, String color);
 }

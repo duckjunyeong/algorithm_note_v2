@@ -5,6 +5,7 @@ import type { UseCategoryCreationFormProps } from './useCategoryCreationForm';
 export function CategoryCreationForm({
   onSave,
   onCancel,
+  existingCategories,
 }: UseCategoryCreationFormProps) {
   const {
     name,
@@ -18,6 +19,7 @@ export function CategoryCreationForm({
   } = useCategoryCreationForm({
     onSave,
     onCancel,
+    existingCategories,
   });
 
   return (

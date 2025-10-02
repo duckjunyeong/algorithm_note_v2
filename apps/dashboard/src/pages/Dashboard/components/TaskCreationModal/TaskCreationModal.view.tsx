@@ -2,6 +2,7 @@ import { Button } from '../../../../../../../libs/ui-components/src/components/B
 import { QuestionCard } from '../../../../../../../libs/ui-components/src/components/QuestionCard';
 import { QuestionEditModal } from '../../../../../../../libs/ui-components/src/components/QuestionEditModal';
 import { QuestionSettingsPanel } from '../../../../../../../libs/ui-components/src/components/QuestionSettingsPanel';
+import { CategoryCreationForm } from '../../../../../../../libs/ui-components/src/components/CategoryCreationForm';
 import type { CreateAnswerResponse } from '../../../../schemas/taskCreation.schema';
 
 interface TaskCreationModalViewProps {
@@ -20,14 +21,17 @@ interface TaskCreationModalViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  // --- 수정된 부분 시작 ---
+  // Category 관련 props
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
   isLoadingCategories: boolean;
   categoryError: string | null;
+  showCategoryForm: boolean;
   onCategorySelect: (categoryId: number) => void;
   onAddCategoryClick: () => void;
-  // --- 수정된 부분 끝 ---
+  onCloseCategoryForm: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
+  // 질문 관련 props
   onContinue: () => void;
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
@@ -53,14 +57,17 @@ export function TaskCreationModalView({
   setRepetitionCycle,
   importance,
   setImportance,
-  // --- 추가된 props ---
+  // Category props
   categories,
   selectedCategoryId,
   isLoadingCategories,
   categoryError,
+  showCategoryForm,
   onCategorySelect,
   onAddCategoryClick,
-  // ---
+  onCloseCategoryForm,
+  onSaveCategory,
+  // Question props
   onContinue,
   onQuestionToggle,
   onQuestionEdit,
@@ -115,14 +122,17 @@ export function TaskCreationModalView({
                     setRepetitionCycle={setRepetitionCycle}
                     importance={importance}
                     setImportance={setImportance}
-                    // --- 수정된 부분 시작 ---
+                    // Category props
                     categories={categories}
                     selectedCategoryId={selectedCategoryId}
                     isLoadingCategories={isLoadingCategories}
                     categoryError={categoryError}
+                    showCategoryForm={showCategoryForm}
                     onCategorySelect={onCategorySelect}
                     onAddCategoryClick={onAddCategoryClick}
-                    // --- 수정된 부분 끝 ---
+                    onCloseCategoryForm={onCloseCategoryForm}
+                    onSaveCategory={onSaveCategory}
+                    // Question props
                     onQuestionToggle={onQuestionToggle}
                     onQuestionEdit={onQuestionEdit}
                     onQuestionDelete={onQuestionDelete}
@@ -206,14 +216,17 @@ interface SelectViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  // --- 수정된 부분 시작 ---
+  // Category props
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
   isLoadingCategories: boolean;
   categoryError: string | null;
+  showCategoryForm: boolean;
   onCategorySelect: (categoryId: number) => void;
   onAddCategoryClick: () => void;
-  // --- 수정된 부분 끝 ---
+  onCloseCategoryForm: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
+  // Question props
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
   onQuestionDelete: (questionId: number) => void;
@@ -229,14 +242,17 @@ function SelectView({
   setRepetitionCycle,
   importance,
   setImportance,
-  // --- 추가된 props ---
+  // Category props
   categories,
   selectedCategoryId,
   isLoadingCategories,
   categoryError,
+  showCategoryForm,
   onCategorySelect,
   onAddCategoryClick,
-  // ---
+  onCloseCategoryForm,
+  onSaveCategory,
+  // Question props
   onQuestionToggle,
   onQuestionEdit,
   onQuestionDelete,
@@ -290,20 +306,26 @@ function SelectView({
 
         {/* Settings Panel */}
         <div className="w-64 flex-shrink-0">
-          {/* --- 수정된 부분 시작 --- */}
-          <QuestionSettingsPanel
-            repetitionCycle={repetitionCycle}
-            setRepetitionCycle={setRepetitionCycle}
-            importance={importance}
-            setImportance={setImportance}
-            categories={categories}
-            selectedCategoryId={selectedCategoryId}
-            isLoadingCategories={isLoadingCategories}
-            categoryError={categoryError}
-            onCategorySelect={onCategorySelect}
-            onAddCategoryClick={onAddCategoryClick}
-          />
-          {/* --- 수정된 부분 끝 --- */}
+          {showCategoryForm ? (
+            <CategoryCreationForm
+              onSave={onSaveCategory}
+              onCancel={onCloseCategoryForm}
+              existingCategories={categories}
+            />
+          ) : (
+            <QuestionSettingsPanel
+              repetitionCycle={repetitionCycle}
+              setRepetitionCycle={setRepetitionCycle}
+              importance={importance}
+              setImportance={setImportance}
+              categories={categories}
+              selectedCategoryId={selectedCategoryId}
+              isLoadingCategories={isLoadingCategories}
+              categoryError={categoryError}
+              onCategorySelect={onCategorySelect}
+              onAddCategoryClick={onAddCategoryClick}
+            />
+          )}
         </div>
       </div>
 

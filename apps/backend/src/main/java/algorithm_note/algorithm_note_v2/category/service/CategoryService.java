@@ -43,6 +43,11 @@ public class CategoryService {
             throw new DuplicateCategoryException("이미 사용 중인 카테고리 이름입니다: " + requestDto.getName());
         }
 
+        // Check for duplicate category color
+        if (categoryRepository.existsByUserAndColor(user, requestDto.getColor())) {
+            throw new DuplicateCategoryException("이미 사용 중인 색상입니다. 다른 색상을 선택해주세요.");
+        }
+
         // Create and save category
         Category category = Category.builder()
                 .user(user)

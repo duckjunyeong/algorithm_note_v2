@@ -3,11 +3,13 @@ import { useState, useCallback } from 'react';
 export interface UseCategoryCreationFormProps {
   onSave: (name: string, color: string) => Promise<void>;
   onCancel: () => void;
+  existingCategories?: Array<{ name: string; color: string }>;
 }
 
 export function useCategoryCreationForm({
   onSave,
   onCancel,
+  existingCategories = [],
 }: UseCategoryCreationFormProps) {
   const [name, setName] = useState('');
   const [color, setColor] = useState('#3B82F6'); // 기본 색상
@@ -21,7 +23,8 @@ export function useCategoryCreationForm({
 
   const handleColorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setColor(e.target.value);
-  }, []);
+    if (error) setError(''); // 에러 초기화
+  }, [error]);
 
   const handleSubmit = useCallback(async () => {
     // 유효성 검사
@@ -32,6 +35,23 @@ export function useCategoryCreationForm({
 
     if (name.length > 100) {
       setError('카테고리 이름은 100자 이내로 작성해주세요');
+      return;
+    }
+
+    // 중복 검증
+    const isDuplicateName = existingCategories.some(
+      (cat) => cat.name.toLowerCase() === name.trim().toLowerCase()
+    );
+    if (isDuplicateName) {
+      setError('이미 사용 중인 카테고리 이름입니다');
+      return;
+    }
+
+    const isDuplicateColor = existingCategories.some(
+      (cat) => cat.color.toUpperCase() === color.toUpperCase()
+    );
+    if (isDuplicateColor) {
+      setError('이미 사용 중인 색상입니다. 다른 색상을 선택해주세요.');
       return;
     }
 
@@ -52,7 +72,7 @@ export function useCategoryCreationForm({
     } finally {
       setIsSubmitting(false);
     }
-  }, [name, color, onSave]);
+  }, [name, color, onSave, existingCategories]);
 
   const handleCancel = useCallback(() => {
     setName('');

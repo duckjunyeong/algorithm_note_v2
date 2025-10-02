@@ -86,8 +86,11 @@ export function TaskCreationModal({
       selectedCategoryId={selectedCategoryId}
       isLoadingCategories={isLoadingCategories}
       categoryError={categoryError}
+      showCategoryForm={showCategoryForm}
       onCategorySelect={handleCategorySelect}
       onAddCategoryClick={handleAddCategoryClick}
+      onCloseCategoryForm={handleCloseCategoryForm}
+      onSaveCategory={onSaveCategory}
 
       onContinue={handleContinue}
       onQuestionToggle={handleQuestionToggle}
