@@ -21,6 +21,7 @@ public class ReviewCardResponseDto {
 
     private Long reviewCardId;
     private String category;
+    private Long categoryId;
     private String title;
     private Integer importance;
     private Integer reviewCycle;
@@ -41,6 +42,7 @@ public class ReviewCardResponseDto {
                 .reviewCardId(reviewCard.getReviewCardId())
                 .title(reviewCard.getTitle())
                 .category(reviewCard.getCategory().getName())
+                .categoryId(reviewCard.getCategory().getCategoryId())
                 .importance(reviewCard.getImportance())
                 .reviewCycle(reviewCard.getReviewCycle())
                 .isActive(reviewCard.getIsActive())
@@ -66,6 +68,7 @@ public class ReviewCardResponseDto {
                 .reviewCardId(reviewCard.getReviewCardId())
                 .title(reviewCard.getTitle())
                 .category(reviewCard.getCategory().getName())
+                .categoryId(reviewCard.getCategory().getCategoryId())
                 .importance(reviewCard.getImportance())
                 .reviewCycle(reviewCard.getReviewCycle())
                 .isActive(reviewCard.getIsActive())

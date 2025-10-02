@@ -47,6 +47,7 @@ export const reviewCardSchema = z.object({
   reviewCardId: z.number().int().positive(),
   title: z.string(),
   category: z.string(),
+  categoryId: z.number().int().positive().optional(),
   importance: z.number().int().min(1).max(5),
   reviewCycle: z.number().int().positive(),
   isActive: z.boolean(),

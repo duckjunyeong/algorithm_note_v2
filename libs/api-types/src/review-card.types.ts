@@ -7,6 +7,7 @@ export interface ReviewCard {
   reviewCardId: number;
   title: string;
   category: string;
+  categoryId?: number;
   importance: number;
   reviewCycle: number;
   isActive: boolean;
