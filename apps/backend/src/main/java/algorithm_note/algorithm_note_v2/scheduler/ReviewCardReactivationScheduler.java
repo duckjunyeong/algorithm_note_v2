@@ -22,12 +22,12 @@ public class ReviewCardReactivationScheduler {
      * 복습 카드 재활성화 작업을 주기적으로 실행합니다.
      *
      * 실행 주기:
-     * - 개발 환경: 매 10초 (환경변수로 설정)
-     * - 배포 환경: 매일 자정 (환경변수로 설정)
+     * - 개발 환경: 매 10초 (application-dev.yml)
+     * - 배포 환경: 매시간 정각 (application-prod.yml)
      *
-     * Cron 표현식은 application.properties의 ${revalidation.schedule}에서 주입됩니다.
+     * Cron 표현식은 application.yml의 ${revalidation.schedule}에서 주입됩니다.
      */
-    @Scheduled(cron = "${revalidation.schedule:0 0 * * * *}")
+    @Scheduled(cron = "${revalidation.schedule}")
     public void scheduleReactivation() {
         log.info("=== Review Card Reactivation Scheduler Started ===");
 

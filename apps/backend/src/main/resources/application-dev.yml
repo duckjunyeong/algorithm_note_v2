@@ -1,0 +1,7 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+revalidation:
+  schedule: "*/10 * * * * *"  # 개발 환경: 10초마다 실행

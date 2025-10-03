@@ -1,0 +1,7 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+revalidation:
+  schedule: 0 0 * * * *  # 배포 환경: 매시간 정각

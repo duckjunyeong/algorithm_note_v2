@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: algorithm_note_v2
   datasource:
@@ -9,6 +11,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
 
 clerk:
   webhook:

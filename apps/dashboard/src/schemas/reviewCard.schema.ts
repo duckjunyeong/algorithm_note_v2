@@ -29,7 +29,7 @@ export const createReviewCardRequestSchema = z.object({
   reviewCycle: z.number()
     .int("반복 주기는 정수여야 합니다")
     .min(1, "반복 주기는 1일 이상이어야 합니다")
-    .max(365, "반복 주기는 365일 이하여야 합니다"),
+    .max(15, "반복 주기는 15일 이하여야 합니다"),
 
   questions: z.array(reviewQuestionSchema)
     .min(1, "최소 1개의 질문을 추가해주세요")
