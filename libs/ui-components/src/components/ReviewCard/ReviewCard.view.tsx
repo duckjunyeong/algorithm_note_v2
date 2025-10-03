@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCircle, FiPlay } from 'react-icons/fi';
+import { FiCircle, FiPlay, FiEye } from 'react-icons/fi';
 
 interface Tag {
   label: string;
@@ -14,9 +14,10 @@ export interface ReviewCardViewProps {
   title: string;
   tags?: Tag[];
   isHovering: boolean;
+  isActive: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
-  onTestButtonClick: () => void;
+  onButtonClick: () => void;
 }
 
 export function ReviewCardView({
@@ -25,10 +26,13 @@ export function ReviewCardView({
   title,
   tags,
   isHovering,
+  isActive,
   onMouseEnter,
   onMouseLeave,
-  onTestButtonClick,
+  onButtonClick,
 }: ReviewCardViewProps) {
+
+  console.log('Rendering ReviewCardView:', { id, isActive });
   return (
     <div
       onMouseEnter={onMouseEnter}
@@ -60,7 +64,7 @@ export function ReviewCardView({
         ))}
       </div>
 
-      {/* 호버 시 중앙 테스트 시작 버튼 */}
+      {/* 호버 시 중앙 버튼 (테스트 시작 또는 결과 보기) */}
       <AnimatePresence>
         {isHovering && (
           <motion.div
@@ -75,14 +79,27 @@ export function ReviewCardView({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                onTestButtonClick();
+                onButtonClick();
               }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold shadow-lg transition-colors hover:bg-blue-700"
+              className={`flex items-center gap-2 rounded-lg px-6 py-3 text-white font-semibold shadow-lg transition-colors ${
+                isActive
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
             >
-              <FiPlay size={20} />
-              테스트 시작
+              {isActive ? (
+                <>
+                  <FiPlay size={20} />
+                  테스트 시작
+                </>
+              ) : (
+                <>
+                  <FiEye size={20} />
+                  결과 보기
+                </>
+              )}
             </motion.button>
           </motion.div>
         )}

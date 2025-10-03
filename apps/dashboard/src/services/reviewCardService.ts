@@ -4,6 +4,7 @@ import type {
   CreateReviewCardResponse,
   GetReviewCardsResponse,
   ReviewCard,
+  ReviewCardResultResponse,
 } from '../../../../libs/api-types/src';
 
 import type { UpdateReviewResultRequest } from '../../../../libs/api-types/src/review-card.types';
@@ -91,6 +92,23 @@ export class ReviewCardService {
       await apiClient.post(`/reviewCard/${reviewCardId}/review`);
     } catch (error) {
       console.error('복습 횟수 증가 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 비활성화된 복습 카드의 질문과 답변 목록을 조회합니다
+   * @param reviewCardId 복습 카드 ID
+   * @returns 질문별 답변 목록
+   */
+  static async getReviewCardResults(reviewCardId: number): Promise<ReviewCardResultResponse> {
+    try {
+      const response = await apiClient.get<ReviewCardResultResponse>(
+        `/reviewCard/${reviewCardId}/results`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('복습 카드 결과 조회 실패:', error);
       throw error;
     }
   }

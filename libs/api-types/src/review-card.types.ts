@@ -63,6 +63,27 @@ export interface UpdateReviewResultRequest {
   }>;
 }
 
+// 답변 인터페이스
+export interface Answer {
+  answerId: number;
+  questionId: number;
+  content: string;
+  evaluationResult: 'SUCCESS' | 'FAILURE';
+  createdAt: string;
+}
+
+// 질문과 답변 목록 인터페이스
+export interface QuestionWithAnswers {
+  reviewQuestionId: number;
+  questionText: string;
+  answers: Answer[];
+}
+
+// 복습 카드 결과 조회 응답 인터페이스
+export interface ReviewCardResultResponse {
+  questions: QuestionWithAnswers[];
+}
+
 // API 에러 응답 인터페이스
 export interface ApiErrorResponse {
   status: number;

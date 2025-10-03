@@ -16,6 +16,8 @@ import ConfirmModal from '../../../../../libs/ui-components/src/components/Confi
 import { TaskCreationModal } from './components/TaskCreationModal';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
 import { ReviewTestModal } from './components/ReviewTestModal';
+import { ReviewResultModal } from './components/ReviewResultModal';
+
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
@@ -39,6 +41,10 @@ export interface DashboardPageViewProps {
   isReviewTestModalOpen: boolean;
   selectedReviewCardId: number | null;
   onOpenConfirmModal: () => void;
+  isReviewResultModalOpen: boolean;
+  selectedResultReviewCardId: number | null;
+  onOpenReviewResultModal: (reviewCardId: number) => void;
+  onCloseReviewResultModal: () => void;
   onCloseConfirmModal: () => void;
   onOpenTaskCreationModal: () => void;
   onCloseTaskCreationModal: () => void;
@@ -79,13 +85,14 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isLoadingCategories,
   categoryError,
   onToggleSidebar,
-  isConfirmModalOpen,
-  isConfirmLoading,
   isTaskCreationModalOpen,
   isTaskCreationConfirmOpen,
+  isReviewResultModalOpen,
   isReviewTestModalOpen,
   selectedReviewCardId,
-  onCloseConfirmModal,
+  selectedResultReviewCardId,
+  onOpenReviewResultModal,
+  onCloseReviewResultModal,
   onOpenTaskCreationModal,
   onCloseTaskCreationModal,
   onTaskCreationBackgroundClick,
@@ -203,12 +210,13 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                     id={`R-${card.reviewCardId}`}
                     category={card.category}
                     title={card.title}
+                    isActive={card.isActive}
                     tags={[
                       { label: '중요도', value: `${card.importance}/5` },
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
                     ]}
-                    onTestStart={() => onOpenReviewTestModal(card.reviewCardId)}
+                    onResultView={() => onOpenReviewResultModal(card.reviewCardId)}
                   />
                 ))
               )}
@@ -243,6 +251,12 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         reviewCardId={selectedReviewCardId}
         reviewCard={selectedReviewCard}
         onClose={onCloseReviewTestModal}
+      />
+
+      <ReviewResultModal
+        isOpen={isReviewResultModalOpen}
+        reviewCardId={selectedResultReviewCardId}
+        onClose={onCloseReviewResultModal}
       />
     </div>
   );

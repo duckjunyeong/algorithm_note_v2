@@ -17,12 +17,14 @@ export const useDashboardPage = () => {
   const [isTaskCreationConfirmOpen, setIsTaskCreationConfirmOpen] = useState<boolean>(false);
   const [isReviewTestModalOpen, setIsReviewTestModalOpen] = useState<boolean>(false);
   const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
+  const [isReviewResultModalOpen, setIsReviewResultModalOpen] = useState<boolean>(false);
+  const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
 
   // Category 관련 상태
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
-  // 복습 카드 store 사용
+  // 복습 카드 store 
   const {
     backlogCards,
     completedCards,
@@ -120,6 +122,17 @@ export const useDashboardPage = () => {
     setSelectedReviewCardId(null);
   };
 
+  const openReviewResultModal = (reviewCardId: number) => {
+    setSelectedResultReviewCardId(reviewCardId);
+    setIsReviewResultModalOpen(true);
+    console.log('Opening ReviewResultModal for reviewCardId:', reviewCardId);
+  };
+
+  const closeReviewResultModal = () => {
+    setIsReviewResultModalOpen(false);
+    setSelectedResultReviewCardId(null);
+  };
+
   return {
     isSidebarOpen,
     selectedTask,
@@ -148,6 +161,10 @@ export const useDashboardPage = () => {
     handleCancelTaskCreationClose,
     openReviewTestModal,
     closeReviewTestModal,
+    isReviewResultModalOpen,
+    selectedResultReviewCardId,
+    openReviewResultModal,
+    closeReviewResultModal,
     handleSaveCategory,
     toggleSidebar,
   };

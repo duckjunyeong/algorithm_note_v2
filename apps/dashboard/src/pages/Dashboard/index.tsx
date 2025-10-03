@@ -14,6 +14,8 @@ const DashboardPage: FC = () => {
     isReviewTestModalOpen,
     selectedReviewCardId,
     selectedReviewCard,
+    isReviewResultModalOpen,
+    selectedResultReviewCardId,
     backlogCards,
     completedCards,
     reviewCardsLoading,
@@ -30,6 +32,8 @@ const DashboardPage: FC = () => {
     handleCancelTaskCreationClose,
     openReviewTestModal,
     closeReviewTestModal,
+    openReviewResultModal,
+    closeReviewResultModal,
     handleSaveCategory,
     toggleSidebar
   } = useDashboardPage();
@@ -62,6 +66,10 @@ const DashboardPage: FC = () => {
       onCancelTaskCreationClose={handleCancelTaskCreationClose}
       onOpenReviewTestModal={openReviewTestModal}
       onCloseReviewTestModal={closeReviewTestModal}
+      isReviewResultModalOpen={isReviewResultModalOpen}
+      selectedResultReviewCardId={selectedResultReviewCardId}
+      onOpenReviewResultModal={openReviewResultModal}
+      onCloseReviewResultModal={closeReviewResultModal}
       onSaveCategory={handleSaveCategory}
     />
   );

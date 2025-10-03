@@ -20,14 +20,17 @@ export function ReviewCard({
   category,
   title,
   tags,
+  isActive,
   onTestStart,
+  onResultView,
 }: ReviewCardProps) {
   const {
     isHovering,
+    isActive: activeStatus,
     handleMouseEnter,
     handleMouseLeave,
-    handleTestButtonClick,
-  } = useReviewCard({ onTestStart });
+    handleButtonClick,
+  } = useReviewCard({ isActive, onTestStart, onResultView });
 
   return (
     <ReviewCardView
@@ -36,9 +39,10 @@ export function ReviewCard({
       title={title}
       tags={tags}
       isHovering={isHovering}
+      isActive={activeStatus}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onTestButtonClick={handleTestButtonClick}
+      onButtonClick={handleButtonClick}
     />
   );
 }

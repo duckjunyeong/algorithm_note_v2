@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,11 +36,11 @@ public class ReviewCardController {
      */
     @PostMapping("/create")
     public ResponseEntity<ReviewCardCreateResponseDto> createReviewCard(
-            @Valid @RequestBody ReviewCardCreateRequestDto requestDto) {
+            @Valid @RequestBody ReviewCardCreateRequestDto requestDto,
+            @AuthenticationPrincipal User currentUser) {
 
         log.info("Creating review card with title: {}", requestDto.getTitle());
 
-        User currentUser = getCurrentUser();
         ReviewCardCreateResponseDto response = reviewCardService.createReviewCard(requestDto, currentUser);
 
         log.info("Successfully created review card with ID: {}", response.getReviewCardId());
@@ -53,14 +54,14 @@ public class ReviewCardController {
      * @return 복습 카드 목록
      */
     @GetMapping
-    public ResponseEntity<List<ReviewCardResponseDto>> getAllReviewCards() {
+    public ResponseEntity<List<ReviewCardResponseDto>> getAllReviewCards(@AuthenticationPrincipal User currentUser) {
         log.info("Fetching all review cards for authenticated user");
 
-        User currentUser = getCurrentUser();
         List<ReviewCardResponseDto> reviewCards = reviewCardService.getAllReviewCardsByUser(currentUser);
 
         log.info("Found {} review cards for user", reviewCards.size());
 
+        log.info("ReviewCard: {}", reviewCards.get(0).getReviewQuestions());
         return ResponseEntity.ok(reviewCards);
     }
 
@@ -72,11 +73,10 @@ public class ReviewCardController {
      */
     @GetMapping("/{reviewCardId}")
     public ResponseEntity<ReviewCardResponseDto> getReviewCard(
-            @PathVariable Long reviewCardId) {
+            @PathVariable Long reviewCardId,
+            @AuthenticationPrincipal User currentUser) {
 
         log.info("Fetching review card with ID: {}", reviewCardId);
-
-        User currentUser = getCurrentUser();
         ReviewCardResponseDto reviewCard = reviewCardService.getReviewCardById(reviewCardId, currentUser);
 
         return ResponseEntity.ok(reviewCard);
@@ -92,12 +92,11 @@ public class ReviewCardController {
     @PatchMapping("/{reviewCardId}/status")
     public ResponseEntity<Void> updateReviewCardStatus(
             @PathVariable Long reviewCardId,
-            @Valid @RequestBody ReviewCardUpdateStatusRequestDto requestDto) {
+            @Valid @RequestBody ReviewCardUpdateStatusRequestDto requestDto,
+            @AuthenticationPrincipal User currentUser) {
 
         log.info("Updating review card status - ID: {}, isActive: {}",
                 reviewCardId, requestDto.getIsActive());
-
-        User currentUser = getCurrentUser();
         reviewCardService.updateReviewCardStatus(reviewCardId, requestDto.getIsActive(), currentUser);
 
         log.info("Successfully updated review card status - ID: {}", reviewCardId);
@@ -112,10 +111,8 @@ public class ReviewCardController {
      * @return 성공 응답
      */
     @PostMapping("/{reviewCardId}/review")
-    public ResponseEntity<Void> incrementReviewCount(@PathVariable Long reviewCardId) {
+    public ResponseEntity<Void> incrementReviewCount(@PathVariable Long reviewCardId, @AuthenticationPrincipal User currentUser) {
         log.info("Incrementing review count for card ID: {}", reviewCardId);
-
-        User currentUser = getCurrentUser();
         reviewCardService.incrementReviewCount(reviewCardId, currentUser);
 
         log.info("Successfully incremented review count for card ID: {}", reviewCardId);
@@ -130,10 +127,8 @@ public class ReviewCardController {
      * @return 성공 응답
      */
     @DeleteMapping("/{reviewCardId}")
-    public ResponseEntity<Void> deleteReviewCard(@PathVariable Long reviewCardId) {
+    public ResponseEntity<Void> deleteReviewCard(@PathVariable Long reviewCardId, @AuthenticationPrincipal User currentUser) {
         log.info("Deleting review card with ID: {}", reviewCardId);
-
-        User currentUser = getCurrentUser();
         reviewCardService.deleteReviewCard(reviewCardId, currentUser);
 
         log.info("Successfully deleted review card with ID: {}", reviewCardId);
@@ -149,11 +144,10 @@ public class ReviewCardController {
      */
     @GetMapping("/status")
     public ResponseEntity<List<ReviewCardResponseDto>> getReviewCardsByStatus(
-            @RequestParam Boolean isActive) {
+            @RequestParam Boolean isActive,
+            @AuthenticationPrincipal User currentUser) {
 
         log.info("Fetching review cards by status: {}", isActive);
-
-        User currentUser = getCurrentUser();
         List<ReviewCardResponseDto> reviewCards = reviewCardService.getReviewCardsByStatus(currentUser, isActive);
 
         log.info("Found {} review cards with status: {}", reviewCards.size(), isActive);
@@ -167,13 +161,31 @@ public class ReviewCardController {
      * @return 복습 카드 통계 정보
      */
     @GetMapping("/stats")
-    public ResponseEntity<ReviewCardService.ReviewCardStatsDto> getReviewCardStats() {
+    public ResponseEntity<ReviewCardService.ReviewCardStatsDto> getReviewCardStats(@AuthenticationPrincipal User currentUser) {
         log.info("Fetching review card stats for authenticated user");
-
-        User currentUser = getCurrentUser();
         ReviewCardService.ReviewCardStatsDto stats = reviewCardService.getReviewCardStats(currentUser);
 
         return ResponseEntity.ok(stats);
+    }
+
+    /**
+     * 비활성화된 복습 카드의 질문과 답변 목록을 조회합니다.
+     *
+     * @param reviewCardId 복습 카드 ID
+     * @return 질문별 답변 목록이 포함된 응답
+     */
+    @GetMapping("/{reviewCardId}/results")
+    public ResponseEntity<ReviewCardResultResponseDto> getReviewCardResults(
+            @PathVariable Long reviewCardId,
+            @AuthenticationPrincipal User currentUser) {
+
+        log.info("Fetching review card results for ID: {}", reviewCardId);
+
+        ReviewCardResultResponseDto results = reviewCardService.getReviewCardResults(reviewCardId, currentUser);
+
+        log.info("Successfully fetched review card results - ID: {}", reviewCardId);
+
+        return ResponseEntity.ok(results);
     }
 
     /**
@@ -186,34 +198,13 @@ public class ReviewCardController {
     @PutMapping("/{reviewCardId}/result")
     public ResponseEntity<Void> updateReviewResult(
             @PathVariable Long reviewCardId,
-            @Valid @RequestBody ReviewCardUpdateRequestDto requestDto) {
+            @Valid @RequestBody ReviewCardUpdateRequestDto requestDto,
+            @AuthenticationPrincipal User currentUser) {
 
-        User currentUser = getCurrentUser();
         reviewCardService.updateReviewResult(reviewCardId, requestDto, currentUser);
 
         log.info("Successfully updated review result - ID: {}", reviewCardId);
 
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     * SecurityContext로부터 현재 인증된 사용자를 가져옵니다.
-     *
-     * @return 현재 인증된 사용자
-     * @throws RuntimeException 인증되지 않은 사용자인 경우
-     */
-    private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("인증되지 않은 사용자입니다.");
-        }
-
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof User)) {
-            throw new RuntimeException("유효하지 않은 사용자 정보입니다.");
-        }
-
-        return (User) principal;
     }
 }

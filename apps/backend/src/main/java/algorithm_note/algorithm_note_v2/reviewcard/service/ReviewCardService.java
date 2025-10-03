@@ -2,13 +2,16 @@ package algorithm_note.algorithm_note_v2.reviewcard.service;
 
 import algorithm_note.algorithm_note_v2.category.domain.Category;
 import algorithm_note.algorithm_note_v2.category.service.CategoryService;
+import algorithm_note.algorithm_note_v2.reviewcard.domain.Answer;
 import algorithm_note.algorithm_note_v2.reviewcard.domain.ReviewCard;
 import algorithm_note.algorithm_note_v2.reviewQuestion.domain.ReviewQuestion;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateRequestDto;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardCreateResponseDto;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardResponseDto;
+import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardResultResponseDto;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.ReviewCardUpdateRequestDto;
 import algorithm_note.algorithm_note_v2.reviewcard.exception.ReviewCardNotFoundException;
+import algorithm_note.algorithm_note_v2.reviewcard.repository.AnswerRepository;
 import algorithm_note.algorithm_note_v2.reviewcard.repository.ReviewCardRepository;
 import algorithm_note.algorithm_note_v2.reviewQuestion.repository.ReviewQuestionRepository;
 import algorithm_note.algorithm_note_v2.reviewQuestion.service.ReviewQuestionService;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +37,7 @@ public class ReviewCardService {
 
     private final ReviewCardRepository reviewCardRepository;
     private final ReviewQuestionRepository reviewQuestionRepository;
+    private final AnswerRepository answerRepository;
     private final ReviewQuestionService reviewQuestionService;
     private final CategoryService categoryService;
 
@@ -212,6 +217,38 @@ public class ReviewCardService {
                 .activeCount(activeCount)
                 .completedCount(completedCount)
                 .build();
+    }
+
+    /**
+     * 비활성화된 복습 카드의 질문과 답변 목록을 조회합니다.
+     *
+     * @param reviewCardId 복습 카드 ID
+     * @param user 소유자 사용자
+     * @return 질문별 답변 목록이 포함된 응답 DTO
+     */
+    public ReviewCardResultResponseDto getReviewCardResults(Long reviewCardId, User user) {
+        log.info("Fetching review card results - cardId: {}, user: {}", reviewCardId, user.getId());
+
+        // 1. ReviewCard 조회 및 권한 검증
+        ReviewCard reviewCard = reviewCardRepository.findByIdAndUserWithQuestions(reviewCardId, user)
+                .orElseThrow(() -> new ReviewCardNotFoundException("복습 카드를 찾을 수 없습니다."));
+
+        List<ReviewQuestion> reviewQuestions = reviewCard.getReviewQuestions();
+
+        // 2. 각 질문에 대한 답변 조회 (최신순 정렬)
+        Map<Long, List<Answer>> answersMap = reviewQuestions.stream()
+                .collect(Collectors.toMap(
+                        ReviewQuestion::getReviewQuestionId,
+                        question -> answerRepository
+                                .findAllByReviewQuestion_ReviewQuestionIdOrderByCreatedAtDesc(
+                                        question.getReviewQuestionId()
+                                )
+                ));
+
+        log.info("Found {} questions with answers for card: {}", reviewQuestions.size(), reviewCardId);
+
+        // 3. DTO 변환 및 반환
+        return ReviewCardResultResponseDto.from(reviewQuestions, answersMap);
     }
 
     /**

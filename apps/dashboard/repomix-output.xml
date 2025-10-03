@@ -73,6 +73,9 @@ src/main.tsx
 src/pages/Dashboard/components/HeroContent/HeroContent.view.tsx
 src/pages/Dashboard/components/HeroContent/index.tsx
 src/pages/Dashboard/components/HeroContent/useHeroContent.ts
+src/pages/Dashboard/components/ReviewResultModal/index.tsx
+src/pages/Dashboard/components/ReviewResultModal/ReviewResultModal.view.tsx
+src/pages/Dashboard/components/ReviewResultModal/useReviewResultModal.ts
 src/pages/Dashboard/components/ReviewTestModal/index.tsx
 src/pages/Dashboard/components/ReviewTestModal/ReviewTestModal.view.tsx
 src/pages/Dashboard/components/ReviewTestModal/useReviewTestModal.ts
@@ -200,6 +203,7 @@ export default defineConfig([
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/lang-python": "^6.2.1",
     "@codemirror/view": "^6.38.2",
+    "@tanstack/react-query": "^5.87.4",
     "@uiw/codemirror-theme-vscode": "^4.25.1",
     "@uiw/react-codemirror": "^4.25.1",
     "axios": "^1.12.1",
@@ -1238,6 +1242,364 @@ export const useHeroContent = () => {
 };
 </file>
 
+<file path="src/pages/Dashboard/components/ReviewResultModal/index.tsx">
+import { useReviewResultModal, type UseReviewResultModalProps } from './useReviewResultModal';
+import { ReviewResultModalView } from './ReviewResultModal.view';
+
+export interface ReviewResultModalProps extends UseReviewResultModalProps {}
+
+export function ReviewResultModal({ isOpen, reviewCardId, onClose }: ReviewResultModalProps) {
+  const {
+    isLoading,
+    isError,
+    error,
+    currentQuestion,
+    currentAnswer,
+    currentQuestionIndex,
+    currentAnswerIndex,
+    totalQuestions,
+    totalAnswers,
+    isPrevQuestionDisabled,
+    isNextQuestionDisabled,
+    isPrevAnswerDisabled,
+    isNextAnswerDisabled,
+    handleClose,
+    handlePrevQuestion,
+    handleNextQuestion,
+    handlePrevAnswer,
+    handleNextAnswer,
+  } = useReviewResultModal({ isOpen, reviewCardId, onClose });
+
+  return (
+    <ReviewResultModalView
+      isOpen={isOpen}
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      currentQuestion={currentQuestion}
+      currentAnswer={currentAnswer}
+      currentQuestionIndex={currentQuestionIndex}
+      currentAnswerIndex={currentAnswerIndex}
+      totalQuestions={totalQuestions}
+      totalAnswers={totalAnswers}
+      isPrevQuestionDisabled={isPrevQuestionDisabled}
+      isNextQuestionDisabled={isNextQuestionDisabled}
+      isPrevAnswerDisabled={isPrevAnswerDisabled}
+      isNextAnswerDisabled={isNextAnswerDisabled}
+      onClose={handleClose}
+      onPrevQuestion={handlePrevQuestion}
+      onNextQuestion={handleNextQuestion}
+      onPrevAnswer={handlePrevAnswer}
+      onNextAnswer={handleNextAnswer}
+    />
+  );
+}
+</file>
+
+<file path="src/pages/Dashboard/components/ReviewResultModal/ReviewResultModal.view.tsx">
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import type { QuestionWithAnswers, Answer } from '../../../../../../../libs/api-types/src';
+
+export interface ReviewResultModalViewProps {
+  isOpen: boolean;
+  isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+  currentQuestion: QuestionWithAnswers | null;
+  currentAnswer: Answer | null;
+  currentQuestionIndex: number;
+  currentAnswerIndex: number;
+  totalQuestions: number;
+  totalAnswers: number;
+  isPrevQuestionDisabled: boolean;
+  isNextQuestionDisabled: boolean;
+  isPrevAnswerDisabled: boolean;
+  isNextAnswerDisabled: boolean;
+  onClose: () => void;
+  onPrevQuestion: () => void;
+  onNextQuestion: () => void;
+  onPrevAnswer: () => void;
+  onNextAnswer: () => void;
+}
+
+export function ReviewResultModalView({
+  isOpen,
+  isLoading,
+  isError,
+  error,
+  currentQuestion,
+  currentAnswer,
+  currentQuestionIndex,
+  currentAnswerIndex,
+  totalQuestions,
+  totalAnswers,
+  isPrevQuestionDisabled,
+  isNextQuestionDisabled,
+  isPrevAnswerDisabled,
+  isNextAnswerDisabled,
+  onClose,
+  onPrevQuestion,
+  onNextQuestion,
+  onPrevAnswer,
+  onNextAnswer,
+}: ReviewResultModalViewProps) {
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+          className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-lg bg-background-primary p-6 shadow-xl"
+        >
+          {/* 헤더 */}
+          <div className="mb-6 flex items-center justify-between border-b border-neutral-100 pb-4">
+            <h2 className="text-2xl font-bold text-text-primary">결과 보기</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-neutral-50"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+
+          {/* 로딩 상태 */}
+          {isLoading && (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+            </div>
+          )}
+
+          {/* 에러 상태 */}
+          {isError && (
+            <div className="rounded-lg bg-red-50 p-4 text-center">
+              <p className="text-red-600 font-medium">데이터를 불러오는 데 실패했습니다.</p>
+            </div>
+          )}
+
+          {/* 데이터 표시 */}
+          {!isLoading && !isError && currentQuestion && (
+            <div className="space-y-6">
+              {/* 질문 네비게이션 */}
+              <div className="flex items-center justify-between rounded-lg bg-neutral-50 p-4">
+                <button
+                  type="button"
+                  onClick={onPrevQuestion}
+                  disabled={isPrevQuestionDisabled}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors ${
+                    isPrevQuestionDisabled
+                      ? 'cursor-not-allowed text-neutral-300'
+                      : 'text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  <FiChevronLeft size={20} />
+                  이전 질문
+                </button>
+                <span className="text-sm text-text-secondary">
+                  질문 {currentQuestionIndex + 1} / {totalQuestions}
+                </span>
+                <button
+                  type="button"
+                  onClick={onNextQuestion}
+                  disabled={isNextQuestionDisabled}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors ${
+                    isNextQuestionDisabled
+                      ? 'cursor-not-allowed text-neutral-300'
+                      : 'text-blue-600 hover:bg-blue-50'
+                  }`}
+                >
+                  다음 질문
+                  <FiChevronRight size={20} />
+                </button>
+              </div>
+
+              {/* 질문 내용 */}
+              <div className="rounded-lg border border-neutral-100 bg-background-secondary p-4">
+                <h3 className="mb-2 text-sm font-medium text-text-secondary">질문</h3>
+                <p className="text-text-primary whitespace-pre-wrap">{currentQuestion.questionText}</p>
+              </div>
+
+              {/* 답변 내용 */}
+              {currentAnswer ? (
+                <div className="space-y-4">
+                  {/* 답변 네비게이션 */}
+                  <div className="flex items-center justify-between rounded-lg bg-neutral-50 p-4">
+                    <button
+                      type="button"
+                      onClick={onPrevAnswer}
+                      disabled={isPrevAnswerDisabled}
+                      className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors ${
+                        isPrevAnswerDisabled
+                          ? 'cursor-not-allowed text-neutral-300'
+                          : 'text-blue-600 hover:bg-blue-50'
+                      }`}
+                    >
+                      <FiChevronLeft size={20} />
+                      이전 답변
+                    </button>
+                    <span className="text-sm text-text-secondary">
+                      답변 {currentAnswerIndex + 1} / {totalAnswers}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={onNextAnswer}
+                      disabled={isNextAnswerDisabled}
+                      className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors ${
+                        isNextAnswerDisabled
+                          ? 'cursor-not-allowed text-neutral-300'
+                          : 'text-blue-600 hover:bg-blue-50'
+                      }`}
+                    >
+                      다음 답변
+                      <FiChevronRight size={20} />
+                    </button>
+                  </div>
+
+                  {/* 답변 상세 */}
+                  <div
+                    className={`rounded-lg border p-4 ${
+                      currentAnswer.evaluationResult === 'SUCCESS'
+                        ? 'border-green-200 bg-green-50'
+                        : 'border-red-200 bg-red-50'
+                    }`}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <h3 className="text-sm font-medium text-text-secondary">답변</h3>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          currentAnswer.evaluationResult === 'SUCCESS'
+                            ? 'bg-green-600 text-white'
+                            : 'bg-red-600 text-white'
+                        }`}
+                      >
+                        {currentAnswer.evaluationResult === 'SUCCESS' ? '성공' : '실패'}
+                      </span>
+                    </div>
+                    <p className="text-text-primary whitespace-pre-wrap">{currentAnswer.content}</p>
+                    <p className="mt-3 text-xs text-text-tertiary">
+                      작성일: {new Date(currentAnswer.createdAt).toLocaleString('ko-KR')}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-neutral-100 bg-neutral-50 p-8 text-center">
+                  <p className="text-text-secondary">기록된 답변이 없습니다.</p>
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
+</file>
+
+<file path="src/pages/Dashboard/components/ReviewResultModal/useReviewResultModal.ts">
+import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { ReviewCardService } from '../../../../services/reviewCardService';
+import type { ReviewCardResultResponse } from '../../../../../../../libs/api-types/src';
+
+export interface UseReviewResultModalProps {
+  isOpen: boolean;
+  reviewCardId: number | null;
+  onClose: () => void;
+}
+
+export function useReviewResultModal({ isOpen, reviewCardId, onClose }: UseReviewResultModalProps) {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0);
+
+  // 복습 카드 결과 데이터 페칭
+  const { data, isLoading, isError, error } = useQuery<ReviewCardResultResponse>({
+    queryKey: ['reviewCardResults', reviewCardId],
+    queryFn: () => ReviewCardService.getReviewCardResults(reviewCardId!),
+    enabled: isOpen && reviewCardId !== null,
+  });
+
+  // 현재 질문 데이터
+  const currentQuestion = useMemo(() => {
+    if (!data?.questions || data.questions.length === 0) return null;
+    return data.questions[currentQuestionIndex] || null;
+  }, [data, currentQuestionIndex]);
+
+  // 현재 답변 데이터
+  const currentAnswer = useMemo(() => {
+    if (!currentQuestion?.answers || currentQuestion.answers.length === 0) return null;
+    return currentQuestion.answers[currentAnswerIndex] || null;
+  }, [currentQuestion, currentAnswerIndex]);
+
+  // 질문 네비게이션
+  const handlePrevQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+      setCurrentAnswerIndex(0); // 질문 변경 시 답변 인덱스 초기화
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (data?.questions && currentQuestionIndex < data.questions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setCurrentAnswerIndex(0); // 질문 변경 시 답변 인덱스 초기화
+    }
+  };
+
+  // 답변 네비게이션
+  const handlePrevAnswer = () => {
+    if (currentAnswerIndex > 0) {
+      setCurrentAnswerIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleNextAnswer = () => {
+    if (currentQuestion?.answers && currentAnswerIndex < currentQuestion.answers.length - 1) {
+      setCurrentAnswerIndex((prev) => prev + 1);
+    }
+  };
+
+  // 버튼 비활성화 상태
+  const isPrevQuestionDisabled = currentQuestionIndex === 0;
+  const isNextQuestionDisabled = !data?.questions || currentQuestionIndex === data.questions.length - 1;
+  const isPrevAnswerDisabled = currentAnswerIndex === 0 || !currentQuestion?.answers || currentQuestion.answers.length === 0;
+  const isNextAnswerDisabled = !currentQuestion?.answers || currentAnswerIndex === currentQuestion.answers.length - 1 || currentQuestion.answers.length === 0;
+
+  // 모달 닫기 시 상태 초기화
+  const handleClose = () => {
+    setCurrentQuestionIndex(0);
+    setCurrentAnswerIndex(0);
+    onClose();
+  };
+
+  return {
+    data,
+    isLoading,
+    isError,
+    error,
+    currentQuestion,
+    currentAnswer,
+    currentQuestionIndex,
+    currentAnswerIndex,
+    totalQuestions: data?.questions?.length || 0,
+    totalAnswers: currentQuestion?.answers?.length || 0,
+    handlePrevQuestion,
+    handleNextQuestion,
+    handlePrevAnswer,
+    handleNextAnswer,
+    isPrevQuestionDisabled,
+    isNextQuestionDisabled,
+    isPrevAnswerDisabled,
+    isNextAnswerDisabled,
+    handleClose,
+  };
+}
+</file>
+
 <file path="src/pages/Dashboard/components/ReviewTestModal/index.tsx">
 import { useReviewTestModal, type UseReviewTestModalProps } from './useReviewTestModal';
 import { ReviewTestModalView } from './ReviewTestModal.view';
@@ -1269,6 +1631,15 @@ export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: R
     handleSettingChange,
     handleSave,
     isSaving,
+    categories,
+    selectedCategoryId,
+    isLoadingCategories,
+    categoryError,
+    showCategoryForm,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
+    handleSaveCategory,
   } = useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose });
 
   return (
@@ -1298,6 +1669,15 @@ export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: R
       onSettingChange={handleSettingChange}
       onSave={handleSave}
       isSaving={isSaving}
+      categories={categories}
+      selectedCategoryId={selectedCategoryId}
+      isLoadingCategories={isLoadingCategories}
+      categoryError={categoryError}
+      showCategoryForm={showCategoryForm}
+      onCategorySelect={handleCategorySelect}
+      onAddCategoryClick={handleAddCategoryClick}
+      onCloseCategoryForm={handleCloseCategoryForm}
+      onSaveCategory={handleSaveCategory}
     />
   );
 }
@@ -1306,6 +1686,8 @@ export function ReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: R
 <file path="src/pages/Dashboard/components/ReviewTestModal/ReviewTestModal.view.tsx">
 import { FiX, FiChevronLeft, FiChevronRight, FiTrash } from 'react-icons/fi';
 import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
+import { CategorySelector } from '../../../../../../../libs/ui-components/src/components/CategorySelector';
+import { CategoryCreationForm } from '../../../../../../../libs/ui-components/src/components/CategoryCreationForm';
 
 interface ReviewQuestion {
   reviewQuestionId: number;
@@ -1343,6 +1725,16 @@ export interface ReviewTestModalViewProps {
   onSettingChange?: (field: string, value: string | number) => void;
   onSave?: () => void;
   isSaving?: boolean;
+  // Category props
+  categories?: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId?: number | null;
+  isLoadingCategories?: boolean;
+  categoryError?: string | null;
+  showCategoryForm?: boolean;
+  onCategorySelect?: (categoryId: number) => void;
+  onAddCategoryClick?: () => void;
+  onCloseCategoryForm?: () => void;
+  onSaveCategory?: (name: string, color: string) => Promise<void>;
 }
 
 export function ReviewTestModalView({
@@ -1371,6 +1763,16 @@ export function ReviewTestModalView({
   onSettingChange,
   onSave,
   isSaving,
+  // Category props
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  showCategoryForm,
+  onCategorySelect,
+  onAddCategoryClick,
+  onCloseCategoryForm,
+  onSaveCategory,
 }: ReviewTestModalViewProps) {
   if (!isOpen) return null;
 
@@ -1403,6 +1805,15 @@ export function ReviewTestModalView({
               onSettingChange={onSettingChange || (() => {})}
               onSave={onSave || (() => {})}
               isSaving={isSaving || false}
+              categories={categories || []}
+              selectedCategoryId={selectedCategoryId ?? null}
+              isLoadingCategories={isLoadingCategories || false}
+              categoryError={categoryError ?? null}
+              showCategoryForm={showCategoryForm || false}
+              onCategorySelect={onCategorySelect || (() => {})}
+              onAddCategoryClick={onAddCategoryClick || (() => {})}
+              onCloseCategoryForm={onCloseCategoryForm || (() => {})}
+              onSaveCategory={onSaveCategory || (async () => {})}
             />
           ) : currentQuestion ? (
             currentView === 'input' ? (
@@ -1642,6 +2053,16 @@ interface ResultViewProps {
   onSettingChange: (field: string, value: string | number) => void;
   onSave: () => void;
   isSaving: boolean;
+  // Category props
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  showCategoryForm: boolean;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
+  onCloseCategoryForm: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
 }
 
 function ResultView({
@@ -1653,6 +2074,16 @@ function ResultView({
   onSettingChange,
   onSave,
   isSaving,
+  // Category props
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  showCategoryForm,
+  onCategorySelect,
+  onAddCategoryClick,
+  onCloseCategoryForm,
+  onSaveCategory,
 }: ResultViewProps) {
   const remainingQuestions = questions.filter(q => !deletedQuestionIds.has(q.reviewQuestionId));
   const isAllQuestionsDeleted = remainingQuestions.length === 0;
@@ -1756,16 +2187,22 @@ function ResultView({
           <div className="space-y-4">
             {/* Category */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">
-                카테고리
-              </label>
-              <input
-                type="text"
-                value={localSettings.category}
-                onChange={(e) => onSettingChange('category', e.target.value)}
-                placeholder="카테고리 입력"
-                className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-              />
+              {showCategoryForm ? (
+                <CategoryCreationForm
+                  onSave={onSaveCategory}
+                  onCancel={onCloseCategoryForm}
+                  existingCategories={categories}
+                />
+              ) : (
+                <CategorySelector
+                  categories={categories}
+                  selectedCategoryId={selectedCategoryId}
+                  isLoading={isLoadingCategories}
+                  error={categoryError}
+                  onCategorySelect={onCategorySelect}
+                  onAddCategoryClick={onAddCategoryClick}
+                />
+              )}
             </div>
 
             {/* Importance Slider */}
@@ -1776,14 +2213,14 @@ function ResultView({
               <input
                 type="range"
                 min="1"
-                max="5"
+                max="10"
                 value={localSettings.importance}
                 onChange={(e) => onSettingChange('importance', Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>1</span>
-                <span>5</span>
+                <span>10</span>
               </div>
             </div>
 
@@ -1795,14 +2232,14 @@ function ResultView({
               <input
                 type="range"
                 min="1"
-                max="365"
+                max="15"
                 value={localSettings.reviewCycle}
                 onChange={(e) => onSettingChange('reviewCycle', Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>1일</span>
-                <span>365일</span>
+                <span>15일</span>
               </div>
             </div>
           </div>
@@ -1868,6 +2305,8 @@ import { useState, useEffect } from 'react';
 import { AnswerService } from '../../../../services/answerService';
 import { ReviewQuestionService } from '../../../../services/reviewQuestionService';
 import { ReviewCardService } from '../../../../services/reviewCardService';
+import { categoryService } from '../../../../services/categoryService';
+import { useReviewCardStore } from '../../../../store/useReviewCardStore';
 import type { Answer, EvaluationResult } from '../../../../schemas/answer.schema';
 import { showErrorToast, showSuccessToast } from '../../../../utils/toast';
 
@@ -1884,6 +2323,9 @@ export interface UseReviewTestModalProps {
 }
 
 export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: UseReviewTestModalProps) {
+  // Store actions for optimistic UI
+  const { moveCardToCompleted, removeCard } = useReviewCardStore();
+
   const [currentView, setCurrentView] = useState<'input' | 'evaluation' | 'result'>('input');
   const [questions, setQuestions] = useState<ReviewQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -1896,6 +2338,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
 
   // Result View states
   const [questionResults, setQuestionResults] = useState<Map<number, { successCount: number; failCount: number }>>(new Map());
+  const [questionAnswers, setQuestionAnswers] = useState<Map<number, string>>(new Map());
   const [localSettings, setLocalSettings] = useState({
     category: '',
     importance: 3,
@@ -1904,18 +2347,32 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
   const [deletedQuestionIds, setDeletedQuestionIds] = useState<Set<number>>(new Set());
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
+  // Category states
+  const [categories, setCategories] = useState<Array<{ categoryId: number; name: string; color: string }>>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [showCategoryForm, setShowCategoryForm] = useState<boolean>(false);
+
   // 모달이 열릴 때 질문 목록 및 카드 설정 로드
   useEffect(() => {
     if (isOpen && reviewCardId) {
       loadQuestions(reviewCardId);
+      loadCategories();
+      console.log('reviewCard in modal:', reviewCard);
       if (reviewCard) {
         setLocalSettings({
           category: reviewCard.category || '',
           importance: reviewCard.importance || 3,
           reviewCycle: reviewCard.reviewCycle || 7
         });
+        // If reviewCard has categoryId, set it
+        if (reviewCard.categoryId) {
+          setSelectedCategoryId(reviewCard.categoryId);
+        }
       }
       setQuestionResults(new Map());
+      setQuestionAnswers(new Map());
       setDeletedQuestionIds(new Set());
     } else {
       resetModalState();
@@ -1935,6 +2392,19 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     }
   };
 
+  const loadCategories = async () => {
+    setIsLoadingCategories(true);
+    setCategoryError(null);
+    try {
+      const fetchedCategories = await categoryService.fetchCategories();
+      setCategories(fetchedCategories);
+    } catch (error) {
+      setCategoryError('카테고리를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoadingCategories(false);
+    }
+  };
+
   const resetModalState = () => {
     setCurrentView('input');
     setQuestions([]);
@@ -1943,7 +2413,12 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     setPreviousAnswers([]);
     setCurrentAnswerIndex(0);
     setQuestionResults(new Map());
+    setQuestionAnswers(new Map());
     setDeletedQuestionIds(new Set());
+    setCategories([]);
+    setSelectedCategoryId(null);
+    setShowCategoryForm(false);
+    setCategoryError(null);
   };
 
   const handleSubmitAnswer = async () => {
@@ -1958,7 +2433,17 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     }
 
     const currentQuestion = questions[currentQuestionIndex];
+
+    // 로컬 Map에 답변 저장
+    setQuestionAnswers(prev => {
+      const newMap = new Map(prev);
+      newMap.set(currentQuestion.reviewQuestionId, answerInput.trim());
+      return newMap;
+    });
+
     setCurrentView('evaluation');
+
+    // 이전 질문들 불러온다.
     await loadPreviousAnswers(currentQuestion.reviewQuestionId);
   };
 
@@ -1996,32 +2481,50 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
 
     const currentQuestion = questions[currentQuestionIndex];
 
-    // 로컬 Map 업데이트 (질문별 카운트 증가)
-    setQuestionResults(prev => {
-      const newMap = new Map(prev);
-      const current = newMap.get(currentQuestion.reviewQuestionId) || { successCount: 0, failCount: 0 };
+    // 저장할 답변 가져오기 (로컬 Map에서 우선 조회, 없으면 현재 answerInput 사용)
+    const answerContent = questionAnswers.get(currentQuestion.reviewQuestionId) || answerInput.trim();
 
-      if (result === 'SUCCESS') {
-        current.successCount++;
+    // 서버에 답변 저장
+    setIsSavingAnswer(true);
+    try {
+      await AnswerService.createAnswer({
+        questionId: currentQuestion.reviewQuestionId,
+        content: answerContent,
+        evaluationResult: result
+      });
+
+      // 로컬 Map 업데이트 (질문별 카운트 증가)
+      setQuestionResults(prev => {
+        const newMap = new Map(prev);
+        const current = newMap.get(currentQuestion.reviewQuestionId) || { successCount: 0, failCount: 0 };
+
+        if (result === 'SUCCESS') {
+          current.successCount++;
+        } else {
+          current.failCount++;
+        }
+
+        newMap.set(currentQuestion.reviewQuestionId, current);
+        return newMap;
+      });
+
+      // 마지막 질문인지 확인
+      if (currentQuestionIndex === questions.length - 1) {
+        // Result View로 전환
+        setCurrentView('result');
+        showSuccessToast('테스트가 종료되었습니다.');
       } else {
-        current.failCount++;
+        // 다음 질문으로 이동
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setAnswerInput('');
+        setCurrentView('input');
+        setPreviousAnswers([]);
       }
-
-      newMap.set(currentQuestion.reviewQuestionId, current);
-      return newMap;
-    });
-
-    // 마지막 질문인지 확인
-    if (currentQuestionIndex === questions.length - 1) {
-      // Result View로 전환
-      setCurrentView('result');
-      showSuccessToast('테스트가 종료되었습니다.');
-    } else {
-      // 다음 질문으로 이동
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setAnswerInput('');
-      setCurrentView('input');
-      setPreviousAnswers([]);
+    } catch (error) {
+      showErrorToast('답변 저장에 실패했습니다.');
+      console.error('답변 저장 실패:', error);
+    } finally {
+      setIsSavingAnswer(false);
     }
   };
 
@@ -2037,16 +2540,50 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     }));
   };
 
+  // Category handlers
+  const handleCategorySelect = (categoryId: number) => {
+    setSelectedCategoryId(categoryId);
+  };
+
+  const handleAddCategoryClick = () => {
+    setShowCategoryForm(true);
+  };
+
+  const handleCloseCategoryForm = () => {
+    setShowCategoryForm(false);
+  };
+
+  const handleSaveCategory = async (name: string, color: string) => {
+    try {
+      const newCategory = await categoryService.createCategory({ name, color });
+      setCategories(prev => [...prev, newCategory]);
+      setSelectedCategoryId(newCategory.categoryId);
+      setShowCategoryForm(false);
+      showSuccessToast('카테고리가 생성되었습니다.');
+    } catch (error) {
+      showErrorToast('카테고리 생성에 실패했습니다.');
+      throw error;
+    }
+  };
+
   const handleSave = async () => {
     if (!reviewCardId) return;
 
     setIsSaving(true);
-    try {
-      const remainingQuestions = questions.filter(
-        q => !deletedQuestionIds.has(q.reviewQuestionId)
-      );
-      const isCardDeleted = remainingQuestions.length === 0;
 
+    const remainingQuestions = questions.filter(
+      q => !deletedQuestionIds.has(q.reviewQuestionId)
+    );
+    const isCardDeleted = remainingQuestions.length === 0;
+
+    // 낙관적 UI 업데이트: API 호출 전에 store 상태 변경
+    if (isCardDeleted) {
+      removeCard(reviewCardId);
+    } else {
+      moveCardToCompleted(reviewCardId);
+    }
+
+    try {
       if (isCardDeleted) {
         // 카드 전체 삭제
         await ReviewCardService.deleteReviewCard(reviewCardId);
@@ -2069,12 +2606,19 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
           deletedQuestionIds: Array.from(deletedQuestionIds),
           questionUpdates
         });
+
+        // 복습 횟수 증가
+        await ReviewCardService.incrementReviewCount(reviewCardId);
+
         showSuccessToast('저장되었습니다.');
       }
 
       onClose();
     } catch (error) {
+      // 롤백: API 실패 시 store 재조회로 원상복구
       showErrorToast('저장에 실패했습니다.');
+      const { fetchReviewCards } = useReviewCardStore.getState();
+      await fetchReviewCards();
     } finally {
       setIsSaving(false);
     }
@@ -2109,6 +2653,16 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     handleSettingChange,
     handleSave,
     isSaving,
+    // Category
+    categories,
+    selectedCategoryId,
+    isLoadingCategories,
+    categoryError,
+    showCategoryForm,
+    handleCategorySelect,
+    handleAddCategoryClick,
+    handleCloseCategoryForm,
+    handleSaveCategory,
   };
 }
 </file>
@@ -2240,6 +2794,7 @@ import { useCategoryStore } from '../../../../store/useCategoryStore';
 interface TaskCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
+
   onBackgroundClick?: () => void;
   categories: Array<{ categoryId: number; name: string; color: string }>;
   isLoadingCategories: boolean;
@@ -2315,10 +2870,17 @@ export function TaskCreationModal({
       setRepetitionCycle={setRepetitionCycle}
       importance={importance}
       setImportance={setImportance}
-      category={category}
-      setCategory={setCategory}
-      categoryColor={categoryColor}
-      setCategoryColor={setCategoryColor}
+
+      categories={categories}
+      selectedCategoryId={selectedCategoryId}
+      isLoadingCategories={isLoadingCategories}
+      categoryError={categoryError}
+      showCategoryForm={showCategoryForm}
+      onCategorySelect={handleCategorySelect}
+      onAddCategoryClick={handleAddCategoryClick}
+      onCloseCategoryForm={handleCloseCategoryForm}
+      onSaveCategory={onSaveCategory}
+
       onContinue={handleContinue}
       onQuestionToggle={handleQuestionToggle}
       onQuestionEdit={handleQuestionEdit}
@@ -2338,13 +2900,14 @@ import { Button } from '../../../../../../../libs/ui-components/src/components/B
 import { QuestionCard } from '../../../../../../../libs/ui-components/src/components/QuestionCard';
 import { QuestionEditModal } from '../../../../../../../libs/ui-components/src/components/QuestionEditModal';
 import { QuestionSettingsPanel } from '../../../../../../../libs/ui-components/src/components/QuestionSettingsPanel';
+import { CategoryCreationForm } from '../../../../../../../libs/ui-components/src/components/CategoryCreationForm';
 import type { CreateAnswerResponse } from '../../../../schemas/taskCreation.schema';
 
 interface TaskCreationModalViewProps {
   isOpen: boolean;
   onClose: () => void;
   onBackgroundClick?: () => void;
-  currentView: 'input' | 'select';
+  currentView: 'input' | 'select' | 'category';
   inputValue: string;
   setInputValue: (value: string) => void;
   errorMessage: string;
@@ -2356,10 +2919,17 @@ interface TaskCreationModalViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  categoryColor: string;
-  setCategoryColor: (value: string) => void;
+  // Category 관련 props
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  showCategoryForm: boolean;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
+  onCloseCategoryForm: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
+  // 질문 관련 props
   onContinue: () => void;
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
@@ -2385,10 +2955,17 @@ export function TaskCreationModalView({
   setRepetitionCycle,
   importance,
   setImportance,
-  category,
-  setCategory,
-  categoryColor,
-  setCategoryColor,
+  // Category props
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  showCategoryForm,
+  onCategorySelect,
+  onAddCategoryClick,
+  onCloseCategoryForm,
+  onSaveCategory,
+  // Question props
   onContinue,
   onQuestionToggle,
   onQuestionEdit,
@@ -2406,56 +2983,63 @@ export function TaskCreationModalView({
         onClick={onBackgroundClick}
       />
       <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">
-            추가 태스크 생성
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+          <div className="flex items-center justify-between p-6 border-b">
+            <h2 className="text-xl font-semibold text-gray-900">
+              추가 태스크 생성
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
 
-        <div className="p-6">
-          {currentView === 'input' && (
-            <InputView
-              value={inputValue}
-              onChange={setInputValue}
-              errorMessage={errorMessage}
-              isLoading={isLoading}
-              onContinue={onContinue}
-            />
-          )}
-          {currentView === 'select' && (
-            <>
-              {isLoading && !questions ? (
-                <LoadingView />
-              ) : questions ? (
-                <SelectView
-                  title={questions.title}
-                  questions={questions.questions}
-                  selectedQuestions={selectedQuestions}
-                  repetitionCycle={repetitionCycle}
-                  setRepetitionCycle={setRepetitionCycle}
-                  importance={importance}
-                  setImportance={setImportance}
-                  category={category}
-                  setCategory={setCategory}
-                  categoryColor={categoryColor}
-                  setCategoryColor={setCategoryColor}
-                  onQuestionToggle={onQuestionToggle}
-                  onQuestionEdit={onQuestionEdit}
-                  onQuestionDelete={onQuestionDelete}
-                  onRegisterSelectedQuestions={onRegisterSelectedQuestions}
-                  errorMessage={errorMessage}
-                />
-              ) : null}
-            </>
-          )}
+          <div className="p-6">
+            {currentView === 'input' && (
+              <InputView
+                value={inputValue}
+                onChange={setInputValue}
+                errorMessage={errorMessage}
+                isLoading={isLoading}
+                onContinue={onContinue}
+              />
+            )}
+            {currentView === 'select' && (
+              <>
+                {isLoading && !questions ? (
+                  <LoadingView />
+                ) : questions ? (
+                  <SelectView
+                    title={questions.title}
+                    questions={questions.questions}
+                    selectedQuestions={selectedQuestions}
+                    repetitionCycle={repetitionCycle}
+                    setRepetitionCycle={setRepetitionCycle}
+                    importance={importance}
+                    setImportance={setImportance}
+                    // Category props
+                    categories={categories}
+                    selectedCategoryId={selectedCategoryId}
+                    isLoadingCategories={isLoadingCategories}
+                    categoryError={categoryError}
+                    showCategoryForm={showCategoryForm}
+                    onCategorySelect={onCategorySelect}
+                    onAddCategoryClick={onAddCategoryClick}
+                    onCloseCategoryForm={onCloseCategoryForm}
+                    onSaveCategory={onSaveCategory}
+                    // Question props
+                    onQuestionToggle={onQuestionToggle}
+                    onQuestionEdit={onQuestionEdit}
+                    onQuestionDelete={onQuestionDelete}
+                    onRegisterSelectedQuestions={onRegisterSelectedQuestions}
+                    errorMessage={errorMessage}
+                  />
+                ) : null}
+              </>
+            )}
         </div>
       </div>
 
@@ -2470,6 +3054,8 @@ export function TaskCreationModalView({
     </div>
   );
 }
+
+// ... InputView, LoadingView 컴포넌트는 변경 없음 ...
 
 interface InputViewProps {
   value: string;
@@ -2528,10 +3114,17 @@ interface SelectViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  categoryColor: string;
-  setCategoryColor: (value: string) => void;
+  // Category props
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  selectedCategoryId: number | null;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
+  showCategoryForm: boolean;
+  onCategorySelect: (categoryId: number) => void;
+  onAddCategoryClick: () => void;
+  onCloseCategoryForm: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
+  // Question props
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
   onQuestionDelete: (questionId: number) => void;
@@ -2547,10 +3140,17 @@ function SelectView({
   setRepetitionCycle,
   importance,
   setImportance,
-  category,
-  setCategory,
-  categoryColor,
-  setCategoryColor,
+  // Category props
+  categories,
+  selectedCategoryId,
+  isLoadingCategories,
+  categoryError,
+  showCategoryForm,
+  onCategorySelect,
+  onAddCategoryClick,
+  onCloseCategoryForm,
+  onSaveCategory,
+  // Question props
   onQuestionToggle,
   onQuestionEdit,
   onQuestionDelete,
@@ -2574,23 +3174,22 @@ function SelectView({
           {questions.map((question) => (
             <div
               key={question.id}
-              className="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-              onClick={() => onQuestionToggle(question.id)}
+              className="flex items-start gap-3 p-2 rounded-lg"
             >
               <input
                 type="checkbox"
                 id={`question-${question.id}`}
                 checked={selectedQuestions.has(question.id)}
                 onChange={() => onQuestionToggle(question.id)}
-                onClick={(e) => e.stopPropagation()}
                 className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
               />
-              <div className="flex-1" onClick={(e) => e.stopPropagation()}>
+              <div className="flex-1">
                 <QuestionCard
                   questionId={question.id}
                   question={question.text}
                   onEdit={onQuestionEdit}
                   onDelete={onQuestionDelete}
+                  onQuestionClick={() => onQuestionToggle(question.id)}
                 />
               </div>
             </div>
@@ -2604,16 +3203,26 @@ function SelectView({
 
         {/* Settings Panel */}
         <div className="w-64 flex-shrink-0">
-          <QuestionSettingsPanel
-            repetitionCycle={repetitionCycle}
-            setRepetitionCycle={setRepetitionCycle}
-            importance={importance}
-            setImportance={setImportance}
-            category={category}
-            setCategory={setCategory}
-            categoryColor={categoryColor}
-            setCategoryColor={setCategoryColor}
-          />
+          {showCategoryForm ? (
+            <CategoryCreationForm
+              onSave={onSaveCategory}
+              onCancel={onCloseCategoryForm}
+              existingCategories={categories}
+            />
+          ) : (
+            <QuestionSettingsPanel
+              repetitionCycle={repetitionCycle}
+              setRepetitionCycle={setRepetitionCycle}
+              importance={importance}
+              setImportance={setImportance}
+              categories={categories}
+              selectedCategoryId={selectedCategoryId}
+              isLoadingCategories={isLoadingCategories}
+              categoryError={categoryError}
+              onCategorySelect={onCategorySelect}
+              onAddCategoryClick={onAddCategoryClick}
+            />
+          )}
         </div>
       </div>
 
@@ -2903,47 +3512,44 @@ import ConfirmModal from '../../../../../libs/ui-components/src/components/Confi
 import { TaskCreationModal } from './components/TaskCreationModal';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
 import { ReviewTestModal } from './components/ReviewTestModal';
+import { ReviewResultModal } from './components/ReviewResultModal';
+
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
-  tasksByStatus: Record<TaskStatus, Task[]>;
-  progressStats: {
-    totalCount: number;
-    doneCount: number;
-    percentage: number;
-    chartData: { name: string; value: number; fill: string }[];
-  };
-  analysisStats: {
-    successRate: number;
-    barChartData: { name: string; value: number; fill: string }[];
-    pieChartData: { name: string; value: number }[];
-    growthData: { date: string; rate: number }[];
-    doneCount: number;
-    failCount: number;
-  };
+
   // 복습 카드 관련 props
   backlogCards: ReviewCardType[];
   completedCards: ReviewCardType[];
   reviewCardsLoading: boolean;
   reviewCardsError: string | null;
+  selectedReviewCard: ReviewCardType | null;
+  // Category 관련 props
+  categories: Array<{ categoryId: number; name: string; color: string }>;
+  isLoadingCategories: boolean;
+  categoryError: string | null;
   onToggleSidebar: () => void;
-  isChatModalOpen: boolean;
   selectedTask: Task | null;
-  chatSessionKey: string;
   isConfirmModalOpen: boolean;
   isConfirmLoading: boolean;
   isTaskCreationModalOpen: boolean;
+  isTaskCreationConfirmOpen: boolean;
   isReviewTestModalOpen: boolean;
   selectedReviewCardId: number | null;
-  onOpenChatModal: () => void;
-  onCloseChatModal: () => void;
   onOpenConfirmModal: () => void;
+  isReviewResultModalOpen: boolean;
+  selectedResultReviewCardId: number | null;
+  onOpenReviewResultModal: (reviewCardId: number) => void;
+  onCloseReviewResultModal: () => void;
   onCloseConfirmModal: () => void;
   onOpenTaskCreationModal: () => void;
   onCloseTaskCreationModal: () => void;
+  onTaskCreationBackgroundClick: () => void;
+  onConfirmTaskCreationClose: () => void;
+  onCancelTaskCreationClose: () => void;
   onOpenReviewTestModal: (reviewCardId: number) => void;
   onCloseReviewTestModal: () => void;
-  onConfirmStop: () => void;
+  onSaveCategory: (name: string, color: string) => Promise<void>;
 }
 
 const columnStyles: Record<TaskStatus, { bg: string; text: string; dot: string }> = {
@@ -2966,28 +3572,31 @@ const CustomTooltip: FC<any> = ({ active, payload, label }) => {
 
 export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isSidebarOpen,
-  tasksByStatus,
-  progressStats,
-  analysisStats,
   backlogCards,
   completedCards,
   reviewCardsLoading,
   reviewCardsError,
+  selectedReviewCard,
+  categories,
+  isLoadingCategories,
+  categoryError,
   onToggleSidebar,
-  isChatModalOpen,
-  selectedTask,
-  chatSessionKey,
-  isConfirmModalOpen,
-  isConfirmLoading,
   isTaskCreationModalOpen,
+  isTaskCreationConfirmOpen,
+  isReviewResultModalOpen,
   isReviewTestModalOpen,
   selectedReviewCardId,
-  onCloseConfirmModal,
+  selectedResultReviewCardId,
+  onOpenReviewResultModal,
+  onCloseReviewResultModal,
   onOpenTaskCreationModal,
   onCloseTaskCreationModal,
+  onTaskCreationBackgroundClick,
+  onConfirmTaskCreationClose,
+  onCancelTaskCreationClose,
   onOpenReviewTestModal,
   onCloseReviewTestModal,
-  onConfirmStop,
+  onSaveCategory,
 }) => {
   const PIE_COLORS = ['#5E6AD2', '#D1D5DB'];
 
@@ -3014,18 +3623,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           <div className="mt-6 flex flex-col gap-6 lg:flex-row">
             <div className="flex w-full flex-col justify-between rounded-lg bg-background-secondary p-4 lg:w-1/3">
               <h2 className="text-base font-semibold text-text-primary">전체 진행률</h2>
-              <div className="relative mx-auto h-24 w-24">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadialBarChart innerRadius="70%" outerRadius="100%" data={progressStats.chartData} startAngle={180} endAngle={0} barSize={8}>
-                    <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-                    <RadialBar background dataKey="value" cornerRadius={10} className="fill-brand"/>
-                  </RadialBarChart>
-                </ResponsiveContainer>
-                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-2xl font-bold text-text-primary">{progressStats.percentage}%</span>
-                  <span className="mt-1 text-xs text-text-secondary">{progressStats.doneCount} / {progressStats.totalCount}</span>
-                </div>
-              </div>
+             
             </div>
             
             <div className="flex w-full flex-col gap-4 rounded-lg bg-background-secondary p-4 lg:w-2/3">
@@ -3033,43 +3631,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                  <h2 className="text-base font-semibold text-text-primary">주간 성공률</h2>
               </div>
               <div className="h-full flex-grow">
-                 <ResponsiveContainer width="100%" height={125}>
-                  <LineChart data={analysisStats.growthData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="colorSuccessRate" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#5E6AD2" stopOpacity={0.2}/>
-                        <stop offset="95%" stopColor="#5E6AD2" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid stroke="transparent" />
-                    <XAxis 
-                      dataKey="date" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: '#9CA3AF', fontSize: 10 }} 
-                      padding={{ left: 10, right: 10 }}
-                    />
-                    <YAxis 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: '#9CA3AF', fontSize: 10 }} 
-                      tickFormatter={(value) => `${value}%`}
-                    />
-                    <Tooltip 
-                      content={<CustomTooltip />} 
-                      cursor={{ stroke: '#9CA3AF', strokeDasharray: '3 3' }}
-                    />
-                    <Area type="monotone" dataKey="rate" stroke="transparent" fill="url(#colorSuccessRate)" />
-                    <Line 
-                      type="monotone" 
-                      dataKey="rate" 
-                      stroke="#5E6AD2"
-                      strokeWidth={2} 
-                      dot={false}
-                      activeDot={{ r: 4, strokeWidth: 2 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+           
               </div>
             </div>
           </div>
@@ -3144,12 +3706,13 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                     id={`R-${card.reviewCardId}`}
                     category={card.category}
                     title={card.title}
+                    isActive={card.isActive}
                     tags={[
                       { label: '중요도', value: `${card.importance}/5` },
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
                     ]}
-                    onTestStart={() => onOpenReviewTestModal(card.reviewCardId)}
+                    onResultView={() => onOpenReviewResultModal(card.reviewCardId)}
                   />
                 ))
               )}
@@ -3159,25 +3722,37 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
       </div>
 
       <ConfirmModal
-        isOpen={isConfirmModalOpen}
-        title="작업을 중단하시겠습니까?"
-        message="진행 중인 채팅이 취소되고 입력한 내용이 사라집니다."
-        onConfirm={onConfirmStop}
-        onCancel={onCloseConfirmModal}
-        isLoading={isConfirmLoading}
-        confirmText="중단하기"
+        isOpen={isTaskCreationConfirmOpen}
+        title="작성을 취소하시겠습니까?"
+        message="작성 중인 내용이 사라집니다."
+        onConfirm={onConfirmTaskCreationClose}
+        onCancel={onCancelTaskCreationClose}
+        isLoading={false}
+        confirmText="확인"
         cancelText="취소"
       />
 
       <TaskCreationModal
         isOpen={isTaskCreationModalOpen}
         onClose={onCloseTaskCreationModal}
+        onBackgroundClick={onTaskCreationBackgroundClick}
+        categories={categories}
+        isLoadingCategories={isLoadingCategories}
+        categoryError={categoryError}
+        onSaveCategory={onSaveCategory}
       />
 
       <ReviewTestModal
         isOpen={isReviewTestModalOpen}
         reviewCardId={selectedReviewCardId}
+        reviewCard={selectedReviewCard}
         onClose={onCloseReviewTestModal}
+      />
+
+      <ReviewResultModal
+        isOpen={isReviewResultModalOpen}
+        reviewCardId={selectedResultReviewCardId}
+        onClose={onCloseReviewResultModal}
       />
     </div>
   );
@@ -3193,61 +3768,71 @@ import { DashboardPageView } from './DashboardPage.view';
 const DashboardPage: FC = () => {
   const {
     isSidebarOpen,
-    tasksByStatus,
-    progressStats,
-    analysisStats,
-    isChatModalOpen,
     selectedTask,
-    chatSessionKey,
     isConfirmModalOpen,
     isConfirmLoading,
     isTaskCreationModalOpen,
+    isTaskCreationConfirmOpen,
     isReviewTestModalOpen,
     selectedReviewCardId,
+    selectedReviewCard,
+    isReviewResultModalOpen,
+    selectedResultReviewCardId,
     backlogCards,
     completedCards,
     reviewCardsLoading,
     reviewCardsError,
-    openChatModal,
-    closeChatModal,
+    categories,
+    isLoadingCategories,
+    categoryError,
     openConfirmModal,
     closeConfirmModal,
     openTaskCreationModal,
     closeTaskCreationModal,
+    handleTaskCreationBackgroundClick,
+    handleConfirmTaskCreationClose,
+    handleCancelTaskCreationClose,
     openReviewTestModal,
     closeReviewTestModal,
-    handleConfirmStop,
+    openReviewResultModal,
+    closeReviewResultModal,
+    handleSaveCategory,
     toggleSidebar
   } = useDashboardPage();
 
   return (
     <DashboardPageView
       isSidebarOpen={isSidebarOpen}
-      tasksByStatus={tasksByStatus}
-      progressStats={progressStats}
-      analysisStats={analysisStats}
       onToggleSidebar={toggleSidebar}
-      isChatModalOpen={isChatModalOpen}
       selectedTask={selectedTask}
-      chatSessionKey={chatSessionKey}
       isConfirmModalOpen={isConfirmModalOpen}
       isConfirmLoading={isConfirmLoading}
       isTaskCreationModalOpen={isTaskCreationModalOpen}
+      isTaskCreationConfirmOpen={isTaskCreationConfirmOpen}
       isReviewTestModalOpen={isReviewTestModalOpen}
       selectedReviewCardId={selectedReviewCardId}
+      selectedReviewCard={selectedReviewCard}
       backlogCards={backlogCards}
       completedCards={completedCards}
       reviewCardsLoading={reviewCardsLoading}
       reviewCardsError={reviewCardsError}
-      onOpenChatModal={openChatModal}
-      onCloseChatModal={closeChatModal}
+      categories={categories}
+      isLoadingCategories={isLoadingCategories}
+      categoryError={categoryError}
       onOpenConfirmModal={openConfirmModal}
       onCloseConfirmModal={closeConfirmModal}
       onOpenTaskCreationModal={openTaskCreationModal}
       onCloseTaskCreationModal={closeTaskCreationModal}
+      onTaskCreationBackgroundClick={handleTaskCreationBackgroundClick}
+      onConfirmTaskCreationClose={handleConfirmTaskCreationClose}
+      onCancelTaskCreationClose={handleCancelTaskCreationClose}
       onOpenReviewTestModal={openReviewTestModal}
       onCloseReviewTestModal={closeReviewTestModal}
-      onConfirmStop={handleConfirmStop}
+      isReviewResultModalOpen={isReviewResultModalOpen}
+      selectedResultReviewCardId={selectedResultReviewCardId}
+      onOpenReviewResultModal={openReviewResultModal}
+      onCloseReviewResultModal={closeReviewResultModal}
+      onSaveCategory={handleSaveCategory}
     />
   );
 };
@@ -3259,22 +3844,30 @@ export default DashboardPage;
 // DashboardPage/useDashboardPage.ts
 import { useState, useMemo, useEffect } from 'react';
 import { useReviewCardStore } from '../../store/useReviewCardStore';
+import { useCategoryStore } from '../../store/useCategoryStore';
+import { categoryService } from '../../services/categoryService';
+import { showErrorToast, showSuccessToast } from '../../utils/toast';
 
 export type TaskStatus = 'backlog' | 'failed' | 'done';
 export interface Task { id: string; type: string; title: string; description: string; status: TaskStatus; }
 
 export const useDashboardPage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [isChatModalOpen, setIsChatModalOpen] = useState<boolean>(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [chatSessionKey, setChatSessionKey] = useState<string>('');
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
   const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
+  const [isTaskCreationConfirmOpen, setIsTaskCreationConfirmOpen] = useState<boolean>(false);
   const [isReviewTestModalOpen, setIsReviewTestModalOpen] = useState<boolean>(false);
   const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
+  const [isReviewResultModalOpen, setIsReviewResultModalOpen] = useState<boolean>(false);
+  const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
 
-  // 복습 카드 store 사용
+  // Category 관련 상태
+  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+
+  // 복습 카드 store 
   const {
     backlogCards,
     completedCards,
@@ -3284,24 +3877,55 @@ export const useDashboardPage = () => {
     clearError
   } = useReviewCardStore();
 
-  // 페이지 마운트 시 복습 카드 목록 조회
+  // Category store 사용
+  const { categories, setCategories, addCategory } = useCategoryStore();
+
+  // 페이지 마운트 시 복습 카드 목록 및 카테고리 조회
   useEffect(() => {
     fetchReviewCards();
+    loadCategories();
   }, [fetchReviewCards]);
 
+  // 카테고리 목록 조회
+  const loadCategories = async () => {
+    setIsLoadingCategories(true);
+    setCategoryError(null);
+    try {
+      const categories = await categoryService.fetchCategories();
+      setCategories(categories);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : '카테고리 목록을 불러오는데 실패했습니다.';
+      setCategoryError(errorMsg);
+      showErrorToast(errorMsg);
+    } finally {
+      setIsLoadingCategories(false);
+    }
+  };
+
+  // 카테고리 생성
+  const handleSaveCategory = async (name: string, color: string) => {
+    try {
+      const newCategory = await categoryService.createCategory({ name, color });
+      addCategory(newCategory);
+      showSuccessToast('카테고리가 생성되었습니다.');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : '카테고리 생성에 실패했습니다.';
+      showErrorToast(errorMsg);
+      throw error;
+    }
+  };
+
+  // selectedReviewCardId에 해당하는 reviewCard 찾기
+  const selectedReviewCard = useMemo(() => {
+    if (!selectedReviewCardId) return null;
+
+    const card = backlogCards.find(card => card.reviewCardId === selectedReviewCardId) ||
+                 completedCards.find(card => card.reviewCardId === selectedReviewCardId);
+
+    return card || null;
+  }, [selectedReviewCardId, backlogCards, completedCards]);
+
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
-
-  const openChatModal = (task?: Task) => {
-    setSelectedTask(task || null);
-    setChatSessionKey(task ? `task-${task.id}-${Date.now()}` : `new-task-${Date.now()}`);
-    setIsChatModalOpen(true);
-  };
-
-  const closeChatModal = () => {
-    setIsChatModalOpen(false);
-    setSelectedTask(null);
-    setChatSessionKey('');
-  };
 
   const openConfirmModal = () => setIsConfirmModalOpen(true);
   const closeConfirmModal = () => setIsConfirmModalOpen(false);
@@ -3315,6 +3939,22 @@ export const useDashboardPage = () => {
     }
   };
 
+  // TaskCreationModal 배경 클릭 시 ConfirmModal 열기
+  const handleTaskCreationBackgroundClick = () => {
+    setIsTaskCreationConfirmOpen(true);
+  };
+
+  // ConfirmModal에서 "확인" 클릭 시 TaskCreationModal 닫기
+  const handleConfirmTaskCreationClose = () => {
+    setIsTaskCreationConfirmOpen(false);
+    closeTaskCreationModal();
+  };
+
+  // ConfirmModal에서 "취소" 클릭 시 ConfirmModal만 닫기
+  const handleCancelTaskCreationClose = () => {
+    setIsTaskCreationConfirmOpen(false);
+  };
+
   const openReviewTestModal = (reviewCardId: number) => {
     setSelectedReviewCardId(reviewCardId);
     setIsReviewTestModalOpen(true);
@@ -3325,107 +3965,50 @@ export const useDashboardPage = () => {
     setSelectedReviewCardId(null);
   };
 
-  const handleConfirmStop = async () => {
-    // 중복 클릭 방지
-    if (isConfirmLoading) return;
-
-    setIsConfirmLoading(true);
-
-    try {
-      // ChatModal 관련 데이터 정리
-      closeChatModal();
-      console.log('ChatModal 데이터 정리 완료');
-    } catch (error) {
-      console.warn('ChatModal 데이터 정리 실패:', error);
-    } finally {
-      setIsConfirmLoading(false);
-      closeConfirmModal();
-    }
+  const openReviewResultModal = (reviewCardId: number) => {
+    setSelectedResultReviewCardId(reviewCardId);
+    setIsReviewResultModalOpen(true);
+    console.log('Opening ReviewResultModal for reviewCardId:', reviewCardId);
   };
 
-  const allTasks: Task[] = [
-    { id: 'T-001', type: '서브태스크', title: '[frontend] Clerk 기반 소셜 로그인/회원가입 기능 구현', description: '...', status: 'done' },
-    { id: 'T-002', type: '서브태스크', title: '[backend] 문제 등록 및 AI 분석 파이프라인 구축', description: '...', status: 'backlog' },
-    { id: 'T-003', type: '주요태스크', title: '[infra] CI/CD 파이프라인 개선', description: '...', status: 'backlog' },
-    { id: 'T-004', type: '서브태스크', title: '[frontend] 회원 프로필 페이지 UI 개발', description: '...', status: 'backlog' },
-    { id: 'T-005', type: '버그수정', title: '[backend] 로그인 시 간헐적 500 에러 수정', description: '...', status: 'failed' },
-    { id: 'T-006', type: '주요태스크', title: '[DB] 데이터베이스 스키마 최적화', description: '...', status: 'done' },
-    { id: 'T-007', type: '버그수정', title: '[frontend] 모바일에서 UI 깨짐 현상 수정', description: '...', status: 'failed' },
-  ];
-  const tasksByStatus = useMemo(() => {
-    return allTasks.reduce((acc, task) => {
-      if (!acc[task.status]) {
-        acc[task.status] = [];
-      }
-      acc[task.status].push(task);
-      return acc;
-    }, {} as Record<TaskStatus, Task[]>);
-  }, [allTasks]);
+  const closeReviewResultModal = () => {
+    setIsReviewResultModalOpen(false);
+    setSelectedResultReviewCardId(null);
+  };
 
-  const progressStats = useMemo(() => {
-    const totalCount = allTasks.length;
-    const doneCount = tasksByStatus.done?.length || 0;
-    const percentage = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
-    const chartData = [{ name: 'Done', value: percentage, fill: '#5E6AD2' }];
-    return { totalCount, doneCount, percentage, chartData };
-  }, [allTasks, tasksByStatus]);
-
-  const analysisStats = useMemo(() => {
-    const doneCount = tasksByStatus.done?.length || 0;
-    const failCount = tasksByStatus.failed?.length || 0;
-    const completedCount = doneCount + failCount;
-    const successRate = completedCount > 0 ? Math.round((doneCount / completedCount) * 100) : 0;
-    const barChartData = [
-      { name: '실패', value: failCount, fill: '#6B7280' },
-      { name: '완료', value: doneCount, fill: '#5E6AD2' },
-    ];
-    
-    const pieChartData = [
-      { name: '완료', value: doneCount },
-      { name: '실패', value: failCount },
-    ];
-    const today = new Date();
-    const growthData = Array.from({ length: 7 }).map((_, i) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() - (6 - i));
-      const rate = (6 - i) > 0 
-        ? Math.floor(Math.random() * (75 - 40 + 1) + 40)
-        : successRate;
-      return {
-        date: `${date.getMonth() + 1}/${date.getDate()}`,
-        rate: rate,
-      };
-    });
-    return { successRate, barChartData, pieChartData, growthData, doneCount, failCount };
-  }, [tasksByStatus]);
-  
   return {
     isSidebarOpen,
-    tasksByStatus,
-    progressStats,
-    analysisStats,
-    isChatModalOpen,
     selectedTask,
-    chatSessionKey,
     isConfirmModalOpen,
     isConfirmLoading,
     isTaskCreationModalOpen,
+    isTaskCreationConfirmOpen,
     isReviewTestModalOpen,
     selectedReviewCardId,
+    selectedReviewCard,
     // 복습 카드 관련 상태 추가
     backlogCards,
     completedCards,
     reviewCardsLoading,
     reviewCardsError,
-    openChatModal,
-    closeChatModal,
+    // Category 관련 상태 추가
+    categories,
+    isLoadingCategories,
+    categoryError,
     openConfirmModal,
     closeConfirmModal,
     openTaskCreationModal,
     closeTaskCreationModal,
+    handleTaskCreationBackgroundClick,
+    handleConfirmTaskCreationClose,
+    handleCancelTaskCreationClose,
     openReviewTestModal,
     closeReviewTestModal,
-    handleConfirmStop,
+    isReviewResultModalOpen,
+    selectedResultReviewCardId,
+    openReviewResultModal,
+    closeReviewResultModal,
+    handleSaveCategory,
     toggleSidebar,
   };
 };
@@ -3567,6 +4150,7 @@ export const reviewCardSchema = z.object({
   reviewCardId: z.number().int().positive(),
   title: z.string(),
   category: z.string(),
+  categoryId: z.number().int().positive().optional(),
   importance: z.number().int().min(1).max(5),
   reviewCycle: z.number().int().positive(),
   isActive: z.boolean(),
@@ -3829,8 +4413,10 @@ import type {
   CreateReviewCardResponse,
   GetReviewCardsResponse,
   ReviewCard,
-  UpdateReviewResultRequest
+  ReviewCardResultResponse,
 } from '../../../../libs/api-types/src';
+
+import type { UpdateReviewResultRequest } from '../../../../libs/api-types/src/review-card.types';
 
 /**
  * 복습 카드 관련 API 호출 서비스
@@ -3902,6 +4488,36 @@ export class ReviewCardService {
       await apiClient.delete(`/reviewCard/${reviewCardId}`);
     } catch (error) {
       console.error('복습 카드 삭제 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 복습 횟수를 증가시킵니다
+   * @param reviewCardId 복습 카드 ID
+   */
+  static async incrementReviewCount(reviewCardId: number): Promise<void> {
+    try {
+      await apiClient.post(`/reviewCard/${reviewCardId}/review`);
+    } catch (error) {
+      console.error('복습 횟수 증가 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 비활성화된 복습 카드의 질문과 답변 목록을 조회합니다
+   * @param reviewCardId 복습 카드 ID
+   * @returns 질문별 답변 목록
+   */
+  static async getReviewCardResults(reviewCardId: number): Promise<ReviewCardResultResponse> {
+    try {
+      const response = await apiClient.get<ReviewCardResultResponse>(
+        `/reviewCard/${reviewCardId}/results`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('복습 카드 결과 조회 실패:', error);
       throw error;
     }
   }
@@ -4136,6 +4752,12 @@ interface ReviewCardActions {
   // 복습 카드 상태 업데이트
   updateCardStatus: (reviewCardId: number, isActive: boolean) => Promise<void>;
 
+  // 낙관적 UI: 카드를 완료로 이동
+  moveCardToCompleted: (reviewCardId: number) => void;
+
+  // 낙관적 UI: 카드 삭제
+  removeCard: (reviewCardId: number) => void;
+
   // 상태 초기화
   clearError: () => void;
   reset: () => void;
@@ -4234,6 +4856,38 @@ export const useReviewCardStore = create<ReviewCardStore>((set, get) => ({
       set({ error: errorMessage });
       throw error;
     }
+  },
+
+  moveCardToCompleted: (reviewCardId: number) => {
+    const { reviewCards } = get();
+    const updatedCards = reviewCards.map(card =>
+      card.reviewCardId === reviewCardId
+        ? { ...card, isActive: false }
+        : card
+    );
+
+    const backlogCards = updatedCards.filter(card => card.isActive);
+    const completedCards = updatedCards.filter(card => !card.isActive);
+
+    set({
+      reviewCards: updatedCards,
+      backlogCards,
+      completedCards,
+    });
+  },
+
+  removeCard: (reviewCardId: number) => {
+    const { reviewCards } = get();
+    const updatedCards = reviewCards.filter(card => card.reviewCardId !== reviewCardId);
+
+    const backlogCards = updatedCards.filter(card => card.isActive);
+    const completedCards = updatedCards.filter(card => !card.isActive);
+
+    set({
+      reviewCards: updatedCards,
+      backlogCards,
+      completedCards,
+    });
   },
 
   clearError: () => {

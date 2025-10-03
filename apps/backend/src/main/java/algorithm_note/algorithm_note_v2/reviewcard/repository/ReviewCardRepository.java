@@ -88,4 +88,13 @@ public interface ReviewCardRepository extends JpaRepository<ReviewCard, Long> {
      * @return 해당 상태의 복습 카드 개수
      */
     long countByUserAndIsActive(User user, Boolean isActive);
+
+    /**
+     * 활성 상태별 모든 복습 카드를 조회합니다.
+     * 스케줄러의 재활성화 작업에 사용됩니다.
+     *
+     * @param isActive 활성 상태
+     * @return 해당 상태의 복습 카드 목록
+     */
+    List<ReviewCard> findAllByIsActive(Boolean isActive);
 }

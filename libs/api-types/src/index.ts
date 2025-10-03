@@ -10,6 +10,9 @@ export type {
   CreateReviewCardRequest,
   CreateReviewCardResponse,
   GetReviewCardsResponse,
+  Answer,
+  QuestionWithAnswers,
+  ReviewCardResultResponse,
   ApiErrorResponse
 } from './review-card.types';
 
