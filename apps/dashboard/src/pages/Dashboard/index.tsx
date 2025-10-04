@@ -23,6 +23,14 @@ const DashboardPage: FC = () => {
     categories,
     isLoadingCategories,
     categoryError,
+    backlogFilterCategoryId,
+    backlogSortBy,
+    setBacklogFilterCategoryId,
+    setBacklogSortBy,
+    completedFilterCategoryId,
+    completedSortBy,
+    setCompletedFilterCategoryId,
+    setCompletedSortBy,
     openConfirmModal,
     closeConfirmModal,
     openTaskCreationModal,
@@ -57,6 +65,14 @@ const DashboardPage: FC = () => {
       categories={categories}
       isLoadingCategories={isLoadingCategories}
       categoryError={categoryError}
+      backlogFilterCategoryId={backlogFilterCategoryId}
+      backlogSortBy={backlogSortBy}
+      onBacklogFilterCategoryChange={setBacklogFilterCategoryId}
+      onBacklogSortChange={setBacklogSortBy}
+      completedFilterCategoryId={completedFilterCategoryId}
+      completedSortBy={completedSortBy}
+      onCompletedFilterCategoryChange={setCompletedFilterCategoryId}
+      onCompletedSortChange={setCompletedSortBy}
       onOpenConfirmModal={openConfirmModal}
       onCloseConfirmModal={closeConfirmModal}
       onOpenTaskCreationModal={openTaskCreationModal}

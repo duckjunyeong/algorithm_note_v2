@@ -76,6 +76,19 @@ public class ReviewQuestion {
     }
 
     /**
+     * 답변 결과에 따라 성공/실패 카운트를 증가시킵니다.
+     *
+     * @param isSuccess 성공 여부 (true: 성공, false: 실패)
+     */
+    public void incrementCount(boolean isSuccess) {
+        if (isSuccess) {
+            this.successCount++;
+        } else {
+            this.failCount++;
+        }
+    }
+
+    /**
      * ReviewQuestion을 생성하는 정적 팩토리 메서드
      *
      * @param reviewCard 소속된 복습 카드

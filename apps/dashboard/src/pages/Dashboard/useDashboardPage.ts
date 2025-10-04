@@ -4,6 +4,7 @@ import { useReviewCardStore } from '../../store/useReviewCardStore';
 import { useCategoryStore } from '../../store/useCategoryStore';
 import { categoryService } from '../../services/categoryService';
 import { showErrorToast, showSuccessToast } from '../../utils/toast';
+import { sortBySuccessRate, sortByImportance, filterByCategory } from '../../utils/reviewCardUtils';
 
 export type TaskStatus = 'backlog' | 'failed' | 'done';
 export interface Task { id: string; type: string; title: string; description: string; status: TaskStatus; }
@@ -23,6 +24,13 @@ export const useDashboardPage = () => {
   // Category 관련 상태
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
+
+  // 필터/정렬 관련 상태 (백로그/완료 분리)
+  const [backlogFilterCategoryId, setBacklogFilterCategoryId] = useState<number | null>(null);
+  const [backlogSortBy, setBacklogSortBy] = useState<'successRate' | 'importance'>('successRate');
+
+  const [completedFilterCategoryId, setCompletedFilterCategoryId] = useState<number | null>(null);
+  const [completedSortBy, setCompletedSortBy] = useState<'successRate' | 'importance'>('successRate');
 
   // 복습 카드 store 
   const {
@@ -71,6 +79,28 @@ export const useDashboardPage = () => {
       throw error;
     }
   };
+
+  // 필터링 및 정렬이 적용된 백로그 카드
+  const filteredBacklogCards = useMemo(() => {
+    let result = filterByCategory(backlogCards, backlogFilterCategoryId);
+
+    result = backlogSortBy === 'successRate'
+      ? sortBySuccessRate(result, 'asc')  // 정답률 낮은 순 (복습 필요한 것부터)
+      : sortByImportance(result, 'desc'); // 중요도 높은 순
+
+    return result;
+  }, [backlogCards, backlogFilterCategoryId, backlogSortBy]);
+
+  // 필터링 및 정렬이 적용된 완료 카드
+  const filteredCompletedCards = useMemo(() => {
+    let result = filterByCategory(completedCards, completedFilterCategoryId);
+
+    result = completedSortBy === 'successRate'
+      ? sortBySuccessRate(result, 'desc')  // 정답률 높은 순 (잘한 것부터)
+      : sortByImportance(result, 'desc'); // 중요도 높은 순
+
+    return result;
+  }, [completedCards, completedFilterCategoryId, completedSortBy]);
 
   // selectedReviewCardId에 해당하는 reviewCard 찾기
   const selectedReviewCard = useMemo(() => {
@@ -144,14 +174,24 @@ export const useDashboardPage = () => {
     selectedReviewCardId,
     selectedReviewCard,
     // 복습 카드 관련 상태 추가
-    backlogCards,
-    completedCards,
+    backlogCards: filteredBacklogCards,  // 필터/정렬 적용된 카드 반환
+    completedCards: filteredCompletedCards,  // 필터/정렬 적용된 카드 반환
     reviewCardsLoading,
     reviewCardsError,
     // Category 관련 상태 추가
     categories,
     isLoadingCategories,
     categoryError,
+    // 백로그 필터/정렬 상태 및 핸들러
+    backlogFilterCategoryId,
+    backlogSortBy,
+    setBacklogFilterCategoryId,
+    setBacklogSortBy,
+    // 완료 필터/정렬 상태 및 핸들러
+    completedFilterCategoryId,
+    completedSortBy,
+    setCompletedFilterCategoryId,
+    setCompletedSortBy,
     openConfirmModal,
     closeConfirmModal,
     openTaskCreationModal,

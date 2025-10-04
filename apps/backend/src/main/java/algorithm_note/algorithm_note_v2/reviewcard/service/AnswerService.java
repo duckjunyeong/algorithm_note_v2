@@ -61,7 +61,15 @@ public class AnswerService {
         Answer answer = Answer.createAnswer(reviewQuestion, requestDto.getContent(), evaluationResult);
         Answer savedAnswer = answerRepository.save(answer);
 
-        log.info("Successfully created answer with ID: {}", savedAnswer.getAnswerId());
+        // 5. ReviewQuestion 카운트 증가
+        boolean isSuccess = evaluationResult == Answer.EvaluationResult.SUCCESS;
+        reviewQuestion.incrementCount(isSuccess);
+
+        // 6. ReviewCard 정답률 재계산
+        reviewQuestion.getReviewCard().recalculateSuccessRate();
+
+        log.info("Successfully created answer with ID: {}, updated question counts and card success rate",
+                savedAnswer.getAnswerId());
 
         return AnswerCreateResponseDto.success(savedAnswer.getAnswerId());
     }

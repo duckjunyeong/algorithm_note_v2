@@ -32,6 +32,16 @@ export interface DashboardPageViewProps {
   categories: Array<{ categoryId: number; name: string; color: string }>;
   isLoadingCategories: boolean;
   categoryError: string | null;
+  // 백로그 필터/정렬 관련 props
+  backlogFilterCategoryId: number | null;
+  backlogSortBy: 'successRate' | 'importance';
+  onBacklogFilterCategoryChange: (categoryId: number | null) => void;
+  onBacklogSortChange: (sortBy: 'successRate' | 'importance') => void;
+  // 완료 필터/정렬 관련 props
+  completedFilterCategoryId: number | null;
+  completedSortBy: 'successRate' | 'importance';
+  onCompletedFilterCategoryChange: (categoryId: number | null) => void;
+  onCompletedSortChange: (sortBy: 'successRate' | 'importance') => void;
   onToggleSidebar: () => void;
   selectedTask: Task | null;
   isConfirmModalOpen: boolean;
@@ -84,6 +94,14 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   categories,
   isLoadingCategories,
   categoryError,
+  backlogFilterCategoryId,
+  backlogSortBy,
+  onBacklogFilterCategoryChange,
+  onBacklogSortChange,
+  completedFilterCategoryId,
+  completedSortBy,
+  onCompletedFilterCategoryChange,
+  onCompletedSortChange,
   onToggleSidebar,
   isTaskCreationModalOpen,
   isTaskCreationConfirmOpen,
@@ -149,7 +167,26 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                   <span className="font-semibold">백로그</span>
                   <span>{backlogCards.length}</span>
                 </div>
-                <FiArrowDown size={16} />
+                <div className="flex items-center gap-2">
+                  <select
+                    value={backlogFilterCategoryId ?? ''}
+                    onChange={(e) => onBacklogFilterCategoryChange(e.target.value ? Number(e.target.value) : null)}
+                    className="bg-neutral-700 text-white text-sm rounded px-2 py-1 border-none outline-none"
+                  >
+                    <option value="">전체 카테고리</option>
+                    {categories.map(c => (
+                      <option key={c.categoryId} value={c.categoryId}>{c.name}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={backlogSortBy}
+                    onChange={(e) => onBacklogSortChange(e.target.value as 'successRate' | 'importance')}
+                    className="bg-neutral-700 text-white text-sm rounded px-2 py-1 border-none outline-none"
+                  >
+                    <option value="successRate">정답률 낮은 순</option>
+                    <option value="importance">중요도 높은 순</option>
+                  </select>
+                </div>
               </div>
               {reviewCardsLoading ? (
                 <div className="text-center py-8 text-text-secondary">
@@ -171,6 +208,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                     category={card.category}
                     title={card.title}
                     tags={[
+                      { label: '정답률', value: `${card.successRate?.toFixed(1) ?? 0}%` },
                       { label: '중요도', value: `${card.importance}/5` },
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
@@ -189,7 +227,26 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                   <span className="font-semibold">완료</span>
                   <span>{completedCards.length}</span>
                 </div>
-                <FiArrowDown size={16} />
+                <div className="flex items-center gap-2">
+                  <select
+                    value={completedFilterCategoryId ?? ''}
+                    onChange={(e) => onCompletedFilterCategoryChange(e.target.value ? Number(e.target.value) : null)}
+                    className="bg-brand-dark text-white text-sm rounded px-2 py-1 border-none outline-none"
+                  >
+                    <option value="">전체 카테고리</option>
+                    {categories.map(c => (
+                      <option key={c.categoryId} value={c.categoryId}>{c.name}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={completedSortBy}
+                    onChange={(e) => onCompletedSortChange(e.target.value as 'successRate' | 'importance')}
+                    className="bg-brand-dark text-white text-sm rounded px-2 py-1 border-none outline-none"
+                  >
+                    <option value="successRate">정답률 높은 순</option>
+                    <option value="importance">중요도 높은 순</option>
+                  </select>
+                </div>
               </div>
               {reviewCardsLoading ? (
                 <div className="text-center py-8 text-text-secondary">
@@ -212,6 +269,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                     title={card.title}
                     isActive={card.isActive}
                     tags={[
+                      { label: '정답률', value: `${card.successRate?.toFixed(1) ?? 0}%` },
                       { label: '중요도', value: `${card.importance}/5` },
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },

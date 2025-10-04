@@ -54,6 +54,10 @@ public class ReviewCard {
     @Builder.Default
     private Integer reviewCount = 0;
 
+    @Column(name = "success_rate")
+    @Builder.Default
+    private Double successRate = 0.0;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -108,6 +112,28 @@ public class ReviewCard {
         if (category != null) this.category = category;
         if (importance != null) this.importance = importance;
         if (reviewCycle != null) this.reviewCycle = reviewCycle;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 정답률을 재계산하고 업데이트합니다.
+     * 모든 질문의 successCount와 failCount를 기반으로 계산합니다.
+     */
+    public void recalculateSuccessRate() {
+        if (this.reviewQuestions == null || this.reviewQuestions.isEmpty()) {
+            this.successRate = 0.0;
+            return;
+        }
+
+        int totalCount = 0;
+        int totalSuccess = 0;
+
+        for (ReviewQuestion question : this.reviewQuestions) {
+            totalCount += question.getSuccessCount() + question.getFailCount();
+            totalSuccess += question.getSuccessCount();
+        }
+
+        this.successRate = totalCount == 0 ? 0.0 : (totalSuccess * 100.0) / totalCount;
         this.updatedAt = LocalDateTime.now();
     }
 }

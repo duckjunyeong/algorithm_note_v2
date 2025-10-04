@@ -52,6 +52,7 @@ export const reviewCardSchema = z.object({
   reviewCycle: z.number().int().positive(),
   isActive: z.boolean(),
   reviewCount: z.number().int().min(0),
+  successRate: z.number().min(0).max(100).optional(),
   successCount: z.number().int().min(0),
   failCount: z.number().int().min(0),
   createdAt: z.string().optional(),
