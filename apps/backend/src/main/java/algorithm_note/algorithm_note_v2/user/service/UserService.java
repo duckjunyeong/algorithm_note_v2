@@ -12,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
-/**
- * Service for managing User entities with Just-In-Time provisioning.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor

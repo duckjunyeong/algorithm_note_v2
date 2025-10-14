@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO for user response.
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @AllArgsConstructor
@@ -26,12 +23,6 @@ public class UserResponseDto {
     private boolean success;
     private String message;
 
-    /**
-     * Creates a success response DTO from User entity.
-     * @param user The User entity
-     * @param message The success message
-     * @return A DTO representing a success state
-     */
     public static UserResponseDto success(User user, String message) {
         return new UserResponseDto(
                 user.getId(),
@@ -46,20 +37,10 @@ public class UserResponseDto {
         );
     }
 
-    /**
-     * Creates a success response DTO from User entity with default message.
-     * @param user The User entity
-     * @return A DTO representing a success state
-     */
     public static UserResponseDto success(User user) {
         return success(user, "User operation completed successfully");
     }
 
-    /**
-     * Creates a failure response DTO.
-     * @param message The failure message
-     * @return A DTO representing a failure state
-     */
     public static UserResponseDto failure(String message) {
         return new UserResponseDto(null, null, null, null, null, null, null, false, message);
     }

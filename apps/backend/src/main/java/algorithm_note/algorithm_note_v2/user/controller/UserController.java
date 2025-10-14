@@ -19,13 +19,6 @@ public class UserController {
 
     private final UserService userService;
 
-    /**
-     * Manually registers a new user (for admin/test purposes).
-     * Note: Normal user registration is handled automatically via Clerk webhook at /webhooks/clerk
-     *
-     * @param requestDto The user registration request data
-     * @return ResponseEntity with user creation result
-     */
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserRegisterRequestDto requestDto) {
         log.info("Manually registering new user with Clerk ID: {}", requestDto.getClerkId());
