@@ -15,10 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST Controller for ReviewQuestion operations.
- * Provides endpoints for question creation and retrieval.
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/review-questions")
@@ -28,12 +24,7 @@ public class ReviewQuestionController {
 
     private final GeminiClient geminiClient;
     private final ReviewQuestionService reviewQuestionService;
-    /**
-     * 질문지를 생성합니다.
-     *
-     * @param request 채팅 메시지 요청 DTO
-     * @return 생성된 질문 응답
-     */
+
     @PostMapping("/create")
     public ResponseEntity<?> sendChatMessage(@Valid @RequestBody ChatMessageRequestDto request) throws JsonProcessingException {
         String message = request.getMessage();
@@ -47,13 +38,6 @@ public class ReviewQuestionController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 특정 복습 카드의 모든 질문을 조회합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param user 인증된 사용자
-     * @return 질문 목록
-     */
     @GetMapping("/review-card/{reviewCardId}")
     public ResponseEntity<List<ReviewQuestionResponseDto>> getQuestionsByReviewCard(
             @PathVariable Long reviewCardId,

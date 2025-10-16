@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Answer REST API 컨트롤러
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/answers")
@@ -26,13 +23,6 @@ public class AnswerController {
 
     private final AnswerService answerService;
 
-    /**
-     * 답변을 생성합니다.
-     *
-     * @param requestDto 답변 생성 요청 DTO
-     * @param user 인증된 사용자
-     * @return 생성된 답변 정보
-     */
     @PostMapping("/create")
     public ResponseEntity<AnswerCreateResponseDto> createAnswer(
             @Valid @RequestBody AnswerCreateRequestDto requestDto,
@@ -46,13 +36,6 @@ public class AnswerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * 특정 질문에 대한 모든 답변을 조회합니다.
-     *
-     * @param questionId 복습 질문 ID
-     * @param user 인증된 사용자
-     * @return 답변 목록 (최신순)
-     */
     @GetMapping("/question/{questionId}")
     public ResponseEntity<List<AnswerResponseDto>> getAnswersByQuestion(
             @PathVariable Long questionId,

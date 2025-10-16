@@ -27,13 +27,6 @@ public class ReviewQuestionService {
     private final ReviewQuestionRepository reviewQuestionRepository;
     private final ReviewCardRepository reviewCardRepository;
 
-    /**
-     * 특정 복습 카드의 모든 질문을 조회합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param user 조회할 사용자
-     * @return 질문 목록
-     */
     public List<ReviewQuestionResponseDto> getQuestionsByReviewCardId(Long reviewCardId, User user) {
         log.info("Fetching questions for reviewCardId: {}, user: {}", reviewCardId, user.getId());
 
@@ -55,11 +48,6 @@ public class ReviewQuestionService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 여러 질문을 ID 목록으로 삭제합니다.
-     *
-     * @param questionIds 삭제할 질문 ID 목록
-     */
     @Transactional
     public void deleteQuestionsByIds(List<Long> questionIds) {
         if (questionIds == null || questionIds.isEmpty()) {

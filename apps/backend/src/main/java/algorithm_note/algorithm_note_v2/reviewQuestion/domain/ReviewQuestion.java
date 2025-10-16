@@ -1,11 +1,15 @@
 package algorithm_note.algorithm_note_v2.reviewQuestion.domain;
 
+import algorithm_note.algorithm_note_v2.reviewcard.domain.Answer;
 import algorithm_note.algorithm_note_v2.reviewcard.domain.ReviewCard;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ReviewQuestion entity representing individual questions within a review card.
@@ -40,6 +44,11 @@ public class ReviewQuestion {
     @Column(name = "fail_count", nullable = false)
     @Builder.Default
     private Integer failCount = 0;
+
+    @OneToMany(mappedBy = "reviewQuestion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @Builder.Default
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
