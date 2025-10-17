@@ -84,8 +84,8 @@ export function TaskCreationModalView({
         className="absolute inset-0"
         onClick={onBackgroundClick}
       />
-      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b">
+      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
             <h2 className="text-xl font-semibold text-gray-900">
               추가 태스크 생성
             </h2>
@@ -99,7 +99,7 @@ export function TaskCreationModalView({
             </button>
           </div>
 
-          <div className="p-6">
+          <div className="p-6 overflow-y-auto flex-1">
             {currentView === 'input' && (
               <InputView
                 value={inputValue}
@@ -272,7 +272,7 @@ function SelectView({
       {/* Main Content Area - Flex Layout */}
       <div className="flex gap-4 flex-1 min-h-[400px]">
         {/* Questions List */}
-        <div className="flex-1 overflow-y-auto pr-2 space-y-3">
+        <div className="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[500px]">
           {questions.map((question) => (
             <div
               key={question.id}
@@ -329,7 +329,7 @@ function SelectView({
       </div>
 
       {/* Bottom Action Bar - Sticky */}
-      <div className="border-t mt-4 pt-4 pb-4 bg-white sticky bottom-0">
+      <div className="border-t mt-4 pt-4 pb-4 bg-white bottom-0">
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-600">
             {selectedQuestions.size}개 질문 선택됨
