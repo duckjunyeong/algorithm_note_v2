@@ -93,9 +93,9 @@ export function ReviewTestModalView({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="absolute inset-0" onClick={onClose} />
-      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
           <h2 className="text-xl font-semibold text-gray-900">복습 테스트</h2>
           <button
             onClick={onClose}
@@ -106,7 +106,7 @@ export function ReviewTestModalView({
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto flex-1">
           {isLoadingQuestions ? (
             <LoadingView message="질문을 불러오고 있습니다..." />
           ) : currentView === 'result' ? (
@@ -242,10 +242,10 @@ function EvaluationView({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4 min-h-[400px]">
+      <div className="grid grid-cols-2 gap-4">
         {/* Left: Previous Answers */}
-        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">이전 답변</h3>
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 flex flex-col max-h-[500px]">
+          <h3 className="text-sm font-medium text-gray-700 mb-3 flex-shrink-0">이전 답변</h3>
           {isLoadingAnswers ? (
             <LoadingView message="이전 답변을 불러오는 중..." />
           ) : previousAnswers.length === 0 ? (
@@ -253,8 +253,8 @@ function EvaluationView({
               이전 답변이 없습니다.
             </div>
           ) : (
-            <div className="space-y-3">
-              <div className="bg-white border border-gray-200 rounded p-3">
+            <div className="space-y-3 flex-1 flex flex-col">
+              <div className="bg-white border border-gray-200 rounded p-3 overflow-y-auto flex-1">
                 <p className="text-sm text-gray-900 whitespace-pre-wrap">
                   {displayedPreviousAnswer.content}
                 </p>
@@ -275,7 +275,7 @@ function EvaluationView({
               </div>
 
               {/* Navigation */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-shrink-0">
                 <button
                   onClick={onPrev}
                   disabled={isPrevDisabled}
@@ -301,9 +301,9 @@ function EvaluationView({
         </div>
 
         {/* Right: Current Answer */}
-        <div className="border border-gray-200 rounded-lg p-4 bg-white">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">현재 답변</h3>
-          <div className="bg-blue-50 border border-blue-200 rounded p-3">
+        <div className="border border-gray-200 rounded-lg p-4 bg-white flex flex-col max-h-[500px]">
+          <h3 className="text-sm font-medium text-gray-700 mb-3 flex-shrink-0">현재 답변</h3>
+          <div className="bg-blue-50 border border-blue-200 rounded p-3 overflow-y-auto flex-1">
             <p className="text-sm text-gray-900 whitespace-pre-wrap">{currentAnswer}</p>
           </div>
         </div>
