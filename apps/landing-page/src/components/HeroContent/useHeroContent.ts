@@ -1,18 +1,19 @@
 // HeroContent/useHeroContent.ts
-
+import { useNavigate } from "react-router-dom";
 /**
  * HeroContent 컴포넌트의 데이터와 이벤트 핸들러를 제공하는 커스텀 훅입니다.
  */
 export const useHeroContent = () => {
+  const Navigate = useNavigate();
+
   const badgeText = '🎉 정식 출시!';
-  const title = '알고리즘 오답 관리 AlgorNote';
+  const title = 'AI 학습 파트너 Synapse';
   const description =
-    '바이브코딩을 시작하는 가장 체계적인 방법.\n코드베이스, 문서화, 구현계획 모두 Vooster가 해결할게요.';
+    '아웃풋(Output) 훈련을 통해 당신의 지식을 잠시 머무는 정보가 아닌,\n 완전한 당신의 것으로 만들어 드립니다.';
 
   /** '무료로 시작하기' 버튼 클릭 시 실행될 핸들러입니다. */
   const handleStartClick = () => {
-    console.log('Start for free button clicked');
-    // 실제 서비스에서는 회원가입 페이지 이동 등의 로직이 필요합니다.
+    Navigate('/sign-in');
   };
 
   /** '커뮤니티' 버튼 클릭 시 실행될 핸들러입니다. */

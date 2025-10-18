@@ -12,10 +12,7 @@ export const useHeader = () => {
   const { isSignedIn } = useAuthStore();
 
   const navLinks: NavLink[] = [
-    { label: 'Product', href: '#' },
-    { label: 'Solutions', href: '#' },
-    { label: 'Resources', href: '#' },
-    { label: 'Pricing', href: '#' },
+    { label: 'dashboard', href: 'http://localhost:5173' },
   ];
 
   const handleAuthClick = async () => {

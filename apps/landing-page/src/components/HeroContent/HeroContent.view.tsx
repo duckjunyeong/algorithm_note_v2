@@ -56,7 +56,7 @@ export const HeroContentView: FC<HeroContentViewProps> = ({
               className="flex items-center gap-2 rounded-md bg-neutral-black px-4 py-2.5 text-sm font-semibold text-text-inverse shadow-sm transition-colors duration-200 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              무료로 시작하기
+              시작하기
             </button>
             <button
               type="button"

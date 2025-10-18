@@ -130,7 +130,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         <main className="p-8 pt-24">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-text-primary">알고리바 태스크 목록</h1>
+              <h1 className="text-2xl font-bold text-text-primary">태스크 목록</h1>
               <p className="mt-1 text-text-secondary">태스크 진행 상황을 한눈에 확인하세요</p>
             </div>
             <button

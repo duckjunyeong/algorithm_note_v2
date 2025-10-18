@@ -43,7 +43,7 @@ export const HeaderView = ({
               <path d="M12 3v18" />
               <path d="M17 3v18" />
             </svg>
-            <span>AlgorNote</span>
+            <span>Synapse</span>
           </div>
           <ul className="hidden items-center gap-8 md:flex">
             {navLinks.map((link) => (
