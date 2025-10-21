@@ -1,6 +1,5 @@
 // Header/Header.view.tsx
 import React from 'react';
-import type { IconType } from 'react-icons';
 import type { BreadcrumbItem } from './useHeader';
 import { FiMenu, FiGlobe, FiChevronDown } from 'react-icons/fi';
 

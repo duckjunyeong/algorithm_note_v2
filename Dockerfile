@@ -35,7 +35,7 @@ WORKDIR /app
 
 # Copy Gradle configuration
 COPY apps/backend/build.gradle apps/backend/settings.gradle ./
-COPY apps/backend/gradle ./gradle
+COPY apps/backend/gradlew ./gradlew
 
 # Download dependencies (cached layer)
 RUN gradle dependencies --no-daemon || true

@@ -14,16 +14,8 @@ interface UseQuestionSettingsPanelProps {
 }
 
 export function useQuestionSettingsPanel({
-  repetitionCycle,
   setRepetitionCycle,
-  importance,
   setImportance,
-  categories,
-  selectedCategoryId,
-  isLoadingCategories,
-  categoryError,
-  onCategorySelect,
-  onAddCategoryClick,
 }: UseQuestionSettingsPanelProps) {
   const handleRepetitionCycleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setRepetitionCycle(parseInt(e.target.value, 10));

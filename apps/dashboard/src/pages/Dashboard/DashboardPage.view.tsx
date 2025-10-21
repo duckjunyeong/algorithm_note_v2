@@ -1,17 +1,10 @@
 // DashboardPage/DashboardPage.view.tsx
 import type { FC } from 'react';
 import type { ReviewCard as ReviewCardType } from '../../../../../libs/api-types/src';
-import {
-  RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, Tooltip,
-  PieChart, Pie, Cell,
-  LineChart, Line, CartesianGrid, Area
-} from 'recharts';
-// 🔥 수정: 제공해주신 import 경로로 변경
 import { SidebarNav } from '../../components/SidebarNav';
 import { Header } from '../../components/Header';
-import { FiArrowDown, FiPlus } from 'react-icons/fi';
-import type { Task, TaskStatus } from './useDashboardPage';
+import {  FiPlus } from 'react-icons/fi';
+import type { Task } from './useDashboardPage';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
 import { TaskCreationModal } from './components/TaskCreationModal';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
@@ -66,23 +59,6 @@ export interface DashboardPageViewProps {
   onSaveCategory: (name: string, color: string) => Promise<void>;
 }
 
-const columnStyles: Record<TaskStatus, { bg: string; text: string; dot: string }> = {
-  backlog: { bg: 'bg-neutral-800', text: 'text-text-inverse', dot: 'bg-neutral-400' },
-  failed: { bg: 'bg-brand', text: 'text-text-inverse', dot: 'bg-brand-light' },
-  done: { bg: 'bg-semantic-success', text: 'text-text-inverse', dot: 'bg-green-300' },
-};
-
-const CustomTooltip: FC<any> = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="rounded-md bg-neutral-900 p-2 px-3 text-sm text-neutral-50 shadow-lg">
-        <span className="font-semibold">{`${label} 성공률: ${payload[0].value}%`}</span>
-      </div>
-    );
-  }
-  return null;
-};
-
 
 export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isSidebarOpen,
@@ -120,8 +96,6 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onCloseReviewTestModal,
   onSaveCategory,
 }) => {
-  const PIE_COLORS = ['#5E6AD2', '#D1D5DB'];
-
   return (
     <div className="relative min-h-screen bg-background-tertiary">
       <SidebarNav isOpen={isSidebarOpen} />

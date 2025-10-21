@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client'
 import { ClerkProvider } from '@clerk/clerk-react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
-import { ERROR_MESSAGES } from './constants/messages';
 
 import './index.css'
 import App from './App.tsx'

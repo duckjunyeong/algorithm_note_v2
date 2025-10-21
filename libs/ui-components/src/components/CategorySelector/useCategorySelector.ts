@@ -10,10 +10,6 @@ export interface UseCategorySelectorProps {
 }
 
 export function useCategorySelector({
-  categories,
-  selectedCategoryId,
-  isLoading,
-  error,
   onCategorySelect,
   onAddCategoryClick,
 }: UseCategorySelectorProps) {
