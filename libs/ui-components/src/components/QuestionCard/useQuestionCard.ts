@@ -13,7 +13,7 @@ export function useQuestionCard({
   onDelete,
   onQuestionClick
 }: UseQuestionCardProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   const handleEdit = useCallback(() => {
     if (isLoading) return;

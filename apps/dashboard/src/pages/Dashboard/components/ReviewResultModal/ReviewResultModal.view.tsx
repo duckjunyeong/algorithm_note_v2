@@ -28,7 +28,6 @@ export function ReviewResultModalView({
   isOpen,
   isLoading,
   isError,
-  error,
   currentQuestion,
   currentAnswer,
   currentQuestionIndex,

@@ -2,7 +2,6 @@ import apiClient from './apiClient';
 import type {
   CreateReviewCardRequest,
   CreateReviewCardResponse,
-  GetReviewCardsResponse,
   ReviewCard,
   ReviewCardResultResponse,
 } from '../../../../libs/api-types/src';

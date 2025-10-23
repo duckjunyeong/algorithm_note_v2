@@ -1,5 +1,5 @@
-import React from 'react';
-import { InputProps, useInput } from './useInput';
+import type { InputProps } from './useInput';
+import { useInput } from './useInput';
 
 export const InputView = (props: InputProps) => {
   const { inputProps, labelClasses, helperTextClasses } = useInput(props);

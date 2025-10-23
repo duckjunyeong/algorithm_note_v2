@@ -59,9 +59,23 @@ public class ClerkJwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/webhooks/") ||
+
+        return path.equals("/") ||
+               path.equals("/index.html") ||
+               path.equals("/sign-in") ||
+               path.equals(("/sign-up")) ||
+               path.startsWith("/static/") ||
+               path.startsWith("/css/") ||
+               path.startsWith("/js/") ||
+               path.startsWith("/assets/") ||
+               path.startsWith("/images/") ||
+               //path.startsWith("/dashboard/") ||
+               path.startsWith("/webhooks/") ||
                path.startsWith("/public/") ||
-               path.startsWith("/actuator/");
+               path.startsWith("/actuator/") ||
+               path.endsWith(".ico") ||
+               path.endsWith(".svg") ||
+               path.endsWith(".json");
     }
 
     private String extractTokenFromRequest(HttpServletRequest request) {

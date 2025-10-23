@@ -296,7 +296,7 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
         // 카드 업데이트
         await ReviewCardService.updateReviewResult(reviewCardId, {
           title: reviewCard?.title,
-          category: localSettings.category,
+          categoryId: selectedCategoryId || undefined,
           importance: localSettings.importance,
           reviewCycle: localSettings.reviewCycle,
           isActive: false,

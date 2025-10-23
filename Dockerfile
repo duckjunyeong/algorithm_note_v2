@@ -22,7 +22,26 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build frontend applications
+# Declare build arguments for Vite environment variables
+# These must be provided at build time via docker-compose or docker build --build-arg
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ARG VITE_CLERK_SIGN_IN_URL
+ARG VITE_CLERK_SIGN_UP_URL
+ARG VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL
+ARG VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL
+ARG VITE_API_BASE_URL
+ARG VITE_MIN_REPEAT_CYCLE_MS
+
+# Convert ARGs to ENV variables so Vite can access them during build
+ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+ENV VITE_CLERK_SIGN_IN_URL=$VITE_CLERK_SIGN_IN_URL
+ENV VITE_CLERK_SIGN_UP_URL=$VITE_CLERK_SIGN_UP_URL
+ENV VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL=$VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL
+ENV VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL=$VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_MIN_REPEAT_CYCLE_MS=$VITE_MIN_REPEAT_CYCLE_MS
+
+# Build frontend applications (environment variables are embedded in the bundle)
 RUN pnpm --filter dashboard build
 RUN pnpm --filter landing-page build
 
@@ -43,7 +62,14 @@ RUN gradle dependencies --no-daemon || true
 # Copy backend source code
 COPY apps/backend/src ./src
 
-# Build Spring Boot application
+# Copy frontend build outputs to Spring Boot static resources before building JAR
+# Landing Page → src/main/resources/static/
+COPY --from=frontend-builder /app/apps/landing-page/dist ./src/main/resources/static/
+
+# Dashboard → src/main/resources/static/dashboard/
+COPY --from=frontend-builder /app/apps/dashboard/dist ./src/main/resources/static/dashboard/
+
+# Build Spring Boot application (now includes frontend files in JAR)
 RUN gradle bootJar --no-daemon
 
 # ================================
@@ -53,15 +79,8 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy backend JAR
+# Copy backend JAR (already contains frontend files)
 COPY --from=backend-builder /app/build/libs/*.jar app.jar
-
-# Copy frontend build outputs to Spring Boot static resources
-# Landing Page → root path (/)
-COPY --from=frontend-builder /app/apps/landing-page/dist ./static/
-
-# Dashboard → /dashboard path
-COPY --from=frontend-builder /app/apps/dashboard/dist ./static/dashboard/
 
 # Expose port
 EXPOSE 8080

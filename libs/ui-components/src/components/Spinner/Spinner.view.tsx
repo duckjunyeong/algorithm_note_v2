@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSpinner } from './useSpinner';
 import type { SpinnerProps } from './useSpinner';
 

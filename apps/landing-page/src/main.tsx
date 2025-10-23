@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { ERROR_MESSAGES } from './constants/messages';
 import './index.css';
@@ -13,8 +13,6 @@ if (!publishableKey) {
 }
 
 function ClerkProviderWithRoutes() {
-  const navigate = useNavigate();
-
   return (
     <ClerkProvider
       publishableKey={publishableKey}

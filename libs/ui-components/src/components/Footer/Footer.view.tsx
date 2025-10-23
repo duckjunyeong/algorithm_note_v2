@@ -1,4 +1,3 @@
-import React from 'react';
 import { useFooter } from './useFooter';
 import type { FooterProps } from './useFooter';
 

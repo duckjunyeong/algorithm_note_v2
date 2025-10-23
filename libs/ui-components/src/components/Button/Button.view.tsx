@@ -1,4 +1,3 @@
-import React from 'react';
 import { useButton } from './useButton';
 import type { ButtonProps } from './useButton';
 

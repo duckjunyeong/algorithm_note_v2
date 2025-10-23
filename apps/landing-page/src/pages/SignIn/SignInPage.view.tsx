@@ -1,4 +1,3 @@
-import React from 'react';
 import {  SignInWithGoogleButton, SignInWithEmailButton } from '../../../../../libs/ui-components/src/index.ts';
 import { UI_TEXT } from '../../constants/messages';
 

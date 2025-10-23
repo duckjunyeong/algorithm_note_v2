@@ -575,40 +575,29 @@ function ResultView({
       </div>
 
       {/* Slider Styles */}
-      <style jsx>{`
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #3B82F6;
-          cursor: pointer;
-          border: 2px solid #ffffff;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
+      <style dangerouslySetInnerHTML={{ __html: `
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #3B82F6;
+        cursor: pointer;
+        border: 2px solid #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
 
-        .slider::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #3B82F6;
-          cursor: pointer;
-          border: 2px solid #ffffff;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .slider::-webkit-slider-track {
-          background: #E5E7EB;
-          border-radius: 8px;
-          height: 8px;
-        }
-
-        .slider::-moz-range-track {
-          background: #E5E7EB;
-          border-radius: 8px;
-          height: 8px;
-        }
-      `}</style>
+      .slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #3B82F6;
+        cursor: pointer;
+        border: 2px solid #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+    `}} />
     </div>
   );
 }

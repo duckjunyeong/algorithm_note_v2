@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { PATHS } from '../../constants/Paths';
+import { PATHS } from '../../constants/paths';
 import { ERROR_MESSAGES } from '../../constants/messages';
-import { useClerk, useSession } from '@clerk/clerk-react'
+import { useClerk } from '@clerk/clerk-react'
 
 const CLERK_SIGN_IN_URL = import.meta.env.VITE_CLERK_SIGN_IN_URL;
 

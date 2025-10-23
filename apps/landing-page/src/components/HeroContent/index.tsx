@@ -7,7 +7,6 @@ import { useHeroContent } from './useHeroContent';
  */
 export const HeroContent = () => {
   const {
-    badgeText,
     title,
     description,
     handleStartClick,
@@ -16,7 +15,6 @@ export const HeroContent = () => {
 
   return (
     <HeroContentView
-      badgeText={badgeText}
       title={title}
       description={description}
       onStartClick={handleStartClick}

@@ -11,9 +11,9 @@ export interface Task { id: string; type: string; title: string; description: st
 
 export const useDashboardPage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTask] = useState<Task | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
-  const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
+  const [isConfirmLoading] = useState<boolean>(false);
   const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
   const [isTaskCreationConfirmOpen, setIsTaskCreationConfirmOpen] = useState<boolean>(false);
   const [isReviewTestModalOpen, setIsReviewTestModalOpen] = useState<boolean>(false);

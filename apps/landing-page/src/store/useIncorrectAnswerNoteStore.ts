@@ -78,12 +78,12 @@ const initialState: IncorrectAnswerNoteState = {
   error: null,
 };
 
-export const useIncorrectAnswerNoteStore = create<IncorrectAnswerNoteStore>((set, get) => ({
+export const useIncorrectAnswerNoteStore = create<IncorrectAnswerNoteStore>((set) => ({
   ...initialState,
 
   openModal: () => set({ isModalOpen: true }),
 
-  closeModal: () => set((state) => ({
+  closeModal: () => set(() => ({
     ...initialState,
     isModalOpen: false,
   })),

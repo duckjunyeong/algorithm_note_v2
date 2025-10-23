@@ -7,18 +7,12 @@ interface HeaderViewProps {
   authButtonText: string;
   /** 인증 버튼(Sign in/Logout) 클릭 시 호출될 함수입니다. */
   onAuthClick: () => void;
-  /** 'Request a demo' 버튼 클릭 시 호출될 함수입니다. */
-  onRequestDemoClick: () => void;
-  /** 'Try for free' 버튼 클릭 시 호출될 함수입니다. */
-  onTryForFreeClick: () => void;
 }
 
 export const HeaderView = ({
   navLinks,
   authButtonText,
   onAuthClick,
-  onRequestDemoClick,
-  onTryForFreeClick,
 }: HeaderViewProps) => {
   return (
      <header

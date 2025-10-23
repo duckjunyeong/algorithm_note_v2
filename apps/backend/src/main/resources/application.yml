@@ -88,6 +88,11 @@ ai:
       input_placeholder: "다음의 Input 내용을 기반으로 위의 프롬프트 지시에 따라 질문지를 생성하라.\nInput: %s"
 
 server:
-  port: 8085
+  port: 8080
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 

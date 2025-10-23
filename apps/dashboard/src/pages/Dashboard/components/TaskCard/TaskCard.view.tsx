@@ -21,7 +21,6 @@ export const TaskCardView = ({
   id,
   category,
   title,
-  description,
   tags,
   onMouseEnter,
   onMouseLeave,

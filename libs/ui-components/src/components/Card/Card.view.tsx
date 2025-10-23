@@ -1,4 +1,3 @@
-import React from 'react';
 import { useCard } from './useCard';
 import type { CardProps } from './useCard';
 

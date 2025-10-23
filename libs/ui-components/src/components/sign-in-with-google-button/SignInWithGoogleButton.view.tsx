@@ -1,5 +1,3 @@
-import React from 'react'
-
 interface SignInWithGoogleButtonViewProps {
   isLoading: boolean
   onClick: () => void

@@ -32,7 +32,23 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/webhooks/**", "/public/**", "/actuator/**").permitAll()
+                .requestMatchers(
+                    "/",
+                    "/sign-in",
+                    "/sign-up",
+                    "/index.html",        // Allow direct access to index.html
+                    "/static/**",
+                    "/css/**",
+                    "/js/**",
+                    "/assets/**",         // Vite build output directory
+                    "/images/**",
+                    "/favicon.ico",
+                    "/manifest.json",
+                    "/vite.svg"         // Vite default icon
+                    //"/dashboard",         // Dashboard entry points
+                    //"/dashboard/",
+                    //"/dashboard/**"       // All dashboard routes (static + SPA routing)
+                ).permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
             )
