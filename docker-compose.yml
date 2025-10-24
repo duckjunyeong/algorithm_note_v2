@@ -38,7 +38,6 @@ services:
     env_file:
       - ./apps/backend/.env
     environment:
-      # Spring Boot runtime environment variables
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
