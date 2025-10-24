@@ -2,6 +2,7 @@ package algorithm_note.algorithm_note_v2.global.config;
 
 import algorithm_note.algorithm_note_v2.global.filter.ClerkJwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,15 +16,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-/**
- * Security configuration for the application with Clerk JWT authentication.
- */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final ClerkJwtAuthenticationFilter clerkJwtAuthenticationFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Value("${app.frontend.landing-url}")
+    private String landingUrl;
+
+    @Value("${app.frontend.dashboard-url}")
+    private String dashboardUrl;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,23 +36,23 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+            )
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers(
                     "/",
                     "/sign-in",
                     "/sign-up",
-                    "/index.html",        // Allow direct access to index.html
+                    "/index.html",
                     "/static/**",
                     "/css/**",
                     "/js/**",
-                    "/assets/**",         // Vite build output directory
+                    "/assets/**",
                     "/images/**",
                     "/favicon.ico",
                     "/manifest.json",
-                    "/vite.svg"         // Vite default icon
-                    //"/dashboard",         // Dashboard entry points
-                    //"/dashboard/",
-                    //"/dashboard/**"       // All dashboard routes (static + SPA routing)
+                    "/vite.svg"
                 ).permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
@@ -61,10 +66,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allow requests from frontend applications
+        // Allow requests from frontend applications (dynamically configured)
         configuration.setAllowedOriginPatterns(Arrays.asList(
-            "http://localhost:5174",
-            "http://localhost:5173"
+            landingUrl,
+            dashboardUrl
         ));
 
         // Allow common HTTP methods

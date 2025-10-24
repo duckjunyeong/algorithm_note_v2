@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/review-questions")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class ReviewQuestionController {
 
     private final GeminiClient geminiClient;

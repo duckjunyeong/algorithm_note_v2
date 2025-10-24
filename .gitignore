@@ -39,6 +39,7 @@ Thumbs.db
 # Misc
 repmix-output.xml
 .claude/settings.local.json 
+/apps/backend/.claude/
 
 *storybook.log
 storybook-static

@@ -8,7 +8,7 @@ function LoadingSpinner() {
 
 
 function RedirectHelperPage() {
-  const externalUrl = 'http://localhost:5173';
+  const externalUrl = import.meta.env.VITE_DASHBOARD_URL;
 
   useEffect(() => {
     window.location.replace(externalUrl);

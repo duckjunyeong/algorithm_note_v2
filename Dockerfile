@@ -23,7 +23,9 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Declare build arguments for Vite environment variables
-# These must be provided at build time via docker-compose or docker build --build-arg
+# These are provided by docker-compose.yml from the root .env file
+ARG VITE_DASHBOARD_URL
+ARG VITE_LANDING_URL
 ARG VITE_CLERK_PUBLISHABLE_KEY
 ARG VITE_CLERK_SIGN_IN_URL
 ARG VITE_CLERK_SIGN_UP_URL
@@ -33,6 +35,8 @@ ARG VITE_API_BASE_URL
 ARG VITE_MIN_REPEAT_CYCLE_MS
 
 # Convert ARGs to ENV variables so Vite can access them during build
+ENV VITE_DASHBOARD_URL=$VITE_DASHBOARD_URL
+ENV VITE_LANDING_URL=$VITE_LANDING_URL
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_SIGN_IN_URL=$VITE_CLERK_SIGN_IN_URL
 ENV VITE_CLERK_SIGN_UP_URL=$VITE_CLERK_SIGN_UP_URL

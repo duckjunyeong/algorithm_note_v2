@@ -6,20 +6,18 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false
     username: root
-    password: 4592
+    password: ${SPRING_DATASOURCE_PASSWORD:4592}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
-
-
 clerk:
   webhook:
     api-url: https://api.clerk.dev/v1
-    secret: whsec_4Zxwzv89AHA1uRs3y127qnqinLX7AuxH
+    secret: ${CLERK_WEBHOOK_SECRET}
     max-timestamp-diff: ${CLERK_WEBHOOK_MAX_TIMESTAMP_DIFF:300}
   secret:
-    key: sk_test_jUI4CUHszXOVagbbIS28dSg7FIvLd2mS0t36iYRUh5
+    key: ${CLERK_SECRET_KEY}
   api-secret: ${clerk.secret.key} # Corrected to reference the defined key
   jwt:
     instance-domain: ${CLERK_INSTANCE_DOMAIN:stable-yeti-70.clerk.accounts.dev}
@@ -27,9 +25,10 @@ clerk:
     #audience: ${CLERK_JWT_AUDIENCE:}
     jwks-cache-expiration-seconds: ${CLERK_JWKS_CACHE_EXPIRATION:3600}
 
+
 ai:
   api:
-    key: AIzaSyCff1IaU8LPPeSJdmOkHaYEu9f5Dx88rSw
+    key: ${AI_API_KEY}
   prompt:
     answer-generator: |
       Persona:
@@ -90,6 +89,10 @@ ai:
 server:
   port: 8080
 
+app:
+  frontend:
+    landing-url: http://localhost:5174  # Default landing page URL for development
+    dashboard-url: http://localhost:5173  # Default dashboard URL for development
 
 logging:
   level:

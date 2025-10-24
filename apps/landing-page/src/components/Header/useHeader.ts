@@ -12,7 +12,7 @@ export const useHeader = () => {
   const { isSignedIn } = useAuthStore();
 
   const navLinks: NavLink[] = [
-    { label: 'dashboard', href: 'http://localhost:5173' },
+    { label: 'dashboard', href: import.meta.env.VITE_DASHBOARD_URL },
   ];
 
   const handleAuthClick = async () => {

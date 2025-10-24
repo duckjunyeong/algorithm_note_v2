@@ -11,7 +11,7 @@ export function useSignUp() {
 
   useEffect(() => {
     if (isSignedIn) {
-      window.location.href = 'http://localhost:5173';
+      window.location.href = import.meta.env.VITE_DASHBOARD_URL;
     }
   }, [isSignedIn]);
 
@@ -30,7 +30,7 @@ export function useSignUp() {
       await signUp.authenticateWithRedirect({
         strategy: 'oauth_google',
         redirectUrl: '/sso-callback',
-        redirectUrlComplete: 'http://localhost:5173',
+        redirectUrlComplete: import.meta.env.VITE_DASHBOARD_URL,
       });
 
       // Store Google login preference

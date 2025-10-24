@@ -8,7 +8,7 @@ export function useSignIn() {
 
   useEffect(() => {
     if (isSignedIn) {
-      window.location.href = 'http://localhost:5173';
+      window.location.href = import.meta.env.VITE_DASHBOARD_URL;
     }
   }, [isSignedIn]);
 

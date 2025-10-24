@@ -11,7 +11,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({
   children,
   requiredRole = 'member',
-  redirectTo = 'http://localhost:5174/sign-in'
+  redirectTo = `${import.meta.env.VITE_LANDING_URL}/sign-in`
 }: ProtectedRouteProps) {
   const { shouldShowContent, shouldShowLoading } = useProtectedRoute({
     requiredRole,

@@ -25,16 +25,18 @@ services:
     build:
       context: .
       args:
-        # Vite build-time environment variables
-        # These values are embedded into the frontend JavaScript bundle during Docker build
-        VITE_CLERK_PUBLISHABLE_KEY: pk_test_c3RhYmxlLXlldGktNzAuY2xlcmsuYWNjb3VudHMuZGV2JA
-        VITE_CLERK_SIGN_IN_URL: /sign-in
-        VITE_CLERK_SIGN_UP_URL: /sign-up
-        VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL: /dashboard
-        VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL: /dashboard
-        VITE_API_BASE_URL: /api
-        VITE_MIN_REPEAT_CYCLE_MS: 10000
+        VITE_DASHBOARD_URL: ${VITE_DASHBOARD_URL}
+        VITE_LANDING_URL: ${VITE_LANDING_URL}
+        VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY}
+        VITE_CLERK_SIGN_IN_URL: ${VITE_CLERK_SIGN_IN_URL}
+        VITE_CLERK_SIGN_UP_URL: ${VITE_CLERK_SIGN_UP_URL}
+        VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL: ${VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL}
+        VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL: ${VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_MIN_REPEAT_CYCLE_MS: ${VITE_MIN_REPEAT_CYCLE_MS}
     container_name: my-app-container
+    env_file:
+      - ./apps/backend/.env
     environment:
       # Spring Boot runtime environment variables
       SPRING_PROFILES_ACTIVE: prod
