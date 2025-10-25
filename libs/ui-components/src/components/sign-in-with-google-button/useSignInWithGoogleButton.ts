@@ -13,7 +13,7 @@ export const useSignInWithGoogleButton = () => {
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
         redirectUrl: '/sso-callback',
-        redirectUrlComplete: 'http://localhost:5173',
+        redirectUrlComplete: import.meta.env.VITE_DASHBOARD_URL,
       })
     } catch (error) {
       console.error('Error signing in with Google:', error)
