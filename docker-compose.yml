@@ -51,6 +51,7 @@ services:
     container_name: my-nginx-proxy
     ports:
       - "80:80" # 외부의 80 포트 요청을 Nginx 컨테이너의 80 포트로 연결
+      - "443:443"
     volumes:
       # 위에서 작성한 nginx.conf를 컨테이너 내부의 설정 파일 경로에 덮어씌움
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
