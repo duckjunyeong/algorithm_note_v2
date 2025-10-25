@@ -30,8 +30,6 @@ services:
         VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY}
         VITE_CLERK_SIGN_IN_URL: ${VITE_CLERK_SIGN_IN_URL}
         VITE_CLERK_SIGN_UP_URL: ${VITE_CLERK_SIGN_UP_URL}
-        VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL: ${VITE_CLERK_SIGN_IN_FORCE_REDIRECT_URL}
-        VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL: ${VITE_CLERK_SIGN_UP_FORCE_REDIRECT_URL}
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
         VITE_MIN_REPEAT_CYCLE_MS: ${VITE_MIN_REPEAT_CYCLE_MS}
     container_name: my-app-container
@@ -39,7 +37,7 @@ services:
       - ./apps/backend/.env
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: rootpassword
     depends_on:

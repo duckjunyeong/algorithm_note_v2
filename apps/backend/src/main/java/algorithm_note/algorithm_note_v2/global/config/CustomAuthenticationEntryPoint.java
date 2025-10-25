@@ -31,8 +31,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     private static final String AJAX_HEADER = "X-Requested-With";
     private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
 
-    @Value("${app.frontend.dashboard-url}")
-    private String dashboardUrl;
+    @Value("${app.frontend.landing-url}")
+    private String landingPage;
 
     private final ObjectMapper objectMapper;
 
@@ -101,7 +101,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     private void handlePageRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String targetUrl = request.getRequestURI();
-        String redirectUrl = dashboardUrl + SIGN_IN_PATH;
+        String redirectUrl = landingPage + SIGN_IN_PATH;
 
         log.debug("Redirecting to {} (original request: {})", redirectUrl, targetUrl);
 
