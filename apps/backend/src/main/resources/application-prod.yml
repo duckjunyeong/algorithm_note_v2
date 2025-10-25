@@ -22,8 +22,9 @@ spring:
 
 app:
   frontend:
-    landing-url: http://junyeong.ai  # Production landing page URL
-    dashboard-url: http://app.junyeong.com  # Production dashboard URL
+    # Single domain configuration with HTTPS
+    landing-url: https://junyeong.ai  # Production landing page URL
+    dashboard-url: https://junyeong.ai/dashboard  # Production dashboard URL
 
 revalidation:
   schedule: 0 0 * * * *  # 배포 환경: 매시간 정각

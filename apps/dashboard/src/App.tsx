@@ -10,7 +10,7 @@ function App() {
   useApiClient();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/dashboard">
       <AuthProvider>
         <Routes>
           <Route path="/" element={ <ProtectedRoute> <DashboardPage /></ProtectedRoute>} />

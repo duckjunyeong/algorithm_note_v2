@@ -12,6 +12,7 @@ interface ImportMetaEnv {
 
   // App Configuration
   readonly VITE_MIN_REPEAT_CYCLE_MS: string;
+  readonly VITE_API_BASE_URL: string;
 }
 
 interface ImportMeta {

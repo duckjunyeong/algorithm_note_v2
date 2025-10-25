@@ -1,11 +1,8 @@
 import type { NavLink } from './useHeader';
 
 interface HeaderViewProps {
-  /** 네비게이션에 표시될 링크 객체의 배열입니다. */
   navLinks: NavLink[];
-  /** 인증 버튼에 표시될 텍스트입니다. */
   authButtonText: string;
-  /** 인증 버튼(Sign in/Logout) 클릭 시 호출될 함수입니다. */
   onAuthClick: () => void;
 }
 

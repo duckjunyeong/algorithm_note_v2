@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: algornote-mysql-prod
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: algornote
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data-prod:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      args:
+        VITE_DASHBOARD_URL: ${VITE_DASHBOARD_URL}
+        VITE_LANDING_URL: ${VITE_LANDING_URL}
+        VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY}
+        VITE_CLERK_SIGN_IN_URL: ${VITE_CLERK_SIGN_IN_URL}
+        VITE_CLERK_SIGN_UP_URL: ${VITE_CLERK_SIGN_UP_URL}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_MIN_REPEAT_CYCLE_MS: ${VITE_MIN_REPEAT_CYCLE_MS}
+    container_name: algornote-app-prod
+    env_file:
+      - ./apps/backend/.env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: algornote-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Use production nginx configuration
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      # Let's Encrypt certificates
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - app
+    networks:
+      - app-network
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    container_name: algornote-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data-prod:
