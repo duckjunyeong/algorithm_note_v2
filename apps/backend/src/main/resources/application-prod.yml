@@ -18,14 +18,13 @@ spring:
     resources:
       static-locations: classpath:/static/
       cache:
-        period: 31536000 # 1 year cache for static resources
+        period: 31536000
 
 app:
   frontend:
-    # Single domain configuration with HTTPS
-    landing-url: https://junyeong.ai  # Production landing page URL
-    dashboard-url: https://junyeong.ai/dashboard  # Production dashboard URL
+    landing-url: http://junyeong.ai
+    dashboard-url: http://junyeong.ai/dashboard
 
 revalidation:
-  schedule: 0 0 * * * *  # 배포 환경: 매시간 정각
+  schedule: 0 0 * * * *
 

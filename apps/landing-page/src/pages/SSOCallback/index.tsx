@@ -1,30 +1,14 @@
-import { useEffect } from 'react'
-import { PATHS } from '../../constants/paths';
-import { ERROR_MESSAGES } from '../../constants/messages';
-import { useClerk } from '@clerk/clerk-react'
 
-const CLERK_SIGN_IN_URL = import.meta.env.VITE_CLERK_SIGN_IN_URL;
+import { AuthenticateWithRedirectCallback } from '@clerk/clerk-react';
+import { Spinner } from '../../../../../libs/ui-components/src/components/Spinner';
+
 
 export default function SSOCallbackPage() {
-  const { handleRedirectCallback } = useClerk();
-
-  useEffect(() => {
-    const processRedirect = async () => {
-      try {
-        await handleRedirectCallback({
-          signInForceRedirectUrl: PATHS.REDIRECT_HELPER,
-          signUpForceRedirectUrl: PATHS.REDIRECT_HELPER,
-        });
-      } catch (error) {
-        console.error(ERROR_MESSAGES.SSO_CALLBACK_ERROR, error);
-        window.location.href = CLERK_SIGN_IN_URL;
-      }
-    };
-
-    processRedirect();
-  }, [handleRedirectCallback]);
-
   return (
-    <></>
+    <>
+    <Spinner />
+    <AuthenticateWithRedirectCallback />
+    
+    </>
   );
 }
