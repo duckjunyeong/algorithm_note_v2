@@ -18,11 +18,10 @@ clerk:
     max-timestamp-diff: ${CLERK_WEBHOOK_MAX_TIMESTAMP_DIFF:300}
   secret:
     key: ${CLERK_SECRET_KEY}
-  api-secret: ${clerk.secret.key} # Corrected to reference the defined key
+  api-secret: ${clerk.secret.key}
   jwt:
     instance-domain: ${CLERK_INSTANCE_DOMAIN:stable-yeti-70.clerk.accounts.dev}
     issuer: ${CLERK_JWT_ISSUER:https://stable-yeti-70.clerk.accounts.dev}
-    #audience: ${CLERK_JWT_AUDIENCE:}
     jwks-cache-expiration-seconds: ${CLERK_JWKS_CACHE_EXPIRATION:3600}
 
 
@@ -91,8 +90,8 @@ server:
 
 app:
   frontend:
-    landing-url: http://localhost:5174  # Default landing page URL for development
-    dashboard-url: http://localhost:5173  # Default dashboard URL for development
+    landing-url: http://localhost:5174
+    dashboard-url: http://localhost:5173
 
 logging:
   level:

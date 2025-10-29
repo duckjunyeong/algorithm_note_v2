@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/useAuthStore';
-
+import { useUser } from '@clerk/clerk-react';
+  
 interface UseProtectedRouteProps {
   requiredRole?: string;
   redirectTo?: string;
@@ -9,11 +9,12 @@ interface UseProtectedRouteProps {
 
 export function useProtectedRoute({
   requiredRole = 'member',
-  redirectTo = '/sign-in'
+  redirectTo = '/sign-in12'
 }: UseProtectedRouteProps = {}) {
+  const { isLoaded, isSignedIn, user } = useUser();
   const navigate = useNavigate();
-  const { isLoaded, isSignedIn, role } = useAuthStore();
-  
+  //const { isLoaded, isSignedIn, role } = useAuthStore();
+  console.log("useProtectedRoute - isLoaded:", isLoaded, "isSignedIn:", isSignedIn, "role:", user ? user.publicMetadata.role : null);
   useEffect(() => {
 
     console.log("isLoaded: " + isLoaded);
@@ -23,14 +24,13 @@ export function useProtectedRoute({
       window.location.replace(redirectTo);
       return;
     }
-
-    if (requiredRole && role !== requiredRole) {
+    if (requiredRole && user.publicMetadata.role !== requiredRole) {
       navigate('/unauthorized');
       return;
     }
-  }, [isLoaded, isSignedIn, role, requiredRole, navigate, redirectTo]);
+  }, [isLoaded, isSignedIn, user, requiredRole, navigate, redirectTo]);
 
-  const shouldShowContent = isLoaded && isSignedIn && (!requiredRole || role === requiredRole);
+  const shouldShowContent = isLoaded && isSignedIn && (!requiredRole || user.publicMetadata.role === requiredRole);
   const shouldShowLoading = !isLoaded;
 
   return {
@@ -38,6 +38,6 @@ export function useProtectedRoute({
     shouldShowLoading,
     isLoaded,
     isSignedIn,
-    role,
+    role : user ? user.publicMetadata.role : null,
   };
 }

@@ -40,11 +40,12 @@ public class SecurityConfig {
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
             )
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers(
+                .requestMatchers( // 그럼 페이지에 해당하는 모든 경로를 작성해야하는데? 다른 방법은?
                     "/",
                     "/sign-in",
                     "/sign-up",
                     "/index.html",
+                    "/dashboard/**",
                     "/static/**",
                     "/css/**",
                     "/js/**",

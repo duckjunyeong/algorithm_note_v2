@@ -22,10 +22,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * Custom filter for Clerk JWT authentication.
- * Verifies JWT tokens and sets User entity as the authenticated principal.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -60,6 +56,7 @@ public class ClerkJwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
 
+        // /api 경로를 제외한 모든 경로들은 filter를 true로?
         return path.equals("/") ||
                path.equals("/index.html") ||
                path.equals("/sign-in") ||
@@ -69,7 +66,7 @@ public class ClerkJwtAuthenticationFilter extends OncePerRequestFilter {
                path.startsWith("/js/") ||
                path.startsWith("/assets/") ||
                path.startsWith("/images/") ||
-               //path.startsWith("/dashboard/") ||
+               path.startsWith("/dashboard/") ||
                path.startsWith("/webhooks/") ||
                path.startsWith("/public/") ||
                path.startsWith("/actuator/") ||

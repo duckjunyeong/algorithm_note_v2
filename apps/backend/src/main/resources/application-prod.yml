@@ -22,8 +22,8 @@ spring:
 
 app:
   frontend:
-    landing-url: http://junyeong.ai
-    dashboard-url: http://junyeong.ai/dashboard
+    landing-url: http://localhost:80
+    dashboard-url: http://localhost:80/dashboard
 
 revalidation:
   schedule: 0 0 * * * *
