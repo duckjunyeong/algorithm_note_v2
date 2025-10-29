@@ -55,24 +55,7 @@ public class ClerkJwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-
-        // /api 경로를 제외한 모든 경로들은 filter를 true로?
-        return path.equals("/") ||
-               path.equals("/index.html") ||
-               path.equals("/sign-in") ||
-               path.equals(("/sign-up")) ||
-               path.startsWith("/static/") ||
-               path.startsWith("/css/") ||
-               path.startsWith("/js/") ||
-               path.startsWith("/assets/") ||
-               path.startsWith("/images/") ||
-               path.startsWith("/dashboard/") ||
-               path.startsWith("/webhooks/") ||
-               path.startsWith("/public/") ||
-               path.startsWith("/actuator/") ||
-               path.endsWith(".ico") ||
-               path.endsWith(".svg") ||
-               path.endsWith(".json");
+        return !path.startsWith("/api/");
     }
 
     private String extractTokenFromRequest(HttpServletRequest request) {
