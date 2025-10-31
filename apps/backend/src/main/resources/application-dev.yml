@@ -9,8 +9,8 @@ spring:
 
 app:
   frontend:
-    landing-url: http://localhost:5174  # Development landing page URL
-    dashboard-url: http://localhost:5173/dashboard  # Development dashboard URL
+    landing-url: http://localhost:5174
+    dashboard-url: http://localhost:5173/dashboard
 
 revalidation:
-  schedule: "*/10 * * * * *"  # 개발 환경: 10초마다 실행
+  schedule: "*/10 * * * * *"

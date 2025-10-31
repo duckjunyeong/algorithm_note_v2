@@ -8,13 +8,25 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
-  const { appName, userName, breadcrumbs } = useHeader();
+  const {
+    appName,
+    userName,
+    userEmail,
+    breadcrumbs,
+    isDropdownOpen,
+    dropdownRef,
+    toggleDropdown
+  } = useHeader();
 
   return (
     <HeaderView
       appName={appName}
       userName={userName}
+      userEmail={userEmail}
       breadcrumbs={breadcrumbs}
+      isDropdownOpen={isDropdownOpen}
+      dropdownRef={dropdownRef}
+      toggleDropdown={toggleDropdown}
       onToggleSidebar={onToggleSidebar}
     />
   );

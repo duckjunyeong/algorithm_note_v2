@@ -1,28 +1,40 @@
 // Header/Header.view.tsx
 import React from 'react';
 import type { BreadcrumbItem } from './useHeader';
-import { FiMenu, FiGlobe, FiChevronDown } from 'react-icons/fi';
+import { FiMenu, FiGlobe, FiChevronDown, FiLogOut } from 'react-icons/fi';
+import { useClerk } from "@clerk/clerk-react";
 
 interface HeaderViewProps {
   appName: string;
   userName: string;
+  userEmail: string;
   breadcrumbs: BreadcrumbItem[];
-  onToggleSidebar: () => void; // 사이드바 토글 함수
+  isDropdownOpen: boolean;
+  dropdownRef: React.RefObject<HTMLDivElement>;
+  toggleDropdown: () => void;
+  onToggleSidebar: () => void;
 }
 
-export const HeaderView: React.FC<HeaderViewProps> = ({
+export const HeaderView = ({
   appName,
   userName,
+  userEmail,
   breadcrumbs,
+  isDropdownOpen,
+  dropdownRef,
+  toggleDropdown,
   onToggleSidebar,
-}) => {
-  // 사용자 이름의 첫 글자를 따서 아바타 이니셜로 사용
+}: HeaderViewProps) => {
   const userInitial = userName.charAt(0) || 'U';
+  const { signOut } = useClerk();
+
+  function handleSignOut() {
+    signOut({ redirectUrl: import.meta.env.VITE_LANDING_URL });
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-30 bg-background-secondary border-b border-neutral-100 font-sans">
       <div className="flex h-16 items-center justify-between px-6">
-        {/* 왼쪽 섹션 */}
         <div className="flex items-center gap-4">
           <button
             onClick={onToggleSidebar}
@@ -46,13 +58,36 @@ export const HeaderView: React.FC<HeaderViewProps> = ({
           </div>
         </div>
 
-        {/* 오른쪽 섹션 */}
         <div className="flex items-center gap-4">
-          <button className="text-text-secondary hover:text-text-primary">
-            <FiGlobe size={20} />
-          </button>
-          <div className="h-8 w-8 flex items-center justify-center rounded-full bg-orange-400 text-sm font-bold text-white">
-            {userInitial}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={toggleDropdown}
+              className="h-8 w-8 flex items-center justify-center rounded-full bg-orange-400 text-sm font-bold text-white hover:bg-orange-500 transition-colors duration-200 cursor-pointer"
+              aria-label="User menu"
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="true"
+            >
+              {userInitial}
+            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-neutral-100 z-50">
+                <div className="px-4 py-3 border-b border-neutral-100">
+                  <p className="text-sm font-medium text-text-primary">{userName}</p>
+                  <p className="text-xs text-text-secondary mt-1">{userEmail}</p>
+                </div>
+
+                <div className="py-1">
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-secondary hover:bg-neutral-50 hover:text-text-primary transition-colors duration-200"
+                  >
+                    <FiLogOut className="h-4 w-4" />
+                    <span>로그아웃</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
