@@ -178,10 +178,8 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
 
     const currentQuestion = questions[currentQuestionIndex];
 
-    // 저장할 답변 가져오기 (로컬 Map에서 우선 조회, 없으면 현재 answerInput 사용)
     const answerContent = questionAnswers.get(currentQuestion.reviewQuestionId) || answerInput.trim();
 
-    // 서버에 답변 저장
     setIsSavingAnswer(true);
     try {
       await AnswerService.createAnswer({
@@ -190,7 +188,6 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
         evaluationResult: result
       });
 
-      // 로컬 Map 업데이트 (질문별 카운트 증가)
       setQuestionResults(prev => {
         const newMap = new Map(prev);
         const current = newMap.get(currentQuestion.reviewQuestionId) || { successCount: 0, failCount: 0 };
@@ -205,13 +202,10 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
         return newMap;
       });
 
-      // 마지막 질문인지 확인
       if (currentQuestionIndex === questions.length - 1) {
-        // Result View로 전환
         setCurrentView('result');
         showSuccessToast('테스트가 종료되었습니다.');
       } else {
-        // 다음 질문으로 이동
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setAnswerInput('');
         setCurrentView('input');
@@ -225,7 +219,6 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     }
   };
 
-  // Result View handlers
   const handleDeleteQuestion = (questionId: number) => {
     setDeletedQuestionIds(prev => new Set(prev).add(questionId));
   };

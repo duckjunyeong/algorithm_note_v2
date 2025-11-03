@@ -19,7 +19,6 @@ export function initializeApiClient(getToken: () => Promise<string | null>) {
   getTokenFn = getToken;
 }
 
-// Request interceptor to add authentication token
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     if (getTokenFn) {
@@ -39,19 +38,16 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle authentication errors
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
-      // Clear auth state when authentication fails
       const { clearAuth } = useAuthStore.getState();
       clearAuth();
 
-      // Redirect to sign-in page
-      window.location.href = PATHS.SIGN_IN;
+      //window.location.href = PATHS.SIGN_IN;
     }
     return Promise.reject(error);
   }

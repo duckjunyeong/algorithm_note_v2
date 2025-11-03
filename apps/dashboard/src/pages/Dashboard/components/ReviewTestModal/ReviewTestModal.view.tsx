@@ -200,6 +200,7 @@ function InputView({ questionText, answerInput, setAnswerInput, onSubmit }: Inpu
         <div className="flex justify-between items-center mt-2">
           <span className="text-xs text-gray-500">Ctrl + Enter</span>
           <button
+            type="button"
             onClick={onSubmit}
             disabled={!answerInput.trim()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
@@ -277,6 +278,7 @@ function EvaluationView({
               {/* Navigation */}
               <div className="flex items-center justify-between flex-shrink-0">
                 <button
+                  type="button"
                   onClick={onPrev}
                   disabled={isPrevDisabled}
                   className="flex items-center gap-1 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
@@ -288,6 +290,7 @@ function EvaluationView({
                   {currentAnswerIndex + 1} / {previousAnswers.length}
                 </span>
                 <button
+                  type="button"
                   onClick={onNext}
                   disabled={isNextDisabled}
                   className="flex items-center gap-1 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
@@ -312,6 +315,7 @@ function EvaluationView({
       {/* Evaluation Buttons */}
       <div className="flex justify-end gap-3 pt-4 border-t">
         <button
+          type="button"
           onClick={() => onEvaluate('FAILURE')}
           disabled={isSavingAnswer}
           className="px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
@@ -319,6 +323,7 @@ function EvaluationView({
           {isSavingAnswer ? '저장 중...' : '실패'}
         </button>
         <button
+          type="button"
           onClick={() => onEvaluate('SUCCESS')}
           disabled={isSavingAnswer}
           className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
@@ -485,7 +490,6 @@ function ResultView({
             </div>
           )}
 
-          {/* Warning for all deleted */}
           {isAllQuestionsDeleted && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-sm text-yellow-800">
@@ -495,11 +499,9 @@ function ResultView({
           )}
         </div>
 
-        {/* Right: Settings Panel */}
         <div className="border border-gray-200 rounded-lg p-4 bg-white">
           <h3 className="text-sm font-medium text-gray-700 mb-4">설정</h3>
           <div className="space-y-4">
-            {/* Category */}
             <div>
               {showCategoryForm ? (
                 <CategoryCreationForm
@@ -519,7 +521,6 @@ function ResultView({
               )}
             </div>
 
-            {/* Importance Slider */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-2">
                 중요도: {localSettings.importance}/5
@@ -538,7 +539,6 @@ function ResultView({
               </div>
             </div>
 
-            {/* Review Cycle Slider */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-2">
                 복습 주기: {localSettings.reviewCycle}일
@@ -560,9 +560,9 @@ function ResultView({
         </div>
       </div>
 
-      {/* Save Button */}
       <div className="flex justify-end pt-4 border-t">
         <button
+          type="button"
           onClick={onSave}
           disabled={isSaving}
           className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
@@ -574,7 +574,6 @@ function ResultView({
         </button>
       </div>
 
-      {/* Slider Styles */}
       <style dangerouslySetInnerHTML={{ __html: `
       .slider::-webkit-slider-thumb {
         -webkit-appearance: none;

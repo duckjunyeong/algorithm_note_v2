@@ -10,7 +10,7 @@ spring:
 app:
   frontend:
     landing-url: http://localhost:5174
-    dashboard-url: http://localhost:5173/dashboard
+    dashboard-url: http://localhost:5173
 
 revalidation:
   schedule: "*/10 * * * * *"

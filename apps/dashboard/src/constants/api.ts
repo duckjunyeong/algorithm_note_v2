@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  DEFAULT_BASE_URL: 'http://localhost:8085/api',
+  DEFAULT_BASE_URL: 'http://localhost:8080/api',
   TIMEOUT: 3000000,
   HEADERS: {
     CONTENT_TYPE: 'application/json',

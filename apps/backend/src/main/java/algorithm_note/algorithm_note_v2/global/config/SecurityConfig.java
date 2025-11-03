@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Value("${app.frontend.landing-url}")
-    private String landingUrl;
+    private String  landingUrl;
 
     @Value("${app.frontend.dashboard-url}")
     private String dashboardUrl;
