@@ -3,12 +3,14 @@ import { CategorySelector } from '../CategorySelector';
 interface QuestionSettingsPanelViewProps {
   repetitionCycle: number;
   importance: number;
+  url: string;
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
   isLoadingCategories: boolean;
   categoryError: string | null;
   onRepetitionCycleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onImportanceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCategorySelect: (categoryId: number) => void;
   onAddCategoryClick: () => void;
 }
@@ -16,12 +18,14 @@ interface QuestionSettingsPanelViewProps {
 export function QuestionSettingsPanelView({
   repetitionCycle,
   importance,
+  url,
   categories,
   selectedCategoryId,
   isLoadingCategories,
   categoryError,
   onRepetitionCycleChange,
   onImportanceChange,
+  onUrlChange,
   onCategorySelect,
   onAddCategoryClick,
 }: QuestionSettingsPanelViewProps) {
@@ -80,6 +84,24 @@ export function QuestionSettingsPanelView({
             onCategorySelect={onCategorySelect}
             onAddCategoryClick={onAddCategoryClick}
           />
+        </div>
+
+        {/* URL 링크 */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-2">
+            참고 URL (선택사항)
+          </label>
+          <input
+            type="url"
+            value={url}
+            onChange={onUrlChange}
+            placeholder="https://example.com"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            문제 또는 학습 자료 링크를 입력하세요
+          </p>
         </div>
       </div>
     </div>

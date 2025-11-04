@@ -58,6 +58,9 @@ public class ReviewCard {
     @Builder.Default
     private Double successRate = 0.0;
 
+    @Column(name = "url", length = 500)
+    private String url;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -106,12 +109,14 @@ public class ReviewCard {
      * @param category 카테고리
      * @param importance 중요도
      * @param reviewCycle 반복 주기
+     * @param url URL 링크
      */
-    public void updateCardInfo(String title, Category category, Integer importance, Integer reviewCycle) {
+    public void updateCardInfo(String title, Category category, Integer importance, Integer reviewCycle, String url) {
         if (title != null) this.title = title;
         if (category != null) this.category = category;
         if (importance != null) this.importance = importance;
         if (reviewCycle != null) this.reviewCycle = reviewCycle;
+        if (url != null) this.url = url;
         this.updatedAt = LocalDateTime.now();
     }
 

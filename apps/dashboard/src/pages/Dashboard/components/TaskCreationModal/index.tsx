@@ -35,6 +35,8 @@ export function TaskCreationModal({
     setRepetitionCycle,
     importance,
     setImportance,
+    url,
+    setUrl,
     showCategoryForm,
     handleContinue,
     handleQuestionToggle,
@@ -81,6 +83,8 @@ export function TaskCreationModal({
       setRepetitionCycle={setRepetitionCycle}
       importance={importance}
       setImportance={setImportance}
+      url={url}
+      setUrl={setUrl}
 
       categories={categories}
       selectedCategoryId={selectedCategoryId}

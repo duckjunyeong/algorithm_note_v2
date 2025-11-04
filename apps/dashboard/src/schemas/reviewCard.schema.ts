@@ -31,6 +31,12 @@ export const createReviewCardRequestSchema = z.object({
     .min(1, "반복 주기는 1일 이상이어야 합니다")
     .max(15, "반복 주기는 15일 이하여야 합니다"),
 
+  url: z.string()
+    .url("올바른 URL 형식이 아닙니다")
+    .max(500, "URL은 500자 이내로 입력해주세요")
+    .optional()
+    .or(z.literal('')),
+
   questions: z.array(reviewQuestionSchema)
     .min(1, "최소 1개의 질문을 추가해주세요")
     .max(10, "질문은 최대 10개까지 추가할 수 있습니다")
@@ -53,6 +59,7 @@ export const reviewCardSchema = z.object({
   isActive: z.boolean(),
   reviewCount: z.number().int().min(0),
   successRate: z.number().min(0).max(100).optional(),
+  url: z.string().url().max(500).optional().or(z.literal('')),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional()
 });

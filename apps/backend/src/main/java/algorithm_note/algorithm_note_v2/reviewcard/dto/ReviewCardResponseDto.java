@@ -28,6 +28,7 @@ public class ReviewCardResponseDto {
     private Boolean isActive;
     private Integer reviewCount;
     private Double successRate;
+    private String url;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<ReviewQuestionResponseDto> reviewQuestions;
@@ -43,6 +44,7 @@ public class ReviewCardResponseDto {
                 .isActive(reviewCard.getIsActive())
                 .reviewCount(reviewCard.getReviewCount())
                 .successRate(reviewCard.getSuccessRate())
+                .url(reviewCard.getUrl())
                 .createdAt(reviewCard.getCreatedAt())
                 .updatedAt(reviewCard.getUpdatedAt())
                 .reviewQuestions(
@@ -64,6 +66,7 @@ public class ReviewCardResponseDto {
                 .isActive(reviewCard.getIsActive())
                 .reviewCount(reviewCard.getReviewCount())
                 .successRate(reviewCard.getSuccessRate())
+                .url(reviewCard.getUrl())
                 .createdAt(reviewCard.getCreatedAt())
                 .updatedAt(reviewCard.getUpdatedAt())
                 .build();

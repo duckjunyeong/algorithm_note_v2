@@ -21,6 +21,8 @@ interface TaskCreationModalViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
+  url: string;
+  setUrl: (value: string) => void;
   // Category 관련 props
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
@@ -57,6 +59,8 @@ export function TaskCreationModalView({
   setRepetitionCycle,
   importance,
   setImportance,
+  url,
+  setUrl,
   // Category props
   categories,
   selectedCategoryId,
@@ -122,6 +126,8 @@ export function TaskCreationModalView({
                     setRepetitionCycle={setRepetitionCycle}
                     importance={importance}
                     setImportance={setImportance}
+                    url={url}
+                    setUrl={setUrl}
                     // Category props
                     categories={categories}
                     selectedCategoryId={selectedCategoryId}
@@ -216,6 +222,8 @@ interface SelectViewProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
+  url: string;
+  setUrl: (value: string) => void;
   // Category props
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
@@ -242,6 +250,8 @@ function SelectView({
   setRepetitionCycle,
   importance,
   setImportance,
+  url,
+  setUrl,
   // Category props
   categories,
   selectedCategoryId,
@@ -317,6 +327,8 @@ function SelectView({
               setRepetitionCycle={setRepetitionCycle}
               importance={importance}
               setImportance={setImportance}
+              url={url}
+              setUrl={setUrl}
               categories={categories}
               selectedCategoryId={selectedCategoryId}
               isLoadingCategories={isLoadingCategories}

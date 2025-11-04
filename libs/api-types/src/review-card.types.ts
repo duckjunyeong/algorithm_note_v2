@@ -13,6 +13,7 @@ export interface ReviewCard {
   isActive: boolean;
   reviewCount: number;
   successRate?: number;
+  url?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -33,6 +34,7 @@ export interface CreateReviewCardRequest {
   categoryId: number;
   importance: number;
   reviewCycle: number;
+  url?: string;
   questions: Array<{
     text: string;
   }>;
@@ -55,6 +57,7 @@ export interface UpdateReviewResultRequest {
   categoryId?: number;
   importance?: number;
   reviewCycle?: number;
+  url?: string;
   isActive: boolean;
   deletedQuestionIds: number[];
   questionUpdates: Array<{

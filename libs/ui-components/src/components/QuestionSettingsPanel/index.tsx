@@ -7,6 +7,8 @@ export function QuestionSettingsPanel({
   setRepetitionCycle,
   importance,
   setImportance,
+  url,
+  setUrl,
   categories,
   selectedCategoryId,
   isLoadingCategories,
@@ -17,11 +19,14 @@ export function QuestionSettingsPanel({
   const {
     handleRepetitionCycleChange,
     handleImportanceChange,
+    handleUrlChange,
   } = useQuestionSettingsPanel({
     repetitionCycle,
     setRepetitionCycle,
     importance,
     setImportance,
+    url,
+    setUrl,
     categories,
     selectedCategoryId,
     isLoadingCategories,
@@ -34,12 +39,14 @@ export function QuestionSettingsPanel({
     <QuestionSettingsPanelView
       repetitionCycle={repetitionCycle}
       importance={importance}
+      url={url}
       categories={categories}
       selectedCategoryId={selectedCategoryId}
       isLoadingCategories={isLoadingCategories}
       categoryError={categoryError}
       onRepetitionCycleChange={handleRepetitionCycleChange}
       onImportanceChange={handleImportanceChange}
+      onUrlChange={handleUrlChange}
       onCategorySelect={onCategorySelect}
       onAddCategoryClick={onAddCategoryClick}
     />

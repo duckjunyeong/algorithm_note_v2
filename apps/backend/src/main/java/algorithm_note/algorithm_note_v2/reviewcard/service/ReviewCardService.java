@@ -63,6 +63,7 @@ public class ReviewCardService {
                     .category(category)
                     .importance(requestDto.getImportance())
                     .reviewCycle(requestDto.getReviewCycle())
+                    .url(requestDto.getUrl())
                     .build();
 
             // 3. ReviewCard 저장
@@ -290,7 +291,8 @@ public class ReviewCardService {
                 requestDto.getTitle(),
                 newCategory,
                 requestDto.getImportance(),
-                requestDto.getReviewCycle()
+                requestDto.getReviewCycle(),
+                requestDto.getUrl()
         );
 
         // 4. 상태 변경 (테스트 완료)

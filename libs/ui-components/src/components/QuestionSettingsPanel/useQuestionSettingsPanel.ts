@@ -5,6 +5,8 @@ interface UseQuestionSettingsPanelProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
+  url: string;
+  setUrl: (value: string) => void;
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
   isLoadingCategories: boolean;
@@ -16,6 +18,7 @@ interface UseQuestionSettingsPanelProps {
 export function useQuestionSettingsPanel({
   setRepetitionCycle,
   setImportance,
+  setUrl,
 }: UseQuestionSettingsPanelProps) {
   const handleRepetitionCycleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setRepetitionCycle(parseInt(e.target.value, 10));
@@ -25,9 +28,14 @@ export function useQuestionSettingsPanel({
     setImportance(parseInt(e.target.value, 10));
   }, [setImportance]);
 
+  const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setUrl(e.target.value);
+  }, [setUrl]);
+
   return {
     handleRepetitionCycleChange,
     handleImportanceChange,
+    handleUrlChange,
   };
 }
 
@@ -36,6 +44,8 @@ export interface QuestionSettingsPanelProps {
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
+  url: string;
+  setUrl: (value: string) => void;
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
   isLoadingCategories: boolean;

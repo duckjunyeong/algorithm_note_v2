@@ -35,6 +35,10 @@ public class ReviewCardCreateRequestDto {
     @Max(value = 365, message = "반복 주기는 365일 이하여야 합니다")
     private Integer reviewCycle;
 
+    @Size(max = 500, message = "URL은 500자 이내로 입력해주세요")
+    @Pattern(regexp = "^(https?://)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$|^$", message = "올바른 URL 형식이 아닙니다")
+    private String url;
+
     @NotNull(message = "질문 목록을 입력해주세요")
     @Size(min = 1, message = "최소 1개의 질문을 추가해주세요")
     @Size(max = 10, message = "질문은 최대 10개까지 추가할 수 있습니다")

@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * 복습 카드 REST API Controller
- *
- * 복습 카드 생성, 조회, 수정, 삭제 등의 API를 제공합니다.
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/reviewCard")
@@ -28,12 +23,6 @@ public class ReviewCardController {
 
     private final ReviewCardService reviewCardService;
 
-    /**
-     * 복습 카드를 생성합니다.
-     *
-     * @param requestDto 복습 카드 생성 요청 DTO
-     * @return 생성된 복습 카드 응답
-     */
     @PostMapping("/create")
     public ResponseEntity<ReviewCardCreateResponseDto> createReviewCard(
             @Valid @RequestBody ReviewCardCreateRequestDto requestDto,
@@ -48,11 +37,6 @@ public class ReviewCardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * 인증된 사용자의 모든 복습 카드를 조회합니다.
-     *
-     * @return 복습 카드 목록
-     */
     @GetMapping
     public ResponseEntity<List<ReviewCardResponseDto>> getAllReviewCards(@AuthenticationPrincipal User currentUser) {
         log.info("Fetching all review cards for authenticated user");
@@ -65,12 +49,7 @@ public class ReviewCardController {
         return ResponseEntity.ok(reviewCards);
     }
 
-    /**
-     * 특정 복습 카드의 상세 정보를 조회합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @return 복습 카드 상세 정보
-     */
+
     @GetMapping("/{reviewCardId}")
     public ResponseEntity<ReviewCardResponseDto> getReviewCard(
             @PathVariable Long reviewCardId,
@@ -82,13 +61,6 @@ public class ReviewCardController {
         return ResponseEntity.ok(reviewCard);
     }
 
-    /**
-     * 복습 카드의 상태를 업데이트합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param requestDto 상태 업데이트 요청 DTO
-     * @return 성공 응답
-     */
     @PatchMapping("/{reviewCardId}/status")
     public ResponseEntity<Void> updateReviewCardStatus(
             @PathVariable Long reviewCardId,
@@ -104,12 +76,7 @@ public class ReviewCardController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 복습 카드의 복습 횟수를 증가시킵니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @return 성공 응답
-     */
+
     @PostMapping("/{reviewCardId}/review")
     public ResponseEntity<Void> incrementReviewCount(@PathVariable Long reviewCardId, @AuthenticationPrincipal User currentUser) {
         log.info("Incrementing review count for card ID: {}", reviewCardId);
@@ -120,12 +87,6 @@ public class ReviewCardController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 복습 카드를 삭제합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @return 성공 응답
-     */
     @DeleteMapping("/{reviewCardId}")
     public ResponseEntity<Void> deleteReviewCard(@PathVariable Long reviewCardId, @AuthenticationPrincipal User currentUser) {
         log.info("Deleting review card with ID: {}", reviewCardId);
@@ -136,12 +97,7 @@ public class ReviewCardController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * 활성 상태별 복습 카드를 조회합니다.
-     *
-     * @param isActive 활성 상태 (true: 백로그, false: 완료)
-     * @return 해당 상태의 복습 카드 목록
-     */
+
     @GetMapping("/status")
     public ResponseEntity<List<ReviewCardResponseDto>> getReviewCardsByStatus(
             @RequestParam Boolean isActive,
@@ -155,11 +111,7 @@ public class ReviewCardController {
         return ResponseEntity.ok(reviewCards);
     }
 
-    /**
-     * 복습 카드 통계를 조회합니다.
-     *
-     * @return 복습 카드 통계 정보
-     */
+
     @GetMapping("/stats")
     public ResponseEntity<ReviewCardService.ReviewCardStatsDto> getReviewCardStats(@AuthenticationPrincipal User currentUser) {
         log.info("Fetching review card stats for authenticated user");
@@ -168,12 +120,7 @@ public class ReviewCardController {
         return ResponseEntity.ok(stats);
     }
 
-    /**
-     * 비활성화된 복습 카드의 질문과 답변 목록을 조회합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @return 질문별 답변 목록이 포함된 응답
-     */
+
     @GetMapping("/{reviewCardId}/results")
     public ResponseEntity<ReviewCardResultResponseDto> getReviewCardResults(
             @PathVariable Long reviewCardId,
@@ -188,13 +135,6 @@ public class ReviewCardController {
         return ResponseEntity.ok(results);
     }
 
-    /**
-     * 복습 테스트 결과를 저장합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param requestDto 업데이트 요청 DTO
-     * @return 성공 응답
-     */
     @PutMapping("/{reviewCardId}/result")
     public ResponseEntity<Void> updateReviewResult(
             @PathVariable Long reviewCardId,

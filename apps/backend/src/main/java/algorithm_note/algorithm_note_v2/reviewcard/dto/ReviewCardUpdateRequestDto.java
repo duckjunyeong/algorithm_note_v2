@@ -1,8 +1,6 @@
 package algorithm_note.algorithm_note_v2.reviewcard.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,9 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * 복습 카드 결과 업데이트 요청 DTO
- */
 @Getter
 @Builder
 @NoArgsConstructor
@@ -31,6 +26,10 @@ public class ReviewCardUpdateRequestDto {
     @Max(value = 15, message = "복습 주기는 15일 이하여야 합니다")
     private Integer reviewCycle;
 
+    @Size(max = 500, message = "URL은 500자 이내로 입력해주세요")
+    @Pattern(regexp = "^(https?://)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$|^$", message = "올바른 URL 형식이 아닙니다")
+    private String url;
+
     @NotNull(message = "isActive는 필수입니다")
     private Boolean isActive;
 
@@ -40,9 +39,6 @@ public class ReviewCardUpdateRequestDto {
     @Builder.Default
     private List<QuestionUpdateDto> questionUpdates = List.of();
 
-    /**
-     * 질문별 업데이트 DTO
-     */
     @Getter
     @Builder
     @NoArgsConstructor

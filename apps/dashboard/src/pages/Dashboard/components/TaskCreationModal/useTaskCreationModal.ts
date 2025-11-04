@@ -20,6 +20,7 @@ export function useTaskCreationModal() {
   // 질문 설정 상태 관리
   const [repetitionCycle, setRepetitionCycle] = useState(3);
   const [importance, setImportance] = useState(5);
+  const [url, setUrl] = useState('');
   const [showCategoryForm, setShowCategoryForm] = useState(false);
 
   const { questions, setQuestions, clearQuestions } = useQuestionStore();
@@ -35,6 +36,7 @@ export function useTaskCreationModal() {
     setEditingQuestion(null);
     setRepetitionCycle(3);
     setImportance(5);
+    setUrl('');
     setShowCategoryForm(false);
     selectCategory(null);
     clearQuestions();
@@ -178,6 +180,7 @@ export function useTaskCreationModal() {
         categoryId: selectedCategoryId,
         importance,
         reviewCycle: repetitionCycle,
+        url: url || undefined,
         questions: selectedQuestionTexts
       };
 
@@ -197,7 +200,7 @@ export function useTaskCreationModal() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedQuestions, questions, selectedCategoryId, importance, repetitionCycle, createReviewCard, resetModal]);
+  }, [selectedQuestions, questions, selectedCategoryId, importance, repetitionCycle, url, createReviewCard, resetModal]);
 
   return {
     currentView,
@@ -212,6 +215,8 @@ export function useTaskCreationModal() {
     setRepetitionCycle,
     importance,
     setImportance,
+    url,
+    setUrl,
     showCategoryForm,
     handleContinue,
     handleQuestionToggle,
