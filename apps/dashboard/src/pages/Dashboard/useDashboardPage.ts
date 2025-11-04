@@ -32,14 +32,15 @@ export const useDashboardPage = () => {
   const [completedFilterCategoryId, setCompletedFilterCategoryId] = useState<number | null>(null);
   const [completedSortBy, setCompletedSortBy] = useState<'successRate' | 'importance'>('successRate');
 
-  // 복습 카드 store 
+  // 복습 카드 store
   const {
     backlogCards,
     completedCards,
     isLoading: reviewCardsLoading,
     error: reviewCardsError,
     fetchReviewCards,
-    clearError
+    clearError,
+    removeCard
   } = useReviewCardStore();
 
   // Category store 사용
@@ -163,6 +164,13 @@ export const useDashboardPage = () => {
     setSelectedResultReviewCardId(null);
   };
 
+  const handleReviewCardDeleteSuccess = () => {
+    if (selectedResultReviewCardId) {
+      removeCard(selectedResultReviewCardId);
+      showSuccessToast('복습 카드가 삭제되었습니다.');
+    }
+  };
+
   return {
     isSidebarOpen,
     selectedTask,
@@ -205,6 +213,7 @@ export const useDashboardPage = () => {
     selectedResultReviewCardId,
     openReviewResultModal,
     closeReviewResultModal,
+    handleReviewCardDeleteSuccess,
     handleSaveCategory,
     toggleSidebar,
   };

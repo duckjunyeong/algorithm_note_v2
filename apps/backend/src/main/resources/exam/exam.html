@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${examTitle}">시험지</title>
+
+    <style>
+        /* --- 기본 및 인쇄 설정 --- */
+
+        /* 브라우저 기본 스타일을 초기화합니다. (간단 버전)
+          실제 프로덕션에서는 Reset.css나 Normalize.css를 사용하는 것이 좋습니다.
+        */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; /* 크기 계산을 쉽게 합니다 (padding, border 포함) */
+        }
+
+        body {
+            background-color: #fff;
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; /* 기본 폰트 설정 (예시) */
+        }
+
+        /* A4 용지 크기(210mm x 297mm)와 여백을 정의하는 컨테이너입니다.
+        */
+        .page-container {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto; /* 중앙 정렬 */
+            padding: 3rem;  /* 12 * 4px = 48px ~= 3rem (Tailwind p-12) */
+        }
+
+        /* --- 1. 헤더 스타일 --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            border-bottom: 2px solid black;
+            padding-bottom: 0.5rem; /* 8px */
+            margin-bottom: 1rem;    /* 16px */
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-left .course-title {
+            font-size: 1.5rem;  /* 24px (Tailwind text-2xl) */
+            font-weight: bold;
+            margin-right: 1rem; /* 16px */
+        }
+
+        .header-left .exam-title {
+            font-size: 3rem;    /* 48px (Tailwind text-5xl) */
+            font-weight: bold;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-right .exam-type {
+            border: 2px solid black;
+            border-radius: 9999px; /* (Tailwind rounded-full) */
+            padding: 0.25rem 1rem; /* 4px 16px */
+            font-size: 1.25rem;    /* 20px (Tailwind text-xl) */
+            font-weight: bold;
+            margin-right: 0.5rem; /* 8px */
+        }
+
+        .header-right .page-info {
+            font-size: 1rem; /* 16px */
+        }
+
+        /* --- 2. 안내 문구 --- */
+        .instruction {
+            width: 100%;
+            margin-bottom: 1rem; /* 16px */
+            font-size: 0.875rem; /* 14px (Tailwind text-sm) */
+        }
+
+        /* --- 3. 문제 영역 (2단 레이아웃) --- */
+        .problem-area {
+            width: 100%;
+            columns: 2;        /* 핵심: 2단 레이아웃 */
+            column-gap: 2rem;  /* 32px (Tailwind gap-x-8) */
+        }
+
+        /* 개별 문제 항목 */
+        .problem-item {
+            margin-bottom: 1.25rem; /* 20px (Tailwind mb-5) */
+
+            /* 핵심: 페이지나 단(column)이 나뉠 때
+              이 요소(문제 1개) 중간이 쪼개지지 않도록 방지합니다.
+            */
+            page-break-inside: avoid;
+            break-inside: avoid; /* (최신 브라우저 호환성) */
+        }
+
+        /* 문제 (질문) */
+        .problem-item .question {
+            margin-bottom: 0.5rem; /* 8px */
+            font-size: 1rem;       /* 16px */
+            font-weight: 600;      /* (Tailwind font-semibold) */
+        }
+
+        /* 보기 (선택지) 리스트 */
+        .problem-item .options-list {
+            margin-left: 1rem; /* 16px */
+            list-style-type: none; /* 기본 list-style 제거 */
+        }
+
+        .problem-item .option-item {
+            font-size: 1rem; /* 16px */
+            margin-bottom: 0.25rem; /* 4px (Tailwind space-y-1) */
+        }
+
+        /* --- 인쇄(PDF) 전용 스타일 --- */
+        @media print {
+            body {
+                /* 인쇄(PDF) 시 브라우저가 강제로 넣는 여백(margin) 제거 */
+                margin: 0;
+            }
+            .page-container {
+                /* 인쇄 시에는 그림자나 불필요한 여백을 제거 (필요시) */
+                margin: 0;
+                padding: 3rem; /* 여백은 유지 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+
+    <header class="header">
+        <div class="header-left">
+            <h2 class="course-title" th:text="${courseTitle}">Synapse AI </h2>
+            <h1 class="exam-title" th:text="${examTitle}">한국학</h1>
+        </div>
+
+    </header>
+
+    <div class="instruction">
+        <span>※ </span>
+        <span th:text="${instruction}">각 문제의 보기 중에서 물음에 가장 합당한 답을 고르시오.</span>
+    </div>
+
+    <main class="problem-area">
+
+        <div th:each="problem, iter : ${problems}" class="problem-item">
+
+            <p class="question">
+                <span th:text="${iter.count} + '. '">1. </span>
+                <span th:text="${problem.question}">다음 중 대한민국의 상징이 아닌 것은?</span>
+            </p>
+
+            <ul class="options-list">
+                <li th:each="option, optIter : ${problem.options}" class="option-item">
+                    <span th:text="${optIter.count == 1 ? '①' : (optIter.count == 2 ? '②' : (optIter.count == 3 ? '③' : (optIter.count == 4 ? '④' : '⑤')))}"></span>
+                    <span th:text="' ' + ${option}">태극기</span>
+                </li>
+            </ul>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

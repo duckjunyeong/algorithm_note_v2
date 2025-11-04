@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { ReviewCardService } from '../../../../services/reviewCardService';
 import type { ReviewCardResultResponse } from '../../../../../../../libs/api-types/src';
 
@@ -7,17 +7,33 @@ export interface UseReviewResultModalProps {
   isOpen: boolean;
   reviewCardId: number | null;
   onClose: () => void;
+  onDeleteSuccess?: () => void;
 }
 
-export function useReviewResultModal({ isOpen, reviewCardId, onClose }: UseReviewResultModalProps) {
+export function useReviewResultModal({ isOpen, reviewCardId, onClose, onDeleteSuccess }: UseReviewResultModalProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   // 복습 카드 결과 데이터 페칭
   const { data, isLoading, isError, error } = useQuery<ReviewCardResultResponse>({
     queryKey: ['reviewCardResults', reviewCardId],
     queryFn: () => ReviewCardService.getReviewCardResults(reviewCardId!),
     enabled: isOpen && reviewCardId !== null,
+  });
+
+  // 복습 카드 삭제 mutation
+  const deleteMutation = useMutation({
+    mutationFn: () => ReviewCardService.deleteReviewCard(reviewCardId!),
+    onSuccess: () => {
+      setIsDeleteConfirmOpen(false);
+      handleClose();
+      onDeleteSuccess?.();
+    },
+    onError: (error) => {
+      console.error('복습 카드 삭제 실패:', error);
+      setIsDeleteConfirmOpen(false);
+    },
   });
 
   // 현재 질문 데이터
@@ -70,7 +86,23 @@ export function useReviewResultModal({ isOpen, reviewCardId, onClose }: UseRevie
   const handleClose = () => {
     setCurrentQuestionIndex(0);
     setCurrentAnswerIndex(0);
+    setIsDeleteConfirmOpen(false);
     onClose();
+  };
+
+  // 삭제 관련 핸들러
+  const handleDeleteClick = () => {
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteConfirmOpen(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (reviewCardId) {
+      deleteMutation.mutate();
+    }
   };
 
   return {
@@ -93,5 +125,10 @@ export function useReviewResultModal({ isOpen, reviewCardId, onClose }: UseRevie
     isPrevAnswerDisabled,
     isNextAnswerDisabled,
     handleClose,
+    handleDeleteClick,
+    handleDeleteCancel,
+    handleDeleteConfirm,
+    isDeleteConfirmOpen,
+    isDeleting: deleteMutation.isPending,
   };
 }

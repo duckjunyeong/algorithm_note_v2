@@ -42,6 +42,7 @@ const DashboardPage: FC = () => {
     closeReviewTestModal,
     openReviewResultModal,
     closeReviewResultModal,
+    handleReviewCardDeleteSuccess,
     handleSaveCategory,
     toggleSidebar
   } = useDashboardPage();
@@ -86,6 +87,7 @@ const DashboardPage: FC = () => {
       selectedResultReviewCardId={selectedResultReviewCardId}
       onOpenReviewResultModal={openReviewResultModal}
       onCloseReviewResultModal={closeReviewResultModal}
+      onReviewCardDeleteSuccess={handleReviewCardDeleteSuccess}
       onSaveCategory={handleSaveCategory}
     />
   );

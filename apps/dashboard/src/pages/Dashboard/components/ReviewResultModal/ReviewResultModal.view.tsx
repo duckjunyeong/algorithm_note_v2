@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import type { QuestionWithAnswers, Answer } from '../../../../../../../libs/api-types/src';
+import ConfirmModal  from '../../../../../../../libs/ui-components/src/components/ConfirmModal';
 
 export interface ReviewResultModalViewProps {
   isOpen: boolean;
@@ -22,6 +23,11 @@ export interface ReviewResultModalViewProps {
   onNextQuestion: () => void;
   onPrevAnswer: () => void;
   onNextAnswer: () => void;
+  onDelete: () => void;
+  isDeleting: boolean;
+  isDeleteConfirmOpen: boolean;
+  onDeleteCancel: () => void;
+  onDeleteConfirm: () => void;
 }
 
 export function ReviewResultModalView({
@@ -43,6 +49,11 @@ export function ReviewResultModalView({
   onNextQuestion,
   onPrevAnswer,
   onNextAnswer,
+  onDelete,
+  isDeleting,
+  isDeleteConfirmOpen,
+  onDeleteCancel,
+  onDeleteConfirm,
 }: ReviewResultModalViewProps) {
   if (!isOpen) return null;
 
@@ -193,8 +204,44 @@ export function ReviewResultModalView({
               )}
             </div>
           )}
+
+          {!isLoading && !isError && (
+            <div className="mt-6 border-t border-neutral-100 pt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={onDelete}
+                disabled={isDeleting}
+                className={`rounded-lg px-6 py-2.5 font-medium transition-colors ${
+                  isDeleting
+                    ? 'cursor-not-allowed bg-semantic-error-light text-semantic-error opacity-50'
+                    : 'bg-semantic-error text-white hover:bg-semantic-error-dark'
+                }`}
+              >
+                {isDeleting ? (
+                  <span className="flex items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    삭제 중...
+                  </span>
+                ) : (
+                  '삭제하기'
+                )}
+              </button>
+            </div>
+          )}
         </motion.div>
       </div>
+
+      {/* 삭제 확인 모달 */}
+      <ConfirmModal
+        isOpen={isDeleteConfirmOpen}
+        title="복습 카드 삭제"
+        message="정말로 이 복습 카드를 삭제하시겠습니까?"
+        onConfirm={onDeleteConfirm}
+        onCancel={onDeleteCancel}
+        isLoading={isDeleting}
+        confirmText="삭제하기"
+        cancelText="취소"
+      />
     </AnimatePresence>
   );
 }

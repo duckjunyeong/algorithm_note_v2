@@ -3,7 +3,7 @@ import { ReviewResultModalView } from './ReviewResultModal.view';
 
 export interface ReviewResultModalProps extends UseReviewResultModalProps {}
 
-export function ReviewResultModal({ isOpen, reviewCardId, onClose }: ReviewResultModalProps) {
+export function ReviewResultModal({ isOpen, reviewCardId, onClose, onDeleteSuccess }: ReviewResultModalProps) {
   const {
     isLoading,
     isError,
@@ -23,7 +23,12 @@ export function ReviewResultModal({ isOpen, reviewCardId, onClose }: ReviewResul
     handleNextQuestion,
     handlePrevAnswer,
     handleNextAnswer,
-  } = useReviewResultModal({ isOpen, reviewCardId, onClose });
+    handleDeleteClick,
+    isDeleting,
+    isDeleteConfirmOpen,
+    handleDeleteCancel,
+    handleDeleteConfirm,
+  } = useReviewResultModal({ isOpen, reviewCardId, onClose, onDeleteSuccess });
 
   return (
     <ReviewResultModalView
@@ -46,6 +51,11 @@ export function ReviewResultModal({ isOpen, reviewCardId, onClose }: ReviewResul
       onNextQuestion={handleNextQuestion}
       onPrevAnswer={handlePrevAnswer}
       onNextAnswer={handleNextAnswer}
+      onDelete={handleDeleteClick}
+      isDeleting={isDeleting}
+      isDeleteConfirmOpen={isDeleteConfirmOpen}
+      onDeleteCancel={handleDeleteCancel}
+      onDeleteConfirm={handleDeleteConfirm}
     />
   );
 }

@@ -48,6 +48,7 @@ export interface DashboardPageViewProps {
   selectedResultReviewCardId: number | null;
   onOpenReviewResultModal: (reviewCardId: number) => void;
   onCloseReviewResultModal: () => void;
+  onReviewCardDeleteSuccess: () => void;
   onCloseConfirmModal: () => void;
   onOpenTaskCreationModal: () => void;
   onCloseTaskCreationModal: () => void;
@@ -87,6 +88,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   selectedResultReviewCardId,
   onOpenReviewResultModal,
   onCloseReviewResultModal,
+  onReviewCardDeleteSuccess,
   onOpenTaskCreationModal,
   onCloseTaskCreationModal,
   onTaskCreationBackgroundClick,
@@ -291,6 +293,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         isOpen={isReviewResultModalOpen}
         reviewCardId={selectedResultReviewCardId}
         onClose={onCloseReviewResultModal}
+        onDeleteSuccess={onReviewCardDeleteSuccess}
       />
     </div>
   );
