@@ -181,8 +181,9 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                     id={`R-${card.reviewCardId}`}
                     category={card.category}
                     title={card.title}
+                    url={card.url}
                     tags={[
-                      { label: '정답률', value: `${card.successRate?.toFixed(1) ?? 0}%` },
+                      { label: '정답율', value: `${card.successRate?.toFixed(1) ?? 0}%` },
                       { label: '중요도', value: `${card.importance}/5` },
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
@@ -242,6 +243,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                     category={card.category}
                     title={card.title}
                     isActive={card.isActive}
+                    url={card.url}
                     tags={[
                       { label: '정답률', value: `${card.successRate?.toFixed(1) ?? 0}%` },
                       { label: '중요도', value: `${card.importance}/5` },
