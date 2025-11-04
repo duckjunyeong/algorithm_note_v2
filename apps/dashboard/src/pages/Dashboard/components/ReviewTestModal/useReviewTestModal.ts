@@ -20,8 +20,6 @@ export interface UseReviewTestModalProps {
 }
 
 export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }: UseReviewTestModalProps) {
-  // Store actions for optimistic UI
-  const { moveCardToCompleted, removeCard } = useReviewCardStore();
 
   const [currentView, setCurrentView] = useState<'input' | 'evaluation' | 'result'>('input');
   const [questions, setQuestions] = useState<ReviewQuestion[]>([]);
@@ -266,13 +264,6 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
     );
     const isCardDeleted = remainingQuestions.length === 0;
 
-    // 낙관적 UI 업데이트: API 호출 전에 store 상태 변경
-    if (isCardDeleted) {
-      removeCard(reviewCardId);
-    } else {
-      moveCardToCompleted(reviewCardId);
-    }
-
     try {
       if (isCardDeleted) {
         // 카드 전체 삭제
@@ -303,12 +294,13 @@ export function useReviewTestModal({ isOpen, reviewCardId, reviewCard, onClose }
         showSuccessToast('저장되었습니다.');
       }
 
-      onClose();
-    } catch (error) {
-      // 롤백: API 실패 시 store 재조회로 원상복구
-      showErrorToast('저장에 실패했습니다.');
+      // API 성공 후 서버에서 최신 데이터 가져오기
       const { fetchReviewCards } = useReviewCardStore.getState();
       await fetchReviewCards();
+
+      onClose();
+    } catch (error) {
+      showErrorToast('저장에 실패했습니다.');
     } finally {
       setIsSaving(false);
     }

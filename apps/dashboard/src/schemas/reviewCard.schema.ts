@@ -24,7 +24,7 @@ export const createReviewCardRequestSchema = z.object({
   importance: z.number()
     .int("중요도는 정수여야 합니다")
     .min(1, "중요도는 1 이상이어야 합니다")
-    .max(5, "중요도는 5 이하여야 합니다"),
+    .max(10, "중요도는 10 이하여야 합니다"),
 
   reviewCycle: z.number()
     .int("반복 주기는 정수여야 합니다")
@@ -48,7 +48,7 @@ export const reviewCardSchema = z.object({
   title: z.string(),
   category: z.string(),
   categoryId: z.number().int().positive().optional(),
-  importance: z.number().int().min(1).max(5),
+  importance: z.number().int().min(1).max(10),
   reviewCycle: z.number().int().positive(),
   isActive: z.boolean(),
   reviewCount: z.number().int().min(0),

@@ -24,7 +24,7 @@ public class ReviewCardUpdateRequestDto {
     private Long categoryId;
 
     @Min(value = 1, message = "중요도는 1 이상이어야 합니다")
-    @Max(value = 5, message = "중요도는 5 이하여야 합니다")
+    @Max(value = 10, message = "중요도는 10 이하여야 합니다")
     private Integer importance;
 
     @Min(value = 1, message = "복습 주기는 1일 이상이어야 합니다")

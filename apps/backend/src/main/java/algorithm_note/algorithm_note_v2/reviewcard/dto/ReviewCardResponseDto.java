@@ -32,12 +32,6 @@ public class ReviewCardResponseDto {
     private LocalDateTime updatedAt;
     private List<ReviewQuestionResponseDto> reviewQuestions;
 
-    /**
-     * ReviewCard 엔티티로부터 DTO를 생성하는 정적 팩토리 메서드
-     *
-     * @param reviewCard ReviewCard 엔티티
-     * @return ReviewCardResponseDto
-     */
     public static ReviewCardResponseDto from(ReviewCard reviewCard) {
         return ReviewCardResponseDto.builder()
                 .reviewCardId(reviewCard.getReviewCardId())
@@ -59,12 +53,6 @@ public class ReviewCardResponseDto {
                 .build();
     }
 
-    /**
-     * 질문 정보 없이 기본 정보만 포함하는 DTO 생성
-     *
-     * @param reviewCard ReviewCard 엔티티
-     * @return ReviewCardResponseDto (질문 정보 제외)
-     */
     public static ReviewCardResponseDto fromWithoutQuestions(ReviewCard reviewCard) {
         return ReviewCardResponseDto.builder()
                 .reviewCardId(reviewCard.getReviewCardId())

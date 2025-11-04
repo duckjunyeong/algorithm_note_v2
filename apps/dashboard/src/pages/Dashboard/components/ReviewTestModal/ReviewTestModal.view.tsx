@@ -523,7 +523,7 @@ function ResultView({
 
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-2">
-                중요도: {localSettings.importance}/5
+                중요도: {localSettings.importance}/10
               </label>
               <input
                 type="range"
