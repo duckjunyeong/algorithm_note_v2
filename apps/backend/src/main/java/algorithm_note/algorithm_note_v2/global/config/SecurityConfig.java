@@ -52,28 +52,28 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allow requests from frontend applications (dynamically configured)
-        configuration.setAllowedOriginPatterns(Arrays.asList(
+        configuration.setAllowedOrigins(Arrays.asList(
             landingUrl,
             dashboardUrl
         ));
 
-        // Allow common HTTP methods
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:5174",
+            "http://localhost:5173"
+        ));
+
         configuration.setAllowedMethods(Arrays.asList(
             "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
 
-        // Allow common headers
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization", "Content-Type", "X-Requested-With",
             "Accept", "Origin", "Access-Control-Request-Method",
             "Access-Control-Request-Headers"
         ));
 
-        // Allow credentials (for authentication)
         configuration.setAllowCredentials(true);
 
-        // Cache preflight response for 1 hour
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
