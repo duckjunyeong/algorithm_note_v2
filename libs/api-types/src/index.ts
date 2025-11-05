@@ -24,3 +24,15 @@ export type {
   CreateCategoryResponse,
   GetCategoriesResponse
 } from './category.types';
+
+// 음성 업로드 관련 타입
+export type {
+  SignedUrlRequest,
+  SignedUrlResponse
+} from './audio-upload.types';
+
+// 음성 인식 관련 타입
+export type {
+  TranscribeAudioRequest,
+  TranscribeAudioResponse
+} from './speech-transcription.types';

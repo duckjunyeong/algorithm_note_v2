@@ -79,9 +79,6 @@ public class WebhookController {
         }
     }
 
-    /**
-     * Clerk 웹훅 데이터를 UserRegisterRequestDto로 변환합니다.
-     */
     private UserRegisterRequestDto createUserRegistrationData(ClerkUserDto clerkUser) {
         String email = extractPrimaryEmail(clerkUser);
 
@@ -93,15 +90,11 @@ public class WebhookController {
         );
     }
 
-    /**
-     * Clerk 사용자 데이터에서 기본 이메일 주소를 추출합니다.
-     */
     private String extractPrimaryEmail(ClerkUserDto clerkUser) {
         if (clerkUser.getEmailAddresses() == null || clerkUser.getEmailAddresses().length == 0) {
             throw new IllegalArgumentException("No email addresses found for user: " + clerkUser.getId());
         }
 
-        // 첫 번째 이메일 주소를 기본 이메일로 사용
         ClerkUserDto.EmailAddress primaryEmail = clerkUser.getEmailAddresses()[0];
         if (primaryEmail.getEmailAddress() == null || primaryEmail.getEmailAddress().trim().isEmpty()) {
             throw new IllegalArgumentException("Primary email address is empty for user: " + clerkUser.getId());

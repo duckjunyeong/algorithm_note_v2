@@ -6,15 +6,9 @@ import type {
 } from '../schemas/answer.schema';
 import { createAnswerResponseSchema, getAnswersResponseSchema } from '../schemas/answer.schema';
 
-/**
- * Answer 관련 API 호출 서비스
- */
+
 export class AnswerService {
-  /**
-   * 답변 생성
-   * @param data 답변 생성 요청 데이터
-   * @returns 생성된 답변 정보
-   */
+
   static async createAnswer(data: CreateAnswerRequest): Promise<CreateAnswerResponse> {
     try {
       const response = await apiClient.post<CreateAnswerResponse>('/answers/create', data);
@@ -29,11 +23,6 @@ export class AnswerService {
     }
   }
 
-  /**
-   * 특정 질문에 대한 답변 목록 조회
-   * @param questionId 질문 ID
-   * @returns 답변 목록 (최신순)
-   */
   static async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
     try {
       const response = await apiClient.get<Answer[]>(`/answers/question/${questionId}`);

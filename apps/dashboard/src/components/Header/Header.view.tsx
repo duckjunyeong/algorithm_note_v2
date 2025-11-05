@@ -1,7 +1,7 @@
 // Header/Header.view.tsx
 import React from 'react';
 import type { BreadcrumbItem } from './useHeader';
-import { FiMenu, FiGlobe, FiChevronDown, FiLogOut } from 'react-icons/fi';
+import { FiMenu, FiChevronDown, FiLogOut } from 'react-icons/fi';
 import { useClerk } from "@clerk/clerk-react";
 
 interface HeaderViewProps {
@@ -10,7 +10,7 @@ interface HeaderViewProps {
   userEmail: string;
   breadcrumbs: BreadcrumbItem[];
   isDropdownOpen: boolean;
-  dropdownRef: React.RefObject<HTMLDivElement>;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
   toggleDropdown: () => void;
   onToggleSidebar: () => void;
 }

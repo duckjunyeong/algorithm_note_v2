@@ -9,19 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-/**
- * Test controller to verify JWT authentication and User entity integration.
- */
 @RestController
 @RequestMapping("/api/test")
 public class TestController {
 
-    /**
-     * Test endpoint to verify authenticated user access.
-     *
-     * @param user The authenticated User entity from JWT
-     * @return User information and authentication status
-     */
     @GetMapping("/user")
     public ResponseEntity<Map<String, Object>> getAuthenticatedUser(@AuthenticationPrincipal User user) {
         if (user == null) {
@@ -45,11 +36,6 @@ public class TestController {
         ));
     }
 
-    /**
-     * Simple health check endpoint for testing authentication flow.
-     *
-     * @return Health check response
-     */
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> healthCheck() {
         return ResponseEntity.ok(Map.of(

@@ -11,6 +11,7 @@ import { ReviewCard } from '../../../../../libs/ui-components/src/components/Rev
 import { ReviewTestModal } from './components/ReviewTestModal';
 import { ReviewResultModal } from './components/ReviewResultModal';
 import { ExamSheetModal } from './components/ExamSheetModal';
+import { AudioRecorder } from '../../components/AudioRecorder';
 
 
 export interface DashboardPageViewProps {
@@ -131,6 +132,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                 <FiPlus size={16} />
                 추가 태스크 생성
               </button>
+              <AudioRecorder />
             </div>
           </div>
 

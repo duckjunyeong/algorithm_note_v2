@@ -1,9 +1,5 @@
 import apiClient from './apiClient';
 
-/**
- * ReviewQuestion 관련 API 호출 서비스
- */
-
 export interface ReviewQuestionResponseDto {
   reviewQuestionId: number;
   questionText: string;
@@ -11,11 +7,7 @@ export interface ReviewQuestionResponseDto {
 }
 
 export class ReviewQuestionService {
-  /**
-   * 특정 복습 카드의 모든 질문 조회
-   * @param reviewCardId 복습 카드 ID
-   * @returns 질문 목록
-   */
+
   static async getQuestionsByReviewCardId(reviewCardId: number): Promise<ReviewQuestionResponseDto[]> {
     try {
       const response = await apiClient.get<ReviewQuestionResponseDto[]>(

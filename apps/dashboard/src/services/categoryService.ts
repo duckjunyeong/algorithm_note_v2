@@ -7,14 +7,9 @@ import {
   type CreateCategoryRequest
 } from '../schemas/category.schema';
 
-/**
- * Category API Service
- * apiClient를 사용하여 카테고리 관련 API 호출
- */
+
 export class CategoryService {
-  /**
-   * 사용자의 모든 카테고리 조회
-   */
+
   async fetchCategories(): Promise<Category[]> {
     try {
       const response = await apiClient.get('/categories');
@@ -27,11 +22,8 @@ export class CategoryService {
     }
   }
 
-  /**
-   * 신규 카테고리 생성
-   */
+
   async createCategory(data: CreateCategoryRequest): Promise<Category> {
-    // 요청 데이터 검증
     const validatedRequest = createCategoryRequestSchema.parse(data);
 
     try {
@@ -45,9 +37,7 @@ export class CategoryService {
     }
   }
 
-  /**
-   * 특정 카테고리 조회
-   */
+
   async getCategoryById(categoryId: number): Promise<Category> {
     try {
       const response = await apiClient.get(`/categories/${categoryId}`);
@@ -60,9 +50,6 @@ export class CategoryService {
     }
   }
 
-  /**
-   * 카테고리 삭제
-   */
   async deleteCategory(categoryId: number): Promise<void> {
     try {
       await apiClient.delete(`/categories/${categoryId}`);

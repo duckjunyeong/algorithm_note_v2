@@ -3,7 +3,6 @@ import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'a
 import { useAuthStore } from '../store/useAuthStore';
 import { API_CONFIG, HTTP_HEADERS } from '../constants/api';
 import { ERROR_MESSAGES } from '../constants/messages';
-import { PATHS } from '../constants/paths';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || API_CONFIG.DEFAULT_BASE_URL,
