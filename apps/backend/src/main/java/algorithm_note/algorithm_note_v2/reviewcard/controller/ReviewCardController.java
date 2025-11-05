@@ -1,18 +1,24 @@
 package algorithm_note.algorithm_note_v2.reviewcard.controller;
 
 import algorithm_note.algorithm_note_v2.reviewcard.dto.*;
+import algorithm_note.algorithm_note_v2.reviewcard.service.PdfGenerationService;
 import algorithm_note.algorithm_note_v2.reviewcard.service.ReviewCardService;
 import algorithm_note.algorithm_note_v2.user.domain.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -22,6 +28,7 @@ import java.util.List;
 public class ReviewCardController {
 
     private final ReviewCardService reviewCardService;
+    private final PdfGenerationService pdfGenerationService;
 
     @PostMapping("/create")
     public ResponseEntity<ReviewCardCreateResponseDto> createReviewCard(
@@ -146,5 +153,33 @@ public class ReviewCardController {
         log.info("Successfully updated review result - ID: {}", reviewCardId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/pdf/generate")
+    public ResponseEntity<byte[]> generatePdf(
+            @Valid @RequestBody PdfGenerationRequestDto requestDto,
+            @AuthenticationPrincipal User currentUser) {
+
+        log.info("Generating PDF for ReviewCard IDs: {}", requestDto.getReviewCardIds());
+
+        byte[] pdfBytes = pdfGenerationService.generatePdfFromReviewCards(
+                requestDto.getReviewCardIds(),
+                requestDto.getExamTitle(),
+                requestDto.getInstruction(),
+                currentUser
+        );
+
+        String filename = String.format("review_cards_%s.pdf",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+
+        log.info("Successfully generated PDF: {}", filename);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
     }
 }

@@ -88,6 +88,13 @@ export interface ReviewCardResultResponse {
   questions: QuestionWithAnswers[];
 }
 
+// PDF 생성 요청 인터페이스
+export interface GenerateExamPdfRequest {
+  reviewCardIds: number[];
+  examTitle?: string;
+  instruction?: string;
+}
+
 // API 에러 응답 인터페이스
 export interface ApiErrorResponse {
   status: number;

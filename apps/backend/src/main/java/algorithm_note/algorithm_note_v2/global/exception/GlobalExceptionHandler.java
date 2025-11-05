@@ -3,6 +3,7 @@ package algorithm_note.algorithm_note_v2.global.exception;
 import algorithm_note.algorithm_note_v2.category.exception.CategoryNotFoundException;
 import algorithm_note.algorithm_note_v2.category.exception.DuplicateCategoryException;
 import algorithm_note.algorithm_note_v2.global.dto.ClerkWebhookResponseDto;
+import algorithm_note.algorithm_note_v2.reviewcard.exception.PdfGenerationException;
 import algorithm_note.algorithm_note_v2.reviewcard.exception.ReviewCardNotFoundException;
 import algorithm_note.algorithm_note_v2.user.dto.UserResponseDto;
 import algorithm_note.algorithm_note_v2.user.exception.UserNotFoundException;
@@ -95,5 +96,16 @@ public class GlobalExceptionHandler {
                 "status", HttpStatus.CONFLICT.value()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(PdfGenerationException.class)
+    public ResponseEntity<Map<String, Object>> handlePdfGenerationException(PdfGenerationException ex) {
+        log.error("PDF generation failed: {}", ex.getMessage(), ex);
+        Map<String, Object> errorResponse = Map.of(
+                "error", "PDF generation failed",
+                "message", ex.getMessage(),
+                "status", HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

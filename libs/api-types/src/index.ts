@@ -10,6 +10,7 @@ export type {
   CreateReviewCardRequest,
   CreateReviewCardResponse,
   GetReviewCardsResponse,
+  GenerateExamPdfRequest,
   Answer,
   QuestionWithAnswers,
   ReviewCardResultResponse,

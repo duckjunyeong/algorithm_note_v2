@@ -3,13 +3,14 @@ import type { FC } from 'react';
 import type { ReviewCard as ReviewCardType } from '../../../../../libs/api-types/src';
 import { SidebarNav } from '../../components/SidebarNav';
 import { Header } from '../../components/Header';
-import {  FiPlus } from 'react-icons/fi';
+import { FiPlus, FiFileText } from 'react-icons/fi';
 import type { Task } from './useDashboardPage';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
 import { TaskCreationModal } from './components/TaskCreationModal';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
 import { ReviewTestModal } from './components/ReviewTestModal';
 import { ReviewResultModal } from './components/ReviewResultModal';
+import { ExamSheetModal } from './components/ExamSheetModal';
 
 
 export interface DashboardPageViewProps {
@@ -49,6 +50,9 @@ export interface DashboardPageViewProps {
   onOpenReviewResultModal: (reviewCardId: number) => void;
   onCloseReviewResultModal: () => void;
   onReviewCardDeleteSuccess: () => void;
+  isExamSheetModalOpen: boolean;
+  onOpenExamSheetModal: () => void;
+  onCloseExamSheetModal: () => void;
   onCloseConfirmModal: () => void;
   onOpenTaskCreationModal: () => void;
   onCloseTaskCreationModal: () => void;
@@ -89,6 +93,9 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onOpenReviewResultModal,
   onCloseReviewResultModal,
   onReviewCardDeleteSuccess,
+  isExamSheetModalOpen,
+  onOpenExamSheetModal,
+  onCloseExamSheetModal,
   onOpenTaskCreationModal,
   onCloseTaskCreationModal,
   onTaskCreationBackgroundClick,
@@ -109,13 +116,22 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
               <h1 className="text-2xl font-bold text-text-primary">태스크 목록</h1>
               <p className="mt-1 text-text-secondary">태스크 진행 상황을 한눈에 확인하세요</p>
             </div>
-            <button
-              onClick={onOpenTaskCreationModal}
-              className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
-            >
-              <FiPlus size={16} />
-              추가 태스크 생성
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={onOpenExamSheetModal}
+                className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-700"
+              >
+                <FiFileText size={16} />
+                시험지 생성하기
+              </button>
+              <button
+                onClick={onOpenTaskCreationModal}
+                className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
+              >
+                <FiPlus size={16} />
+                추가 태스크 생성
+              </button>
+            </div>
           </div>
 
           <div className="mt-6 flex flex-col gap-6 lg:flex-row">
@@ -294,6 +310,11 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         reviewCardId={selectedResultReviewCardId}
         onClose={onCloseReviewResultModal}
         onDeleteSuccess={onReviewCardDeleteSuccess}
+      />
+
+      <ExamSheetModal
+        isOpen={isExamSheetModalOpen}
+        onClose={onCloseExamSheetModal}
       />
     </div>
   );

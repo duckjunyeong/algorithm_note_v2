@@ -34,13 +34,6 @@ public class JwtVerificationService {
     private final Map<String, PublicKey> keyCache = new ConcurrentHashMap<>();
     private volatile Instant lastKeyRefresh = Instant.MIN;
 
-    /**
-     * Verifies a JWT token and extracts claims.
-     *
-     * @param token The JWT token to verify
-     * @return Map of claims if verification succeeds
-     * @throws JwtVerificationException if verification fails
-     */
     public Map<String, Object> verifyToken(String token) {
         try {
             String[] parts = token.split("\\.");
@@ -48,7 +41,6 @@ public class JwtVerificationService {
                 throw new JwtVerificationException("Invalid JWT format");
             }
 
-            // token을 검증하려면 공개키를 이용해서 유효한 것인지를 판단해야하는 것 아닌가?
             Map<String, Object> header = parseJwtPart(parts[0]);
             Map<String, Object> payload = parseJwtPart(parts[1]);
 

@@ -20,6 +20,7 @@ export const useDashboardPage = () => {
   const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
   const [isReviewResultModalOpen, setIsReviewResultModalOpen] = useState<boolean>(false);
   const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
+  const [isExamSheetModalOpen, setIsExamSheetModalOpen] = useState<boolean>(false);
 
   // Category 관련 상태
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
@@ -171,6 +172,14 @@ export const useDashboardPage = () => {
     }
   };
 
+  const openExamSheetModal = () => {
+    setIsExamSheetModalOpen(true);
+  };
+
+  const closeExamSheetModal = () => {
+    setIsExamSheetModalOpen(false);
+  };
+
   return {
     isSidebarOpen,
     selectedTask,
@@ -214,6 +223,9 @@ export const useDashboardPage = () => {
     openReviewResultModal,
     closeReviewResultModal,
     handleReviewCardDeleteSuccess,
+    isExamSheetModalOpen,
+    openExamSheetModal,
+    closeExamSheetModal,
     handleSaveCategory,
     toggleSidebar,
   };

@@ -43,3 +43,5 @@ file
 .env
 .env.local
 .env.*.local
+
+/src/main/resources/stt.json

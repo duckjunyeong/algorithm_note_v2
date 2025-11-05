@@ -11,6 +11,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  thymeleaf:
+    prefix: classpath:/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+  cloud:
+    gcp:
+      credentials:
+        location: classpath:stt.json
 clerk:
   webhook:
     api-url: https://api.clerk.dev/v1
@@ -24,6 +34,9 @@ clerk:
     issuer: ${CLERK_JWT_ISSUER:https://stable-yeti-70.clerk.accounts.dev}
     jwks-cache-expiration-seconds: ${CLERK_JWKS_CACHE_EXPIRATION:3600}
 
+gcs:
+  bucket:
+    name: junyeong_buket
 
 ai:
   api:

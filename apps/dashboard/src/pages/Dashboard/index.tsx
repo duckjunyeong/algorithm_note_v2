@@ -43,6 +43,9 @@ const DashboardPage: FC = () => {
     openReviewResultModal,
     closeReviewResultModal,
     handleReviewCardDeleteSuccess,
+    isExamSheetModalOpen,
+    openExamSheetModal,
+    closeExamSheetModal,
     handleSaveCategory,
     toggleSidebar
   } = useDashboardPage();
@@ -88,6 +91,9 @@ const DashboardPage: FC = () => {
       onOpenReviewResultModal={openReviewResultModal}
       onCloseReviewResultModal={closeReviewResultModal}
       onReviewCardDeleteSuccess={handleReviewCardDeleteSuccess}
+      isExamSheetModalOpen={isExamSheetModalOpen}
+      onOpenExamSheetModal={openExamSheetModal}
+      onCloseExamSheetModal={closeExamSheetModal}
       onSaveCategory={handleSaveCategory}
     />
   );

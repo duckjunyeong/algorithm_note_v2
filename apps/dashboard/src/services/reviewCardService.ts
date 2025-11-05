@@ -4,6 +4,7 @@ import type {
   CreateReviewCardResponse,
   ReviewCard,
   ReviewCardResultResponse,
+  GenerateExamPdfRequest,
 } from '../../../../libs/api-types/src';
 
 import type { UpdateReviewResultRequest } from '../../../../libs/api-types/src/review-card.types';
@@ -74,6 +75,22 @@ export class ReviewCardService {
       return response.data;
     } catch (error) {
       console.error('복습 카드 결과 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  static async generateExamPdf(data: GenerateExamPdfRequest): Promise<Blob> {
+    try {
+      const response = await apiClient.post<Blob>(
+        '/reviewCard/pdf/generate',
+        data,
+        {
+          responseType: 'blob',
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('시험지 PDF 생성 실패:', error);
       throw error;
     }
   }
