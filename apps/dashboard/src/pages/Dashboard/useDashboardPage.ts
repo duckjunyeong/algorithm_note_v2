@@ -22,6 +22,10 @@ export const useDashboardPage = () => {
   const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
   const [isExamSheetModalOpen, setIsExamSheetModalOpen] = useState<boolean>(false);
 
+  // ReviewTaskCreationMenu 관련 상태
+  const [selectedTaskType, setSelectedTaskType] = useState<'concept' | 'memorization' | 'approach'>('concept');
+  const [taskField, setTaskField] = useState<string>('');
+
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
@@ -112,9 +116,26 @@ export const useDashboardPage = () => {
   const openTaskCreationModal = () => setIsTaskCreationModalOpen(true);
   const closeTaskCreationModal = () => {
     setIsTaskCreationModalOpen(false);
+    // 상태 초기화
+    setSelectedTaskType('concept');
+    setTaskField('');
     if (reviewCardsError) {
       clearError();
     }
+  };
+
+  const handleConfirmTask = () => {
+    console.log('Task confirmed:', {
+      taskType: selectedTaskType,
+      field: taskField,
+    });
+    // TODO: API 호출 또는 실제 태스크 생성 로직 추가
+    showSuccessToast('질문이 생성되었습니다!');
+    closeTaskCreationModal();
+  };
+
+  const handleTaskFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTaskField(e.target.value);
   };
 
   const handleTaskCreationBackgroundClick = () => {
@@ -166,6 +187,35 @@ export const useDashboardPage = () => {
     setIsExamSheetModalOpen(false);
   };
 
+  const handleCreateTask = async (data: {
+    taskType: 'concept' | 'approach' | 'memorization';
+    questions: Array<{ id: number; text: string; isSelected: boolean; groupId: string | null }>;
+    groups: Array<{ id: string; name: string; questionIds: number[] }>;
+    settings: {
+      repetitionCycle: number;
+      importance: number;
+      category: string;
+    };
+  }) => {
+    try {
+      // TODO: Replace with actual API call
+      console.log('Creating task with data:', data);
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      showSuccessToast('태스크가 성공적으로 생성되었습니다.');
+      closeTaskCreationModal();
+
+      // Refresh review cards to show the new task
+      await fetchReviewCards();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : '태스크 생성에 실패했습니다.';
+      showErrorToast(errorMsg);
+      throw error;
+    }
+  };
+
   return {
     isSidebarOpen,
     selectedTask,
@@ -176,8 +226,8 @@ export const useDashboardPage = () => {
     isReviewFlowModalOpen,
     selectedReviewCardId,
     selectedReviewCard,
-    backlogCards: filteredBacklogCards, 
-    completedCards: filteredCompletedCards,  
+    backlogCards: filteredBacklogCards,
+    completedCards: filteredCompletedCards,
     reviewCardsLoading,
     reviewCardsError,
     categories,
@@ -209,6 +259,13 @@ export const useDashboardPage = () => {
     openExamSheetModal,
     closeExamSheetModal,
     handleSaveCategory,
+    handleCreateTask,
     toggleSidebar,
+    // ReviewTaskCreationMenu 관련
+    selectedTaskType,
+    setSelectedTaskType,
+    taskField,
+    handleTaskFieldChange,
+    handleConfirmTask,
   };
 };

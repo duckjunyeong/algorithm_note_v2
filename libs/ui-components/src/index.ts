@@ -26,3 +26,6 @@ export type { CategorySelectorProps } from './components/CategorySelector';
 
 export { CategoryCreationForm } from './components/CategoryCreationForm';
 export type { CategoryCreationFormProps } from './components/CategoryCreationForm';
+
+
+export { ChatInterface } from './components/ChatInterface';

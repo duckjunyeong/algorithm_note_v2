@@ -6,7 +6,7 @@ import { Header } from '../../components/Header';
 import { FiPlus, FiFileText } from 'react-icons/fi';
 import type { Task } from './useDashboardPage';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
-import { TaskCreationModal } from './components/TaskCreationModal';
+import { ReviewTaskCreationMenu } from '../../../../../libs/ui-components/src/components/ReviewTaskCreationMenu';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
 import { ReviewFlowModal } from './components/ReviewFlowModal';
 import { ReviewResultModal } from './components/ReviewResultModal';
@@ -63,6 +63,22 @@ export interface DashboardPageViewProps {
   onOpenReviewFlowModal: (reviewCardId: number) => void;
   onCloseReviewFlowModal: () => void;
   onSaveCategory: (name: string, color: string) => Promise<void>;
+  onCreateTask: (data: {
+    taskType: 'concept' | 'approach' | 'memorization';
+    questions: Array<{ id: number; text: string; isSelected: boolean; groupId: string | null }>;
+    groups: Array<{ id: string; name: string; questionIds: number[] }>;
+    settings: {
+      repetitionCycle: number;
+      importance: number;
+      category: string;
+    };
+  }) => Promise<void>;
+  // ReviewTaskCreationMenu 관련 props
+  selectedTaskType: 'concept' | 'memorization' | 'approach';
+  onSelectTaskType: (type: 'concept' | 'memorization' | 'approach') => void;
+  taskField: string;
+  onTaskFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onConfirmTask: () => void;
 }
 
 
@@ -105,6 +121,12 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onOpenReviewFlowModal,
   onCloseReviewFlowModal,
   onSaveCategory,
+  onCreateTask,
+  selectedTaskType,
+  onSelectTaskType,
+  taskField,
+  onTaskFieldChange,
+  onConfirmTask,
 }) => {
   return (
     <div className="relative min-h-screen bg-background-tertiary">
@@ -289,15 +311,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         cancelText="취소"
       />
 
-      <TaskCreationModal
-        isOpen={isTaskCreationModalOpen}
-        onClose={onCloseTaskCreationModal}
-        onBackgroundClick={onTaskCreationBackgroundClick}
-        categories={categories}
-        isLoadingCategories={isLoadingCategories}
-        categoryError={categoryError}
-        onSaveCategory={onSaveCategory}
-      />
+     
 
       <ReviewFlowModal
         isOpen={isReviewFlowModalOpen}
@@ -317,6 +331,17 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         isOpen={isExamSheetModalOpen}
         onClose={onCloseExamSheetModal}
       />
+
+      {isTaskCreationModalOpen && (
+        <ReviewTaskCreationMenu
+          onClose={onCloseTaskCreationModal}
+          selectedTaskType={selectedTaskType}
+          onSelectTaskType={onSelectTaskType}
+          onConfirmTaskCreation={onConfirmTask}
+          taskField={taskField}
+          onTaskFieldChange={onTaskFieldChange}
+        />
+      )}
     </div>
   );
 };

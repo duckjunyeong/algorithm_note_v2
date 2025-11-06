@@ -47,7 +47,13 @@ const DashboardPage: FC = () => {
     openExamSheetModal,
     closeExamSheetModal,
     handleSaveCategory,
-    toggleSidebar
+    handleCreateTask,
+    toggleSidebar,
+    selectedTaskType,
+    setSelectedTaskType,
+    taskField,
+    handleTaskFieldChange,
+    handleConfirmTask,
   } = useDashboardPage();
 
   return (
@@ -95,6 +101,12 @@ const DashboardPage: FC = () => {
       onOpenExamSheetModal={openExamSheetModal}
       onCloseExamSheetModal={closeExamSheetModal}
       onSaveCategory={handleSaveCategory}
+      onCreateTask={handleCreateTask}
+      selectedTaskType={selectedTaskType}
+      onSelectTaskType={setSelectedTaskType}
+      taskField={taskField}
+      onTaskFieldChange={handleTaskFieldChange}
+      onConfirmTask={handleConfirmTask}
     />
   );
 };
