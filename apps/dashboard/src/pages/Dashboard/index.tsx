@@ -11,7 +11,7 @@ const DashboardPage: FC = () => {
     isConfirmLoading,
     isTaskCreationModalOpen,
     isTaskCreationConfirmOpen,
-    isReviewTestModalOpen,
+    isReviewFlowModalOpen,
     selectedReviewCardId,
     selectedReviewCard,
     isReviewResultModalOpen,
@@ -38,8 +38,8 @@ const DashboardPage: FC = () => {
     handleTaskCreationBackgroundClick,
     handleConfirmTaskCreationClose,
     handleCancelTaskCreationClose,
-    openReviewTestModal,
-    closeReviewTestModal,
+    openReviewFlowModal,
+    closeReviewFlowModal,
     openReviewResultModal,
     closeReviewResultModal,
     handleReviewCardDeleteSuccess,
@@ -59,7 +59,7 @@ const DashboardPage: FC = () => {
       isConfirmLoading={isConfirmLoading}
       isTaskCreationModalOpen={isTaskCreationModalOpen}
       isTaskCreationConfirmOpen={isTaskCreationConfirmOpen}
-      isReviewTestModalOpen={isReviewTestModalOpen}
+      isReviewFlowModalOpen={isReviewFlowModalOpen}
       selectedReviewCardId={selectedReviewCardId}
       selectedReviewCard={selectedReviewCard}
       backlogCards={backlogCards}
@@ -84,8 +84,8 @@ const DashboardPage: FC = () => {
       onTaskCreationBackgroundClick={handleTaskCreationBackgroundClick}
       onConfirmTaskCreationClose={handleConfirmTaskCreationClose}
       onCancelTaskCreationClose={handleCancelTaskCreationClose}
-      onOpenReviewTestModal={openReviewTestModal}
-      onCloseReviewTestModal={closeReviewTestModal}
+      onOpenReviewFlowModal={openReviewFlowModal}
+      onCloseReviewFlowModal={closeReviewFlowModal}
       isReviewResultModalOpen={isReviewResultModalOpen}
       selectedResultReviewCardId={selectedResultReviewCardId}
       onOpenReviewResultModal={openReviewResultModal}

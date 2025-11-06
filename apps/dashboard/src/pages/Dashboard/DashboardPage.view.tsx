@@ -8,7 +8,7 @@ import type { Task } from './useDashboardPage';
 import ConfirmModal from '../../../../../libs/ui-components/src/components/ConfirmModal';
 import { TaskCreationModal } from './components/TaskCreationModal';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
-import { ReviewTestModal } from './components/ReviewTestModal';
+import { ReviewFlowModal } from './components/ReviewFlowModal';
 import { ReviewResultModal } from './components/ReviewResultModal';
 import { ExamSheetModal } from './components/ExamSheetModal';
 import { AudioRecorder } from '../../components/AudioRecorder';
@@ -43,7 +43,7 @@ export interface DashboardPageViewProps {
   isConfirmLoading: boolean;
   isTaskCreationModalOpen: boolean;
   isTaskCreationConfirmOpen: boolean;
-  isReviewTestModalOpen: boolean;
+  isReviewFlowModalOpen: boolean;
   selectedReviewCardId: number | null;
   onOpenConfirmModal: () => void;
   isReviewResultModalOpen: boolean;
@@ -60,8 +60,8 @@ export interface DashboardPageViewProps {
   onTaskCreationBackgroundClick: () => void;
   onConfirmTaskCreationClose: () => void;
   onCancelTaskCreationClose: () => void;
-  onOpenReviewTestModal: (reviewCardId: number) => void;
-  onCloseReviewTestModal: () => void;
+  onOpenReviewFlowModal: (reviewCardId: number) => void;
+  onCloseReviewFlowModal: () => void;
   onSaveCategory: (name: string, color: string) => Promise<void>;
 }
 
@@ -88,7 +88,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isTaskCreationModalOpen,
   isTaskCreationConfirmOpen,
   isReviewResultModalOpen,
-  isReviewTestModalOpen,
+  isReviewFlowModalOpen,
   selectedReviewCardId,
   selectedResultReviewCardId,
   onOpenReviewResultModal,
@@ -102,8 +102,8 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onTaskCreationBackgroundClick,
   onConfirmTaskCreationClose,
   onCancelTaskCreationClose,
-  onOpenReviewTestModal,
-  onCloseReviewTestModal,
+  onOpenReviewFlowModal,
+  onCloseReviewFlowModal,
   onSaveCategory,
 }) => {
   return (
@@ -207,7 +207,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
                     ]}
-                    onTestStart={() => onOpenReviewTestModal(card.reviewCardId)}
+                    onTestStart={() => onOpenReviewFlowModal(card.reviewCardId)}
                   />
                 ))
               )}
@@ -299,11 +299,11 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         onSaveCategory={onSaveCategory}
       />
 
-      <ReviewTestModal
-        isOpen={isReviewTestModalOpen}
+      <ReviewFlowModal
+        isOpen={isReviewFlowModalOpen}
         reviewCardId={selectedReviewCardId}
         reviewCard={selectedReviewCard}
-        onClose={onCloseReviewTestModal}
+        onClose={onCloseReviewFlowModal}
       />
 
       <ReviewResultModal

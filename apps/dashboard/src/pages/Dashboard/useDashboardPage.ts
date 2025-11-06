@@ -16,24 +16,21 @@ export const useDashboardPage = () => {
   const [isConfirmLoading] = useState<boolean>(false);
   const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
   const [isTaskCreationConfirmOpen, setIsTaskCreationConfirmOpen] = useState<boolean>(false);
-  const [isReviewTestModalOpen, setIsReviewTestModalOpen] = useState<boolean>(false);
+  const [isReviewFlowModalOpen, setIsReviewFlowModalOpen] = useState<boolean>(false);
   const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
   const [isReviewResultModalOpen, setIsReviewResultModalOpen] = useState<boolean>(false);
   const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
   const [isExamSheetModalOpen, setIsExamSheetModalOpen] = useState<boolean>(false);
 
-  // Category 관련 상태
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
-  // 필터/정렬 관련 상태 (백로그/완료 분리)
   const [backlogFilterCategoryId, setBacklogFilterCategoryId] = useState<number | null>(null);
   const [backlogSortBy, setBacklogSortBy] = useState<'successRate' | 'importance'>('successRate');
 
   const [completedFilterCategoryId, setCompletedFilterCategoryId] = useState<number | null>(null);
   const [completedSortBy, setCompletedSortBy] = useState<'successRate' | 'importance'>('successRate');
 
-  // 복습 카드 store
   const {
     backlogCards,
     completedCards,
@@ -44,16 +41,13 @@ export const useDashboardPage = () => {
     removeCard
   } = useReviewCardStore();
 
-  // Category store 사용
   const { categories, setCategories, addCategory } = useCategoryStore();
 
-  // 페이지 마운트 시 복습 카드 목록 및 카테고리 조회
   useEffect(() => {
     fetchReviewCards();
     loadCategories();
   }, [fetchReviewCards]);
 
-  // 카테고리 목록 조회
   const loadCategories = async () => {
     setIsLoadingCategories(true);
     setCategoryError(null);
@@ -69,7 +63,6 @@ export const useDashboardPage = () => {
     }
   };
 
-  // 카테고리 생성
   const handleSaveCategory = async (name: string, color: string) => {
     try {
       const newCategory = await categoryService.createCategory({ name, color });
@@ -82,29 +75,26 @@ export const useDashboardPage = () => {
     }
   };
 
-  // 필터링 및 정렬이 적용된 백로그 카드
   const filteredBacklogCards = useMemo(() => {
     let result = filterByCategory(backlogCards, backlogFilterCategoryId);
 
     result = backlogSortBy === 'successRate'
-      ? sortBySuccessRate(result, 'asc')  // 정답률 낮은 순 (복습 필요한 것부터)
-      : sortByImportance(result, 'desc'); // 중요도 높은 순
+      ? sortBySuccessRate(result, 'asc') 
+      : sortByImportance(result, 'desc'); 
 
     return result;
   }, [backlogCards, backlogFilterCategoryId, backlogSortBy]);
 
-  // 필터링 및 정렬이 적용된 완료 카드
   const filteredCompletedCards = useMemo(() => {
     let result = filterByCategory(completedCards, completedFilterCategoryId);
 
     result = completedSortBy === 'successRate'
-      ? sortBySuccessRate(result, 'desc')  // 정답률 높은 순 (잘한 것부터)
-      : sortByImportance(result, 'desc'); // 중요도 높은 순
+      ? sortBySuccessRate(result, 'desc')  
+      : sortByImportance(result, 'desc');
 
     return result;
   }, [completedCards, completedFilterCategoryId, completedSortBy]);
 
-  // selectedReviewCardId에 해당하는 reviewCard 찾기
   const selectedReviewCard = useMemo(() => {
     if (!selectedReviewCardId) return null;
 
@@ -122,35 +112,31 @@ export const useDashboardPage = () => {
   const openTaskCreationModal = () => setIsTaskCreationModalOpen(true);
   const closeTaskCreationModal = () => {
     setIsTaskCreationModalOpen(false);
-    // 복습 카드 에러 상태 초기화
     if (reviewCardsError) {
       clearError();
     }
   };
 
-  // TaskCreationModal 배경 클릭 시 ConfirmModal 열기
   const handleTaskCreationBackgroundClick = () => {
     setIsTaskCreationConfirmOpen(true);
   };
 
-  // ConfirmModal에서 "확인" 클릭 시 TaskCreationModal 닫기
   const handleConfirmTaskCreationClose = () => {
     setIsTaskCreationConfirmOpen(false);
     closeTaskCreationModal();
   };
 
-  // ConfirmModal에서 "취소" 클릭 시 ConfirmModal만 닫기
   const handleCancelTaskCreationClose = () => {
     setIsTaskCreationConfirmOpen(false);
   };
 
-  const openReviewTestModal = (reviewCardId: number) => {
+  const openReviewFlowModal = (reviewCardId: number) => {
     setSelectedReviewCardId(reviewCardId);
-    setIsReviewTestModalOpen(true);
+    setIsReviewFlowModalOpen(true);
   };
 
-  const closeReviewTestModal = () => {
-    setIsReviewTestModalOpen(false);
+  const closeReviewFlowModal = () => {
+    setIsReviewFlowModalOpen(false);
     setSelectedReviewCardId(null);
   };
 
@@ -187,24 +173,20 @@ export const useDashboardPage = () => {
     isConfirmLoading,
     isTaskCreationModalOpen,
     isTaskCreationConfirmOpen,
-    isReviewTestModalOpen,
+    isReviewFlowModalOpen,
     selectedReviewCardId,
     selectedReviewCard,
-    // 복습 카드 관련 상태 추가
-    backlogCards: filteredBacklogCards,  // 필터/정렬 적용된 카드 반환
-    completedCards: filteredCompletedCards,  // 필터/정렬 적용된 카드 반환
+    backlogCards: filteredBacklogCards, 
+    completedCards: filteredCompletedCards,  
     reviewCardsLoading,
     reviewCardsError,
-    // Category 관련 상태 추가
     categories,
     isLoadingCategories,
     categoryError,
-    // 백로그 필터/정렬 상태 및 핸들러
     backlogFilterCategoryId,
     backlogSortBy,
     setBacklogFilterCategoryId,
     setBacklogSortBy,
-    // 완료 필터/정렬 상태 및 핸들러
     completedFilterCategoryId,
     completedSortBy,
     setCompletedFilterCategoryId,
@@ -216,8 +198,8 @@ export const useDashboardPage = () => {
     handleTaskCreationBackgroundClick,
     handleConfirmTaskCreationClose,
     handleCancelTaskCreationClose,
-    openReviewTestModal,
-    closeReviewTestModal,
+    openReviewFlowModal,
+    closeReviewFlowModal,
     isReviewResultModalOpen,
     selectedResultReviewCardId,
     openReviewResultModal,
