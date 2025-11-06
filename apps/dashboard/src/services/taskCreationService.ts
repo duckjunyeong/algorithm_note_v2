@@ -10,14 +10,12 @@ export class TaskCreationService {
   async createAnswer(message: string): Promise<CreateAnswerResponse> {
     const requestData: CreateAnswerRequest = { message };
 
-    // Validate request data
     const validatedRequest = createAnswerRequestSchema.parse(requestData);
 
     try {
       const response = await apiClient.post('/review-questions/create', validatedRequest);
       console.log('Raw API Response:', response.data.aiResponse);
 
-      // Validate response data
       return createAnswerResponseSchema.parse(response.data.aiResponse);
     } catch (error) {
       if (error instanceof Error) {

@@ -6,8 +6,6 @@ interface Tag {
   value: string | number;
 }
 
-
-
 export interface ReviewCardProps extends UseReviewCardProps {
   id: string;
   category: string;

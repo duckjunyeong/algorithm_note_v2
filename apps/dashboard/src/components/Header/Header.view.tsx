@@ -46,15 +46,7 @@ export const HeaderView = ({
           <div className="h-6 w-px bg-neutral-100"></div>
           <span className="font-bold text-text-primary">{appName}</span>
           <div className="flex items-center gap-2 text-sm">
-          {breadcrumbs.map((item, index) => (
-            <React.Fragment key={index}>
-              <div className="flex cursor-pointer items-center gap-2 rounded-md p-2 text-text-secondary hover:bg-neutral-50">
-                <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </div>
-              {index < breadcrumbs.length - 1 && <FiChevronDown className="h-4 w-4 text-neutral-300" />}
-            </React.Fragment>
-          ))}
+     
           </div>
         </div>
 

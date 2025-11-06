@@ -130,9 +130,8 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                 className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
               >
                 <FiPlus size={16} />
-                추가 태스크 생성
+                태스크 생성하기
               </button>
-              <AudioRecorder />
             </div>
           </div>
 

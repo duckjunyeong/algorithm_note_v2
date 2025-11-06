@@ -23,21 +23,11 @@ export interface NavItem {
 }
 
 const mainNavItems: NavItem[] = [
-  { id: 'home', label: 'Home', icon: FiHome },
-  { id: 'tasks', label: 'Tasks', icon: FiCheckSquare, badge: 10 },
-  { id: 'transactions', label: 'Transactions', icon: FiList },
-  { id: 'payments', label: 'Payments', icon: FiRepeat, isDropdown: true },
-  { id: 'cards', label: 'Cards', icon: FiCreditCard },
-  { id: 'capital', label: 'Capital', icon: FiTrendingUp },
-  { id: 'accounts', label: 'Accounts', icon: FiBriefcase, isDropdown: true },
+  { id: 'card-task', label: 'Card Task', icon: FiCreditCard },
+  { id: 'logic-task', label: 'Logic Task', icon: FiCheckSquare },
 ];
 
-const workflowItems: NavItem[] = [
-  { id: 'bill-pay', label: 'Bill Pay', icon: FiDollarSign },
-  { id: 'invoicing', label: 'Invoicing', icon: FiFileText, isDropdown: true },
-  { id: 'reimbursements', label: 'Reimbursements', icon: FiRotateCcw },
-  { id: 'accounting', label: 'Accounting', icon: FiBookOpen },
-];
+const workflowItems: NavItem[] = [];
 
 /**
  * SidebarNav에 필요한 메뉴 데이터를 제공하는 훅
