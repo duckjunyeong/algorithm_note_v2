@@ -12,7 +12,7 @@ import { ReviewFlowModal } from './components/ReviewFlowModal';
 import { ReviewResultModal } from './components/ReviewResultModal';
 import { ExamSheetModal } from './components/ExamSheetModal';
 import { AudioRecorder } from '../../components/AudioRecorder';
-
+import { ChatModal } from "../../components/ChatModal";
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
@@ -79,6 +79,9 @@ export interface DashboardPageViewProps {
   taskField: string;
   onTaskFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onConfirmTask: () => void;
+  // ChatModal 관련 props
+  isChatModalOpen: boolean;
+  onCloseChatModal: () => void;
 }
 
 
@@ -127,6 +130,8 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   taskField,
   onTaskFieldChange,
   onConfirmTask,
+  isChatModalOpen,
+  onCloseChatModal,
 }) => {
   return (
     <div className="relative min-h-screen bg-background-tertiary">
@@ -340,6 +345,15 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           onConfirmTaskCreation={onConfirmTask}
           taskField={taskField}
           onTaskFieldChange={onTaskFieldChange}
+        />
+      )}
+
+      {isChatModalOpen && (
+        <ChatModal
+          isOpen={isChatModalOpen}
+          onClose={onCloseChatModal}
+          taskType={selectedTaskType}
+          taskField={taskField}
         />
       )}
     </div>

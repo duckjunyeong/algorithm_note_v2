@@ -54,6 +54,8 @@ const DashboardPage: FC = () => {
     taskField,
     handleTaskFieldChange,
     handleConfirmTask,
+    isChatModalOpen,
+    closeChatModal,
   } = useDashboardPage();
 
   return (
@@ -107,6 +109,8 @@ const DashboardPage: FC = () => {
       taskField={taskField}
       onTaskFieldChange={handleTaskFieldChange}
       onConfirmTask={handleConfirmTask}
+      isChatModalOpen={isChatModalOpen}
+      onCloseChatModal={closeChatModal}
     />
   );
 };

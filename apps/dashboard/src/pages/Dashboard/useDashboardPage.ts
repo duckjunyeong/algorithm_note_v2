@@ -26,6 +26,9 @@ export const useDashboardPage = () => {
   const [selectedTaskType, setSelectedTaskType] = useState<'concept' | 'memorization' | 'approach'>('concept');
   const [taskField, setTaskField] = useState<string>('');
 
+  // ChatModal 관련 상태
+  const [isChatModalOpen, setIsChatModalOpen] = useState<boolean>(false);
+
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
@@ -129,13 +132,18 @@ export const useDashboardPage = () => {
       taskType: selectedTaskType,
       field: taskField,
     });
-    // TODO: API 호출 또는 실제 태스크 생성 로직 추가
-    showSuccessToast('질문이 생성되었습니다!');
+    // ReviewTaskCreationMenu를 닫고 ChatModal을 엽니다
     closeTaskCreationModal();
+    openChatModal();
   };
 
   const handleTaskFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTaskField(e.target.value);
+  };
+
+  const openChatModal = () => setIsChatModalOpen(true);
+  const closeChatModal = () => {
+    setIsChatModalOpen(false);
   };
 
   const handleTaskCreationBackgroundClick = () => {
@@ -267,5 +275,8 @@ export const useDashboardPage = () => {
     taskField,
     handleTaskFieldChange,
     handleConfirmTask,
+    // ChatModal 관련
+    isChatModalOpen,
+    closeChatModal,
   };
 };
