@@ -2,6 +2,8 @@ package algorithm_note.algorithm_note_v2.global.exception;
 
 import algorithm_note.algorithm_note_v2.category.exception.CategoryNotFoundException;
 import algorithm_note.algorithm_note_v2.category.exception.DuplicateCategoryException;
+import algorithm_note.algorithm_note_v2.chat.exception.InvalidTaskTypeException;
+import algorithm_note.algorithm_note_v2.chat.exception.SessionNotFoundException;
 import algorithm_note.algorithm_note_v2.global.dto.ClerkWebhookResponseDto;
 import algorithm_note.algorithm_note_v2.reviewcard.exception.PdfGenerationException;
 import algorithm_note.algorithm_note_v2.reviewcard.exception.ReviewCardNotFoundException;
@@ -107,5 +109,27 @@ public class GlobalExceptionHandler {
                 "status", HttpStatus.INTERNAL_SERVER_ERROR.value()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(SessionNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleSessionNotFoundException(SessionNotFoundException ex) {
+        log.warn("Chat session not found: {}", ex.getMessage());
+        Map<String, Object> errorResponse = Map.of(
+                "error", "Session not found",
+                "message", ex.getMessage(),
+                "status", HttpStatus.NOT_FOUND.value()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidTaskTypeException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidTaskTypeException(InvalidTaskTypeException ex) {
+        log.warn("Invalid task type: {}", ex.getMessage());
+        Map<String, Object> errorResponse = Map.of(
+                "error", "Invalid task type",
+                "message", ex.getMessage(),
+                "status", HttpStatus.BAD_REQUEST.value()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 }

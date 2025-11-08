@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
+import { chatService } from '../../services/chatService';
 import apiClient from '../../services/apiClient';
 
 interface Message {
@@ -12,7 +13,7 @@ interface Message {
 const initialBotMessage: Message = {
   id: 1,
   sender: 'bot',
-  text: `안녕하세요! 오늘 어떤 도움이 필요하신가요?`,
+  text: `"안녕하세요. 젠틴 에너지 가득한 하루네요! 🚀\n\n함께 멋진 AI 기반 오답노트 & 복습 관리 서비스 태스크 계획을 세워봅시다!\n\n먼저, 현재 프로젝트 상황과 젠틴이 이전에 집중하고 싶은 목표가 무엇인지 알려주실 수 있을까요?\n\n예를 들어,\n* 특정 기능 구현\n* 기술 기반 구축\n* 리팩토링 및 개선\n* 기타(직접 알려주세요)\n\n어떤 부분에 집중하고 싶으신가요?"`,
   isTyping: false
 };
 
@@ -49,8 +50,11 @@ export const useChatModal = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [initLoading, setInitLoading] = useState<boolean>(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [showSaveButton, setShowSaveButton] = useState<boolean>(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
   const scrollToBottom = useCallback(() => {
     if (chatAreaRef.current) {
@@ -68,37 +72,44 @@ export const useChatModal = ({
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      initiateNoteCreation();
+      initializeChatSession();
     }
   }, [isOpen]); // messages.length를 의존성 배열에서 제거하여 무한 루프 방지
 
-  const initiateNoteCreation = async () => {
-    setLoading(true);
-    try {
-      if (!scrapedInfo) {
-        // For task creation without scraped info, use initial bot message
-        setMessages([initialBotMessage]);
-        setLoading(false);
-        return;
+  // Cleanup EventSource on unmount
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
       }
+    };
+  }, []);
 
-      const response = await apiClient.post('/api/notes/initiate', {
-        key: scrapedInfo.confirmationKey,
-        analysisResult: scrapedInfo.analysisResult
-      });
+  const initializeChatSession = async () => {
+    setInitLoading(true);
+    try {
+      // New flow: Initialize chat session with streaming
+      const newSessionId = await chatService.initializeChatSession(
+        taskType,
+        taskField || null
+      );
 
-      const botMessage = {
+      setSessionId(newSessionId);
+
+      const welcomeMessage: Message = {
         id: Date.now(),
         sender: 'bot',
-        text: response.data,
-        isTyping: true
+        text: '안녕하세요! 학습하신 내용을 입력해주시면 맞춤 질문을 생성해드리겠습니다.',
+        isTyping: false
       };
-      setMessages([botMessage]);
-    } catch (error) {
-      console.error('Failed to initiate note creation:', error);
+      setMessages([welcomeMessage]);
+    } catch (error: any) {
+      console.error('Failed to initialize chat session:', error);
+      toast.error(error.message || '채팅 세션 초기화에 실패했습니다');
       setMessages([initialBotMessage]);
     } finally {
-      setLoading(false);
+      setInitLoading(false);
     }
   };
 
@@ -111,56 +122,86 @@ export const useChatModal = ({
     if (typeof messageText !== 'string') setInputValue('');
     setLoading(true);
 
-    // 사용자 메시지 추가 후 스크롤
     setTimeout(scrollToBottom, 10);
 
     try {
-      if (!scrapedInfo) {
-        // For task creation without scraped info, show a placeholder response
-        const botResponse: Message = {
-          id: Date.now() + 1,
-          sender: 'bot',
-          text: '태스크 생성 기능은 현재 개발 중입니다. API 연결이 필요합니다.',
-          isTyping: true,
-        };
-        setMessages(prev => [...prev, botResponse]);
-        setTimeout(scrollToBottom, 10);
-        setLoading(false);
-        return;
+      if (!sessionId) {
+        throw new Error('세션 ID가 없습니다');
       }
 
-      const response = await apiClient.post('/api/notes/chat', {
-        sessionId: scrapedInfo.confirmationKey,
-        message: textToSend
-      });
-
-      if (response.data.finalResponse) {
-        setShowSaveButton(true);
-      }
-
-      const botResponse: Message = {
-        id: Date.now() + 1,
+      // Add empty bot message for streaming
+      const botMessageId = Date.now() + 1;
+      const botMessage: Message = {
+        id: botMessageId,
         sender: 'bot',
-        text: response.data.aiResponse,
-        isTyping: true,
+        text: '',
+        isTyping: true
       };
-      setMessages(prev => [...prev, botResponse]);
+      setMessages(prev => [...prev, botMessage]);
 
-      // AI 응답 추가 후 스크롤
-      setTimeout(scrollToBottom, 10);
-    } catch (error) {
+      eventSourceRef.current = chatService.streamChatMessage(
+        sessionId,
+        textToSend,
+        (chunk: string) => {
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.id === botMessageId
+                ? { ...msg, text: msg.text + chunk }
+                : msg
+            )
+          );
+          setTimeout(scrollToBottom, 10);
+        },
+        // onComplete callback
+        () => {
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.id === botMessageId
+                ? { ...msg, isTyping: false }
+                : msg
+            )
+          );
+          setLoading(false);
+          if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+            eventSourceRef.current = null;
+          }
+        },
+        // onError callback
+        (error: Error) => {
+          console.error('Streaming error:', error);
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.id === botMessageId
+                ? {
+                    ...msg,
+                    text: msg.text || '죄송합니다. 메시지 처리 중 오류가 발생했습니다.',
+                    isTyping: false
+                  }
+                : msg
+            )
+          );
+          toast.error(error.message || '메시지 전송 실패');
+          setLoading(false);
+          if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+            eventSourceRef.current = null;
+          }
+        }
+      );
+    } catch (error: any) {
       console.error('Failed to send message:', error);
+      toast.error(error.message || '메시지 전송 실패');
       const errorResponse: Message = {
         id: Date.now() + 1,
         sender: 'bot',
         text: '죄송합니다. 메시지 처리 중 오류가 발생했습니다. 다시 시도해 주세요.',
-        isTyping: true,
+        isTyping: false,
       };
       setMessages(prev => [...prev, errorResponse]);
-    } finally {
       setLoading(false);
     }
-  }, [inputValue, scrollToBottom, scrapedInfo]);
+  }, [inputValue, scrollToBottom, sessionId, scrapedInfo]);
   
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -222,6 +263,8 @@ export const useChatModal = ({
     messages,
     inputValue,
     loading,
+    initLoading,
+    sessionId,
     chatAreaRef,
     recommendedQuestions,
     showSaveButton,

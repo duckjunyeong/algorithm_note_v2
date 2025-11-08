@@ -119,9 +119,6 @@ export const useDashboardPage = () => {
   const openTaskCreationModal = () => setIsTaskCreationModalOpen(true);
   const closeTaskCreationModal = () => {
     setIsTaskCreationModalOpen(false);
-    // 상태 초기화
-    setSelectedTaskType('concept');
-    setTaskField('');
     if (reviewCardsError) {
       clearError();
     }
@@ -144,6 +141,9 @@ export const useDashboardPage = () => {
   const openChatModal = () => setIsChatModalOpen(true);
   const closeChatModal = () => {
     setIsChatModalOpen(false);
+    // ChatModal이 닫힐 때 상태 초기화
+    setSelectedTaskType('concept');
+    setTaskField('');
   };
 
   const handleTaskCreationBackgroundClick = () => {

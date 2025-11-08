@@ -23,11 +23,11 @@ public class GeminiClient {
 
   public GeminiClient(ObjectMapper objectMapper,
                       @Value("${ai.api.key}") String apiKey,
-                      @Value("${ai.prompt.answer-generator}") String answerGenerPrompt) {
+                      @Value("${ai.prompt.memorization-question-generator}") String answerGenerPrompt1) {
     this.objectMapper = objectMapper;
     this.apiKey = apiKey;
-    this.answerGenerPrompt = answerGenerPrompt;
     client = Client.builder().apiKey(apiKey).build();
+    this.answerGenerPrompt = answerGenerPrompt1;
   }
 
   public GeminiResponseDto sendMessage(String userMessage) {

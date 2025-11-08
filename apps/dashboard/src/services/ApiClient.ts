@@ -52,4 +52,8 @@ apiClient.interceptors.response.use(
   }
 );
 
+export function getAuthToken(): Promise<string | null> | null {
+  return getTokenFn ? getTokenFn() : null;
+}
+
 export default apiClient;

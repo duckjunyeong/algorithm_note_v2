@@ -1,17 +1,11 @@
 import { z } from 'zod';
 
-/**
- * 복습 카드 관련 Zod 검증 스키마 정의
- */
-
-// 복습 질문 스키마
 export const reviewQuestionSchema = z.object({
   text: z.string()
     .min(1, "질문 내용을 입력해주세요")
     .max(500, "질문은 500자 이내로 작성해주세요")
 });
 
-// 복습 카드 생성 요청 스키마
 export const createReviewCardRequestSchema = z.object({
   title: z.string()
     .min(1, "제목을 입력해주세요")
@@ -42,13 +36,11 @@ export const createReviewCardRequestSchema = z.object({
     .max(10, "질문은 최대 10개까지 추가할 수 있습니다")
 });
 
-// 복습 카드 생성 응답 스키마
 export const createReviewCardResponseSchema = z.object({
   reviewCardId: z.number().int().positive(),
   message: z.string()
 });
 
-// 복습 카드 스키마
 export const reviewCardSchema = z.object({
   reviewCardId: z.number().int().positive(),
   title: z.string(),
@@ -64,22 +56,18 @@ export const reviewCardSchema = z.object({
   updatedAt: z.string().optional()
 });
 
-// 복습 카드 목록 조회 응답 스키마
 export const getReviewCardsResponseSchema = z.array(reviewCardSchema);
 
-// 복습 카드 상태 업데이트 요청 스키마
 export const updateReviewCardStatusRequestSchema = z.object({
   isActive: z.boolean()
 });
 
-// API 에러 응답 스키마
 export const apiErrorResponseSchema = z.object({
   status: z.number().int(),
   message: z.string(),
   timestamp: z.string().optional()
 });
 
-// 타입 추론
 export type CreateReviewCardRequest = z.infer<typeof createReviewCardRequestSchema>;
 export type CreateReviewCardResponse = z.infer<typeof createReviewCardResponseSchema>;
 export type ReviewCard = z.infer<typeof reviewCardSchema>;
