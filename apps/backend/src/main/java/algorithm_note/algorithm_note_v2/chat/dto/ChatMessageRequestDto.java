@@ -12,13 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatMessageRequestDto {
 
-    @NotBlank(message = "세션 ID는 필수입니다")
-    private String sessionId;
-
     @NotBlank(message = "메시지 내용은 필수입니다")
     private String message;
 
-    public static ChatMessageRequestDto of(String sessionId, String message) {
-        return new ChatMessageRequestDto(sessionId, message);
+    public static ChatMessageRequestDto of(String message) {
+        return new ChatMessageRequestDto(message);
     }
 }

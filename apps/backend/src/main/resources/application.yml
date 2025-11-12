@@ -26,6 +26,9 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       timeout: 60000
+  mvc:
+    async:
+      request-timeout: 3600000
 clerk:
   webhook:
     api-url: https://api.clerk.dev/v1
@@ -58,10 +61,10 @@ ai:
         description: "제공된 '{학습_내용}' 텍스트를 분석하여, 해당 개념에 대한 명확하고 간결한 제목과 사용자가 텍스트의 내용을 복습할 때 사용할 핵심 암기 질문 목록을 생성해야 한다. 각 질문에는 고유한 ID가 할당되어야 한다."
 
       DynamicInputs:
-        - name: USER_NAME
+        - name: {{USER_NAME}}
           description: "사용자 이름. 응답 메시지를 개인화하는 데 사용됩니다."
           required: true
-        - name: DOMAIN
+        - name: {{DOMAIN}}
           description: "학습 분야 (예: '컴퓨터 공학', '헬스'). 선택 사항이며, NULL일 수 있습니다. NULL이 아닐 경우, 해당 분야의 전문 용어와 맥락을 질문 생성에 활용합니다."
           required: false
 
@@ -346,6 +349,8 @@ ai:
 
 server:
   port: 8080
+  tomcat:
+    connection-timeout: -1
 
 app:
   frontend:

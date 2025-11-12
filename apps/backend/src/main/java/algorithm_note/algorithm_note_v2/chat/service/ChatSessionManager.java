@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -27,8 +26,12 @@ public class ChatSessionManager {
 
     private static final long SESSION_TTL = 3600L;
 
-    public ChatSession createSession(String taskType, String taskField, String userName) {
-        String sessionId = UUID.randomUUID().toString();
+    public ChatSession createSession(Long userId, String taskType, String taskField, String userName) {
+        String sessionId = "user-" + userId;
+
+        if (chatSessionRepository.existsById(sessionId)) {
+            deleteSession(sessionId);
+        }
 
         Client client = Client.builder().apiKey(apiKey).build();
         clientCache.put(sessionId, client);
@@ -91,5 +94,15 @@ public class ChatSessionManager {
         session.addAssistantMessage(message);
         updateSession(session);
         log.debug("Added assistant message to session: {}", sessionId);
+    }
+
+    public ChatSession getSessionByUserId(Long userId) {
+        String sessionId = "user-" + userId;
+        return getSession(sessionId);
+    }
+
+    public void deleteSessionByUserId(Long userId) {
+        String sessionId = "user-" + userId;
+        deleteSession(sessionId);
     }
 }

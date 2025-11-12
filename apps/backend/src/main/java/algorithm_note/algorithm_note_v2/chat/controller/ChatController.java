@@ -1,9 +1,11 @@
 package algorithm_note.algorithm_note_v2.chat.controller;
 
-import algorithm_note.algorithm_note_v2.chat.dto.ChatInitializeRequestDto;
-import algorithm_note.algorithm_note_v2.chat.dto.ChatInitializeResponseDto;
+import algorithm_note.algorithm_note_v2.chat.dto.ChatDoneEventDto;
 import algorithm_note.algorithm_note_v2.chat.dto.ChatMessageRequestDto;
+import algorithm_note.algorithm_note_v2.chat.dto.ChatStreamChunkDto;
 import algorithm_note.algorithm_note_v2.chat.entity.ChatSession;
+import algorithm_note.algorithm_note_v2.chat.exception.EmitterNotFoundException;
+import algorithm_note.algorithm_note_v2.chat.repository.EmitterRepository;
 import algorithm_note.algorithm_note_v2.chat.service.ChatSessionManager;
 import algorithm_note.algorithm_note_v2.chat.service.GeminiStreamingService;
 import algorithm_note.algorithm_note_v2.chat.service.PromptService;
@@ -14,15 +16,16 @@ import com.google.genai.types.GenerateContentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -30,126 +33,136 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChatSessionManager sessionManager;
+    private final EmitterRepository emitterRepository;
+    private final ChatSessionManager chatSessionManager;
+    private final GeminiStreamingService geminiStreamingService;
     private final PromptService promptService;
-    private final GeminiStreamingService geminiService;
 
-    private static final long SSE_TIMEOUT = 600_000L;
+    private static final long SSE_TIMEOUT = 60 * 60 * 1000L; // 60분
 
-    @PostMapping("/initialize")
-    public ResponseEntity<ChatInitializeResponseDto> initializeChat(
-            @Valid @RequestBody ChatInitializeRequestDto request) {
+    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter subscribe(
+        @RequestParam String taskType,
+        @RequestParam String taskField,
+        @AuthenticationPrincipal User user
+    ) {
+        Long userId = user.getId();
+        String userName = user.getFirstName() + " " + user.getLastName();
 
-        log.info("Initializing chat session - taskType: {}, taskField: {}",
-                request.getTaskType(), request.getTaskField());
+        log.info("SSE subscribe requested - userId: {}, taskType: {}, taskField: {}",
+            userId, taskType, taskField);
 
-        User currentUser = getCurrentUser();
-        String userName = currentUser.getFirstName();
-
-        ChatSession session = sessionManager.createSession(
-                request.getTaskType(),
-                request.getTaskField(),
-                userName
-        );
-
-        log.info("Chat session initialized successfully - sessionId: {}, user: {}",
-                session.getSessionId(), userName);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ChatInitializeResponseDto.success(session.getSessionId()));
-    }
-
-    @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamChat(@Valid @RequestBody ChatMessageRequestDto request) {
-
-        log.info("Streaming chat message - sessionId: {}", request.getSessionId());
+        emitterRepository.deleteById(userId);
+        try {
+            chatSessionManager.deleteSessionByUserId(userId);
+        } catch (Exception e) {
+            log.debug("No existing session to delete for userId: {}", userId);
+        }
 
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
+        emitterRepository.save(userId, emitter);
+        emitterRepository.configureCallbacks(userId, emitter);
 
-        new Thread(() -> {
-            try {
-                ChatSession session = sessionManager.getSession(request.getSessionId());
-                Client client = sessionManager.getClient(request.getSessionId());
+        chatSessionManager.createSession(userId, taskType, taskField, userName);
 
-                String systemPrompt = promptService.formatPrompt(
-                        session.getTaskType(),
-                        session.getUserName(),
-                        session.getTaskField()
-                );
+        try {
+            Map<String, Object> data = new HashMap<>();
+            data.put("sessionId", "user-" + userId);
+            data.put("message", "Connected successfully");
 
-                sessionManager.addUserMessage(request.getSessionId(), request.getMessage());
+            emitter.send(SseEmitter.event()
+                .name("connected")
+                .data(data));
 
-                ResponseStream<GenerateContentResponse> responseStream = geminiService.streamResponse(
-                        client,
-                        session,
-                        systemPrompt,
-                        request.getMessage()
-                );
-
-                StringBuilder fullResponse = new StringBuilder();
-
-                for (GenerateContentResponse chunk : responseStream) {
-                    String text = geminiService.extractText(chunk);
-                    if (!text.isEmpty()) {
-                        fullResponse.append(text);
-                        emitter.send(SseEmitter.event()
-                                .data(text)
-                                .name("message"));
-                    }
-                }
-
-                responseStream.close();
-
-                sessionManager.addAssistantMessage(request.getSessionId(), fullResponse.toString());
-
-                emitter.send(SseEmitter.event()
-                        .data("[DONE]")
-                        .name("done"));
-                emitter.complete();
-
-                log.info("Chat streaming completed - sessionId: {}", request.getSessionId());
-
-            } catch (IOException e) {
-                log.error("SSE streaming error: {}", e.getMessage(), e);
-                emitter.completeWithError(e);
-            } catch (Exception e) {
-                log.error("Chat processing error: {}", e.getMessage(), e);
-                try {
-                    emitter.send(SseEmitter.event()
-                            .data("오류가 발생했습니다: " + e.getMessage())
-                            .name("error"));
-                    emitter.completeWithError(e);
-                } catch (IOException ioException) {
-                    log.error("Failed to send error event: {}", ioException.getMessage());
-                }
-            }
-        }).start();
+            log.info("SSE connection established for userId: {}", userId);
+        } catch (IOException e) {
+            log.error("Failed to send connected event", e);
+            emitter.completeWithError(e);
+        }
 
         return emitter;
     }
 
-    @DeleteMapping("/session/{sessionId}")
-    public ResponseEntity<Void> deleteSession(@PathVariable String sessionId) {
-        log.info("Deleting chat session: {}", sessionId);
+    @PostMapping("/message")
+    public void sendMessage(
+        @Valid @RequestBody ChatMessageRequestDto request,
+        @AuthenticationPrincipal User user
+    ) {
+        Long userId = user.getId();
+        String userMessage = request.getMessage();
 
-        sessionManager.deleteSession(sessionId);
+        log.info("Message received from userId: {}", userId);
 
-        log.info("Chat session deleted successfully: {}", sessionId);
-        return ResponseEntity.noContent().build();
+        SseEmitter emitter = emitterRepository.get(userId)
+            .orElseThrow(() -> new EmitterNotFoundException());
+
+        ChatSession session = chatSessionManager.getSessionByUserId(userId);
+
+        session.addUserMessage(userMessage);
+        chatSessionManager.updateSession(session);
+
+        CompletableFuture.runAsync(() -> {
+            StringBuilder fullResponse = new StringBuilder();
+
+            try {
+                String sessionId = "user-" + userId;
+                Client client = chatSessionManager.getClient(sessionId);
+
+                String systemPrompt = promptService.formatPrompt(
+                    session.getTaskType(),
+                    session.getTaskField(),
+                    session.getUserName()
+                );
+
+                ResponseStream<GenerateContentResponse> stream =
+                    geminiStreamingService.streamResponse(client, session, systemPrompt, userMessage);
+
+                for (GenerateContentResponse response : stream) {
+                    String chunk = geminiStreamingService.extractText(response);
+
+                    if (chunk != null && !chunk.isEmpty()) {
+                        fullResponse.append(chunk);
+
+                        emitter.send(SseEmitter.event()
+                            .name("message")
+                            .data(new ChatStreamChunkDto(chunk)));
+                    }
+                }
+
+                session.addAssistantMessage(fullResponse.toString());
+                chatSessionManager.updateSession(session);
+
+                emitter.send(SseEmitter.event()
+                    .name("done")
+                    .data(new ChatDoneEventDto(true)));
+
+                log.info("Streaming completed for userId: {}", userId);
+
+            } catch (Exception e) {
+                log.error("Streaming error for userId: {}", userId, e);
+                try {
+                    emitter.completeWithError(e);
+                } catch (Exception ex) {
+                    log.error("Failed to complete emitter with error", ex);
+                }
+            }
+        });
     }
 
-    private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @Scheduled(fixedRate = 15000)
+    public void sendHeartbeat() {
+        Map<Long, SseEmitter> emitters = emitterRepository.getAllEmitters();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("인증되지 않은 사용자입니다.");
-        }
-
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof User)) {
-            throw new RuntimeException("유효하지 않은 사용자 정보입니다.");
-        }
-
-        return (User) principal;
+        emitters.forEach((userId, emitter) -> {
+            try {
+                emitter.send(SseEmitter.event()
+                    .name("heartbeat")
+                    .data(""));
+                log.debug("Heartbeat sent to userId: {}", userId);
+            } catch (IOException e) {
+                log.warn("Failed to send heartbeat to userId: {}, removing emitter", userId);
+                emitterRepository.deleteById(userId);
+            }
+        });
     }
 }

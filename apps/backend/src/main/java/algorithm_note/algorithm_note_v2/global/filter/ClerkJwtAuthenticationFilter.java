@@ -14,12 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -69,11 +73,39 @@ public class ClerkJwtAuthenticationFilter extends OncePerRequestFilter {
         Map<String, Object> jwtClaims = jwtVerificationService.verifyToken(token);
         User user = userService.findOrCreateUser(jwtClaims);
 
+        // Extract roles from public_metadata
+        List<GrantedAuthority> authorities = extractAuthoritiesFromClaims(jwtClaims);
+
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+                new UsernamePasswordAuthenticationToken(user, null, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.debug("Successfully authenticated user with Clerk ID: {}", user.getClerkId());
+        log.debug("Successfully authenticated user with Clerk ID: {} and roles: {}",
+                  user.getClerkId(), authorities);
+    }
+
+
+    private List<GrantedAuthority> extractAuthoritiesFromClaims(Map<String, Object> jwtClaims) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        Object publicMetadata = jwtClaims.get("public_metadata");
+        if (publicMetadata instanceof List) {
+            List<?> roles = (List<?>) publicMetadata;
+            for (Object role : roles) {
+                if (role instanceof String) {
+                    // Spring Security convention: prefix with "ROLE_"
+                    String roleStr = ((String) role).toUpperCase();
+                    authorities.add(new SimpleGrantedAuthority("ROLE_" + roleStr));
+                }
+            }
+        }
+
+        if (authorities.isEmpty()) {
+            log.warn("No roles found in public_metadata, assigning default ROLE_USER");
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
+        return authorities;
     }
 
     private void handleAuthenticationFailure(HttpServletResponse response, String message)

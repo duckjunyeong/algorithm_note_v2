@@ -1,174 +1,108 @@
+import type { TaskType } from '../schemas/taskCreation.schema';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 import apiClient, { getAuthToken } from './apiClient';
-import type {
-  ChatInitializeRequest,
-  ChatInitializeResponse,
-  ChatMessageRequest
-} from '../schemas/chat.schema';
-import {
-  chatInitializeRequestSchema,
-  chatInitializeResponseSchema,
-  chatMessageRequestSchema
-} from '../schemas/chat.schema';
+import { API_ENDPOINTS } from '../constants/api';
 
-export class ChatService {
-
-  async initializeChatSession(
-    taskType: 'concept' | 'memorization' | 'approach',
-    taskField: string | null
-  ): Promise<string> {
-    const requestData: ChatInitializeRequest = { taskType, taskField };
-    const validatedRequest = chatInitializeRequestSchema.parse(requestData);
-
-    try {
-      const response = await apiClient.post<ChatInitializeResponse>(
-        '/chat/initialize',
-        validatedRequest
-      );
-
-      const validatedResponse = chatInitializeResponseSchema.parse(response.data);
-
-      if (!validatedResponse.success) {
-        throw new Error(validatedResponse.message || '채팅 세션 생성에 실패했습니다');
-      }
-
-      return validatedResponse.sessionId;
-    } catch (error: any) {
-      console.error('Failed to initialize chat session:', error);
-      throw new Error(
-        error.response?.data?.message || error.message || '채팅 세션 초기화 실패'
-      );
-    }
-  }
-
-  streamChatMessage(
-    sessionId: string,
-    message: string,
-    onChunk: (chunk: string) => void,
-    onComplete: () => void,
-    onError: (error: Error) => void 
-  ): EventSource {
-    const requestData: ChatMessageRequest = { sessionId, message };
-    const validatedRequest = chatMessageRequestSchema.parse(requestData);
-
-    const url = apiClient.getUri({ url: '/chat/stream' });
-    console.log('SSE URL:', url);
-
-    const eventSource = this.createSSEConnection(url, validatedRequest, {
-      onMessage: onChunk,
-      onDone: onComplete,
-      onError: onError
-    });
-
-    return eventSource;
-  }
-
-  private createSSEConnection(
-    url: string,
-    body: any,
-    callbacks: {
-      onMessage: (chunk: string) => void;
-      onDone: () => void;
-      onError: (error: Error) => void;
-    }
-  ): EventSource {
-    const abortController = new AbortController();
-
-    (async () => {
-      const token = await getAuthToken();
-      console.log('요청을 보냅니다.  ---> ', url);
-      return fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-          ...(token && {
-            Authorization: `Bearer ${token}`
-          })
-        },
-        body: JSON.stringify(body),
-        signal: abortController.signal
-      });
-    })()
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        if (!response.body) {
-          throw new Error('Response body is null');
-        }
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) {
-            callbacks.onDone();
-            break;
-          }
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6); 
-
-              if (data === '[DONE]') {
-                callbacks.onDone();
-                break;
-              }
-
-              callbacks.onMessage(data);
-            } else if (line.startsWith('event: ')) {
-              const eventType = line.slice(7);
-
-              if (eventType === 'done') {
-                callbacks.onDone();
-                break;
-              } else if (eventType === 'error') {
-                callbacks.onError(new Error('Server error occurred'));
-              }
-            }
-          }
-        }
-      })
-      .catch((error) => {
-        if (error.name !== 'AbortError') {
-          callbacks.onError(error);
-        }
-      });
-
-    return {
-      close: () => abortController.abort(),
-      readyState: 1, // OPEN
-      url,
-      withCredentials: false,
-      CONNECTING: 0,
-      OPEN: 1,
-      CLOSED: 2,
-      onopen: null,
-      onmessage: null,
-      onerror: null,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      dispatchEvent: () => true
-    } as EventSource;
-  }
-
-  async deleteSession(sessionId: string): Promise<void> {
-    try {
-      await apiClient.delete(`/chat/session/${sessionId}`);
-    } catch (error: any) {
-      console.error('Failed to delete chat session:', error);
-      throw new Error(error.response?.data?.message || '세션 삭제 실패');
-    }
-  }
+export interface ChatServiceOptions {
+  taskType: TaskType;
+  taskField: string;
+  onMessage: (content: string) => void;
+  onError: (error: Error) => void;
+  onDone: () => void;
 }
 
-// Export singleton instance
-export const chatService = new ChatService();
+export interface ChatService {
+  subscribe: () => Promise<void>;
+  sendMessage: (message: string) => Promise<void>;
+  disconnect: () => void;
+}
+
+export const createChatService = (
+  options: ChatServiceOptions
+): ChatService => {
+  let eventSource: EventSourcePolyfill | null = null;
+  let retryCount = 0;
+  const MAX_RETRIES = 3;
+  const BASE_RETRY_DELAY = 1000; // 1초
+
+  const setupEventListeners = (es: EventSourcePolyfill) => {
+    es.addEventListener('connected', (e) => {
+      console.log('SSE connected:', e);
+      retryCount = 0; // 연결 성공 시 재시도 카운터 초기화
+    });
+
+    es.addEventListener('message', (e) => {
+      const data = JSON.parse(e.data);
+      options.onMessage(data.content);
+    });
+
+    es.addEventListener('done', () => {
+      options.onDone();
+    });
+
+    es.addEventListener('heartbeat', () => {
+      console.log('SSE heartbeat received - connection alive');
+    });
+
+    es.onerror = () => {
+      console.error('SSE connection error');
+      es.close();
+      eventSource = null;
+
+      if (retryCount < MAX_RETRIES) {
+        retryCount++;
+        const delay = BASE_RETRY_DELAY * Math.pow(2, retryCount - 1);
+        console.log(`Reconnecting in ${delay}ms (attempt ${retryCount}/${MAX_RETRIES})...`);
+
+        setTimeout(() => {
+          subscribe().catch((error) => {
+            console.error('Reconnection failed:', error);
+          });
+        }, delay);
+      } else {
+        console.error('Max reconnection attempts reached');
+        options.onError(new Error('채팅 연결에 실패했습니다'));
+      }
+    };
+  };
+
+  const subscribe = async () => {
+    const params = new URLSearchParams({
+      taskType: options.taskType,
+      taskField: options.taskField,
+    });
+
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+    const url = `${baseUrl}${API_ENDPOINTS.CHAT.SUBSCRIBE}?${params}`;
+
+    const tokenGetter = getAuthToken();
+    const token = tokenGetter ? await tokenGetter : null;
+
+    if (!token) {
+      options.onError(new Error('인증 토큰을 가져올 수 없습니다. 다시 로그인해주세요.'));
+      return;
+    }
+
+    eventSource = new EventSourcePolyfill(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    setupEventListeners(eventSource);
+  };
+
+  const sendMessage = async (message: string) => {
+    await apiClient.post(API_ENDPOINTS.CHAT.MESSAGE, {
+      message,
+    });
+  };
+
+  const disconnect = () => {
+    retryCount = MAX_RETRIES;
+    eventSource?.close();
+    eventSource = null;
+  };
+
+  return { subscribe, sendMessage, disconnect };
+};

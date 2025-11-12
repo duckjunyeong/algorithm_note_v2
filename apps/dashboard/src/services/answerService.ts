@@ -13,7 +13,6 @@ export class AnswerService {
     try {
       const response = await apiClient.post<CreateAnswerResponse>('/answers/create', data);
 
-      // Zod 스키마로 응답 검증
       const validatedData = createAnswerResponseSchema.parse(response.data);
 
       return validatedData;
@@ -27,7 +26,6 @@ export class AnswerService {
     try {
       const response = await apiClient.get<Answer[]>(`/answers/question/${questionId}`);
 
-      // Zod 스키마로 응답 검증
       const validatedData = getAnswersResponseSchema.parse(response.data);
 
       return validatedData;

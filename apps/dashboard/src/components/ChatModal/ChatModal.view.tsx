@@ -3,10 +3,8 @@ import { Info, Maximize, X, Send } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 
-// Constants
 const TYPING_SPEED_MS = 15;
 
-// --- Helper Component for Typing Animation ---
 interface TypingMessageProps {
   fullText: string;
   onComplete: () => void;
@@ -37,7 +35,6 @@ const TypingMessage: React.FC<TypingMessageProps> = ({ fullText, onComplete }) =
   return <>{displayedText}</>;
 };
 
-// --- Interfaces ---
 interface MessageProps {
   id: number;
   sender: 'user' | 'bot';
@@ -66,7 +63,6 @@ interface ChatModalViewProps {
   handleSaveNote: () => void;
 }
 
-// --- Main Component ---
 export const ChatModalView: React.FC<ChatModalViewProps> = ({
   isOpen,
   onClose,

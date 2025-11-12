@@ -1,4 +1,3 @@
-// DashboardPage/useDashboardPage.ts
 import { useState, useMemo, useEffect } from 'react';
 import { useReviewCardStore } from '../../store/useReviewCardStore';
 import { useCategoryStore } from '../../store/useCategoryStore';
@@ -22,11 +21,9 @@ export const useDashboardPage = () => {
   const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
   const [isExamSheetModalOpen, setIsExamSheetModalOpen] = useState<boolean>(false);
 
-  // ReviewTaskCreationMenu 관련 상태
   const [selectedTaskType, setSelectedTaskType] = useState<'concept' | 'memorization' | 'approach'>('concept');
   const [taskField, setTaskField] = useState<string>('');
 
-  // ChatModal 관련 상태
   const [isChatModalOpen, setIsChatModalOpen] = useState<boolean>(false);
 
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
@@ -129,7 +126,6 @@ export const useDashboardPage = () => {
       taskType: selectedTaskType,
       field: taskField,
     });
-    // ReviewTaskCreationMenu를 닫고 ChatModal을 엽니다
     closeTaskCreationModal();
     openChatModal();
   };
@@ -141,7 +137,6 @@ export const useDashboardPage = () => {
   const openChatModal = () => setIsChatModalOpen(true);
   const closeChatModal = () => {
     setIsChatModalOpen(false);
-    // ChatModal이 닫힐 때 상태 초기화
     setSelectedTaskType('concept');
     setTaskField('');
   };
@@ -206,16 +201,13 @@ export const useDashboardPage = () => {
     };
   }) => {
     try {
-      // TODO: Replace with actual API call
       console.log('Creating task with data:', data);
 
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       showSuccessToast('태스크가 성공적으로 생성되었습니다.');
       closeTaskCreationModal();
 
-      // Refresh review cards to show the new task
       await fetchReviewCards();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : '태스크 생성에 실패했습니다.';
@@ -269,13 +261,11 @@ export const useDashboardPage = () => {
     handleSaveCategory,
     handleCreateTask,
     toggleSidebar,
-    // ReviewTaskCreationMenu 관련
     selectedTaskType,
     setSelectedTaskType,
     taskField,
     handleTaskFieldChange,
     handleConfirmTask,
-    // ChatModal 관련
     isChatModalOpen,
     closeChatModal,
   };

@@ -14,6 +14,10 @@ export const API_ENDPOINTS = {
     CLEANUP: '/problems/cleanup',
     CODE_ANALYZE: '/problems/code/analyze',
   },
+  CHAT: {
+    SUBSCRIBE: '/chat/subscribe',
+    MESSAGE: '/chat/message',
+  },
 } as const;
 
 export const HTTP_HEADERS = {
