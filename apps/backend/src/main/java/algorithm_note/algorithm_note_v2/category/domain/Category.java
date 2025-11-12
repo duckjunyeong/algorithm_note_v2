@@ -7,9 +7,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * Category entity representing user-defined categories for review cards.
- */
 @Entity
 @Table(name = "categories", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"user_id", "name"})
@@ -54,12 +51,6 @@ public class Category {
         this.updatedAt = LocalDateTime.now();
     }
 
-    /**
-     * Updates category information.
-     *
-     * @param name Category name
-     * @param color Category color
-     */
     public void updateCategoryInfo(String name, String color) {
         if (name != null) this.name = name;
         if (color != null) this.color = color;

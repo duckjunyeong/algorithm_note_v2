@@ -13,6 +13,7 @@ import { ReviewResultModal } from './components/ReviewResultModal';
 import { ExamSheetModal } from './components/ExamSheetModal';
 import { AudioRecorder } from '../../components/AudioRecorder';
 import { ChatModal } from "../../components/ChatModal";
+import { TaskCreationModal } from './components/TaskCreationModal';
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
@@ -41,6 +42,7 @@ export interface DashboardPageViewProps {
   selectedTask: Task | null;
   isConfirmModalOpen: boolean;
   isConfirmLoading: boolean;
+  isReviewMenuOpen: boolean;
   isTaskCreationModalOpen: boolean;
   isTaskCreationConfirmOpen: boolean;
   isReviewFlowModalOpen: boolean;
@@ -55,7 +57,8 @@ export interface DashboardPageViewProps {
   onOpenExamSheetModal: () => void;
   onCloseExamSheetModal: () => void;
   onCloseConfirmModal: () => void;
-  onOpenTaskCreationModal: () => void;
+  onOpenReviewMenu: () => void;
+  onCloseReviewMenu: () => void;
   onCloseTaskCreationModal: () => void;
   onTaskCreationBackgroundClick: () => void;
   onConfirmTaskCreationClose: () => void;
@@ -82,6 +85,7 @@ export interface DashboardPageViewProps {
   // ChatModal 관련 props
   isChatModalOpen: boolean;
   onCloseChatModal: () => void;
+  onChatQuestionsGenerated: () => void;
 }
 
 
@@ -104,6 +108,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onCompletedFilterCategoryChange,
   onCompletedSortChange,
   onToggleSidebar,
+  isReviewMenuOpen,
   isTaskCreationModalOpen,
   isTaskCreationConfirmOpen,
   isReviewResultModalOpen,
@@ -116,7 +121,8 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isExamSheetModalOpen,
   onOpenExamSheetModal,
   onCloseExamSheetModal,
-  onOpenTaskCreationModal,
+  onOpenReviewMenu,
+  onCloseReviewMenu,
   onCloseTaskCreationModal,
   onTaskCreationBackgroundClick,
   onConfirmTaskCreationClose,
@@ -132,6 +138,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onConfirmTask,
   isChatModalOpen,
   onCloseChatModal,
+  onChatQuestionsGenerated,
 }) => {
   return (
     <div className="relative min-h-screen bg-background-tertiary">
@@ -153,7 +160,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                 시험지 생성하기
               </button>
               <button
-                onClick={onOpenTaskCreationModal}
+                onClick={onOpenReviewMenu}
                 className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
               >
                 <FiPlus size={16} />
@@ -316,8 +323,6 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         cancelText="취소"
       />
 
-     
-
       <ReviewFlowModal
         isOpen={isReviewFlowModalOpen}
         reviewCardId={selectedReviewCardId}
@@ -337,9 +342,9 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         onClose={onCloseExamSheetModal}
       />
 
-      {isTaskCreationModalOpen && (
+      {isReviewMenuOpen && (
         <ReviewTaskCreationMenu
-          onClose={onCloseTaskCreationModal}
+          onClose={onCloseReviewMenu}
           selectedTaskType={selectedTaskType}
           onSelectTaskType={onSelectTaskType}
           onConfirmTaskCreation={onConfirmTask}
@@ -354,6 +359,19 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           onClose={onCloseChatModal}
           taskType={selectedTaskType}
           taskField={taskField}
+          onQuestionsGenerated={onChatQuestionsGenerated}
+        />
+      )}
+
+      {isTaskCreationModalOpen && (
+        <TaskCreationModal
+          isOpen={isTaskCreationModalOpen}
+          onClose={onCloseTaskCreationModal}
+          onBackgroundClick={onTaskCreationBackgroundClick}
+          categories={categories}
+          isLoadingCategories={isLoadingCategories}
+          categoryError={categoryError}
+          onSaveCategory={onSaveCategory}
         />
       )}
     </div>

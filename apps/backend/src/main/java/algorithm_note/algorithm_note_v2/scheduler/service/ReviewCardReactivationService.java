@@ -11,11 +11,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-/**
- * 복습 카드 자동 재활성화 서비스
- *
- * 비활성화된 복습 카드 중 reviewCycle 기간이 경과한 카드를 자동으로 재활성화합니다.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,14 +18,6 @@ public class ReviewCardReactivationService {
 
     private final ReviewCardRepository reviewCardRepository;
 
-    /**
-     * 재활성화 대상 복습 카드를 조회하고 활성화 상태로 변경합니다.
-     *
-     * 로직:
-     * 1. isActive = false인 모든 카드 조회
-     * 2. (현재 시각 - updatedAt) >= reviewCycle 조건 필터링
-     * 3. isActive = true로 업데이트
-     */
     @Transactional
     public void reactivateExpiredCards() {
         log.info("Starting review card reactivation task");

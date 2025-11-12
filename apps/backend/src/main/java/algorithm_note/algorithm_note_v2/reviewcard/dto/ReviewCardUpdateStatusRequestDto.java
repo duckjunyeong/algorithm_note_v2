@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 복습 카드 상태 업데이트 요청 DTO
- */
 @Getter
 @Builder
 @NoArgsConstructor

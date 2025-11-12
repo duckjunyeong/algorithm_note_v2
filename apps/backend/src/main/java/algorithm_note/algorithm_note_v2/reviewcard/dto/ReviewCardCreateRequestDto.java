@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * 복습 카드 생성 요청 DTO
- */
 @Getter
 @Builder
 @NoArgsConstructor
@@ -45,9 +42,6 @@ public class ReviewCardCreateRequestDto {
     @Valid
     private List<QuestionDto> questions;
 
-    /**
-     * 질문 DTO
-     */
     @Getter
     @Builder
     @NoArgsConstructor

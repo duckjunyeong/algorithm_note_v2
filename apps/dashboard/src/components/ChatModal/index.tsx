@@ -15,6 +15,7 @@ interface ChatModalProps {
     confirmationKey: string;
     analysisResult: any; // 실제 데이터 타입에 맞게 조정하세요.
   };
+  onQuestionsGenerated?: () => void;
 }
 
 export const ChatModal: React.FC<ChatModalProps> = (props) => {
@@ -31,13 +32,19 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     chatAreaRef,
     recommendedQuestions,
     showSaveButton,
+    showGenerateButton,
     setInputValue,
     handleSendMessage,
     handleKeyDown,
     handleRecommendationClick,
-    handleTypingComplete,
-    handleSaveNote
+    handleGenerateQuestions,
+    handleSelectItems
   } = useChatModal(props);
+
+  // 임시 handleSaveNote 함수 (추후 구현 예정)
+  const handleSaveNote = () => {
+    console.log('저장 버튼 클릭됨');
+  };
 
   const chatModalViewProps = {
     isOpen,
@@ -52,12 +59,14 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     chatAreaRef,
     recommendedQuestions,
     showSaveButton,
+    showGenerateButton,
     setInputValue,
     handleSendMessage,
     handleKeyDown,
     handleRecommendationClick,
-    handleTypingComplete,
-    handleSaveNote
+    handleSaveNote,
+    handleGenerateQuestions,
+    handleSelectItems
   };
 
   return <ChatModalView {...chatModalViewProps} />;

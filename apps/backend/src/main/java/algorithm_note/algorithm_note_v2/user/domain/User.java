@@ -9,9 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * User entity representing application users linked to Clerk authentication.
- */
 @Entity
 @Table(name = "users")
 @Getter
@@ -59,14 +56,6 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    /**
-     * Updates user information from JWT claims.
-     *
-     * @param email User's email address
-     * @param firstName User's first name
-     * @param lastName User's last name
-     * @return Updated User entity for method chaining
-     */
     public User updateFromJwtClaims(String email, String firstName, String lastName) {
         return User.builder()
                 .id(this.id)

@@ -19,9 +19,6 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Service for verifying Clerk JWT tokens using JWKS.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor

@@ -4,9 +4,6 @@ import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-/**
- * Configuration properties for Clerk webhook processing.
- */
 @Component
 @ConfigurationProperties(prefix = "clerk.webhook")
 @Getter

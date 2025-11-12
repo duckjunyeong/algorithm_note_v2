@@ -11,11 +11,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ReviewQuestion entity representing individual questions within a review card.
- *
- * 복습 질문 엔티티 - 복습 카드 내의 개별 질문을 나타냅니다.
- */
 @Entity
 @Table(name = "review_question")
 @Getter
@@ -58,23 +53,12 @@ public class ReviewQuestion {
         this.createdAt = LocalDateTime.now();
     }
 
-    /**
-     * 질문 텍스트를 업데이트합니다.
-     *
-     * @param questionText 새로운 질문 텍스트
-     */
     public void updateQuestionText(String questionText) {
         if (questionText != null && !questionText.trim().isEmpty()) {
             this.questionText = questionText.trim();
         }
     }
 
-    /**
-     * 테스트 결과를 업데이트합니다.
-     *
-     * @param successCount 성공 횟수
-     * @param failCount 실패 횟수
-     */
     public void updateTestResult(Integer successCount, Integer failCount) {
         if (successCount != null && successCount >= 0) {
             this.successCount = successCount;
@@ -84,11 +68,6 @@ public class ReviewQuestion {
         }
     }
 
-    /**
-     * 답변 결과에 따라 성공/실패 카운트를 증가시킵니다.
-     *
-     * @param isSuccess 성공 여부 (true: 성공, false: 실패)
-     */
     public void incrementCount(boolean isSuccess) {
         if (isSuccess) {
             this.successCount++;
@@ -97,13 +76,6 @@ public class ReviewQuestion {
         }
     }
 
-    /**
-     * ReviewQuestion을 생성하는 정적 팩토리 메서드
-     *
-     * @param reviewCard 소속된 복습 카드
-     * @param questionText 질문 텍스트
-     * @return 생성된 ReviewQuestion 인스턴스
-     */
     public static ReviewQuestion createQuestion(ReviewCard reviewCard, String questionText) {
         return ReviewQuestion.builder()
                 .reviewCard(reviewCard)

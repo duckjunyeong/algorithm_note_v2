@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useQuestionStore } from '../../../../store/useQuestionStore';
 import { useReviewCardStore } from '../../../../store/useReviewCardStore';
 import { useCategoryStore } from '../../../../store/useCategoryStore';
@@ -26,6 +26,13 @@ export function useTaskCreationModal() {
   const { questions, setQuestions, clearQuestions } = useQuestionStore();
   const { createReviewCard } = useReviewCardStore();
   const { selectedCategoryId, selectCategory } = useCategoryStore();
+
+  // ChatModal에서 질문이 이미 생성되어 store에 저장된 경우, select view로 시작
+  useEffect(() => {
+    if (questions && questions.questions.length > 0) {
+      setCurrentView('select');
+    }
+  }, [questions]);
 
   const resetModal = useCallback(() => {
     setCurrentView('input');

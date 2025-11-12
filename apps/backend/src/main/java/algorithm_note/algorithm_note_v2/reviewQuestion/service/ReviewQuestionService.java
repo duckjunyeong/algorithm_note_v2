@@ -15,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * ReviewQuestion 비즈니스 로직 서비스
- */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor

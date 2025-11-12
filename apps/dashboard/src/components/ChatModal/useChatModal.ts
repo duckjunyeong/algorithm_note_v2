@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { createChatService, type ChatService } from '../../services/chatService';
-import apiClient from '../../services/apiClient';
-import type { TaskType } from '../../schemas/taskCreation.schema';
+import type { TaskType, CreateAnswerResponse } from '../../schemas/taskCreation.schema';
+import { useQuestionStore } from '../../store/useQuestionStore';
 
 interface Message {
   id: number;
@@ -30,6 +30,7 @@ interface UseChatModalProps {
   taskType: TaskType;
   taskField: string;
   scrapedInfo?: ScrapedInfo;
+  onQuestionsGenerated?: () => void;
 }
 
 export const useChatModal = ({
@@ -39,14 +40,16 @@ export const useChatModal = ({
   title = "추가 태스크 생성",
   taskType,
   taskField,
-  scrapedInfo
+  onQuestionsGenerated
 }: UseChatModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [initLoading, setInitLoading] = useState<boolean>(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [showSaveButton, setShowSaveButton] = useState<boolean>(false);
+  const [sessionId] = useState<string | null>(null);
+  const [showSaveButton] = useState<boolean>(false);
+  const [generatedQuestions, setGeneratedQuestions] = useState<string[]>([]);
+  const [showGenerateButton, setShowGenerateButton] = useState<boolean>(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const chatServiceRef = useRef<ChatService | undefined>(undefined);
   const currentBotMessageIdRef = useRef<number | null>(null);
@@ -56,6 +59,57 @@ export const useChatModal = ({
       chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
     }
   }, []);
+
+  // 질문 목록 파싱 함수
+  const parseGeneratedQuestions = useCallback((text: string): string[] => {
+    // "## 🎯 생성된 질문" 섹션 찾기
+    const questionSectionRegex = /##\s*🎯\s*생성된 질문([\s\S]*?)(?=##|$)/;
+    const match = text.match(questionSectionRegex);
+
+    if (!match) return [];
+
+    const content = match[1];
+
+    // 번호 목록 추출: 1. 질문, 2. 질문, ...
+    const listRegex = /^\d+\.\s+(.+?)$/gm;
+    const questions: string[] = [];
+    let listMatch;
+
+    while ((listMatch = listRegex.exec(content)) !== null) {
+      questions.push(listMatch[1].trim());
+    }
+
+    return questions;
+  }, []);
+
+  // "생성하기" 버튼 클릭 핸들러
+  const handleGenerateQuestions = useCallback(() => {
+    const lastBotMessage = messages[messages.length - 1];
+    if (lastBotMessage && lastBotMessage.sender === 'bot') {
+      const parsed = parseGeneratedQuestions(lastBotMessage.text);
+      setGeneratedQuestions(parsed);
+      setShowGenerateButton(false); // 버튼 숨김
+
+      // CreateAnswerResponse 형식으로 변환
+      const questionResponse: CreateAnswerResponse = {
+        title: taskField || '생성된 질문 목록',
+        questions: parsed.map((text, index) => ({
+          id: Date.now() + index, // 고유 ID 생성
+          text: text
+        }))
+      };
+
+      // useQuestionStore에 저장
+      const { setQuestions } = useQuestionStore.getState();
+      setQuestions(questionResponse);
+
+      // 콘솔 로그로 확인
+      console.log('질문 목록 저장됨:', questionResponse);
+
+      // 부모 컴포넌트에 알림 (TaskCreationModal 열기)
+      onQuestionsGenerated?.();
+    }
+  }, [messages, parseGeneratedQuestions, taskField, onQuestionsGenerated]);
 
   useEffect(() => {
     scrollToBottom();
@@ -101,11 +155,19 @@ export const useChatModal = ({
           setInitLoading(false);
         },
         onDone: () => {
-          setMessages(prev =>
-            prev.map(msg =>
+          setMessages(prev => {
+            const updated = prev.map(msg =>
               msg.isTyping ? { ...msg, isTyping: false } : msg
-            )
-          );
+            );
+
+            // 마지막 봇 메시지에서 "생성된 질문" 패턴 확인
+            const lastBotMessage = updated[updated.length - 1];
+            if (lastBotMessage?.sender === 'bot' && lastBotMessage.text.includes('🎯 생성된 질문')) {
+              setShowGenerateButton(true);
+            }
+
+            return updated;
+          });
           setLoading(false);
           currentBotMessageIdRef.current = null;
           setTimeout(scrollToBottom, 50);
@@ -176,16 +238,15 @@ export const useChatModal = ({
     }
   }, [handleSendMessage]);
 
+  // SelectableList에서 선택된 항목 처리
+  const handleSelectItems = useCallback((selectedNumbers: number[]) => {
+    const message = `${selectedNumbers.join(', ')}번 선택`;
+    handleSendMessage(message);
+  }, [handleSendMessage]);
+
   const handleRecommendationClick = useCallback((question: string) => {
     handleSendMessage(question);
   }, [handleSendMessage]);
-
-  const handleTypingComplete = useCallback((messageId: number, messageIndex: number) => {
-    setMessages(prev => prev.map(m =>
-      m.id === messageId ? { ...m, isTyping: false } : m
-    ));
-    setTimeout(scrollToBottom, 50);
-  }, [scrollToBottom]);
 
 
   return {
@@ -201,10 +262,13 @@ export const useChatModal = ({
     chatAreaRef,
     recommendedQuestions,
     showSaveButton,
+    generatedQuestions,
+    showGenerateButton,
     setInputValue,
     handleSendMessage,
     handleKeyDown,
     handleRecommendationClick,
-    handleTypingComplete
+    handleGenerateQuestions,
+    handleSelectItems
   };
 };

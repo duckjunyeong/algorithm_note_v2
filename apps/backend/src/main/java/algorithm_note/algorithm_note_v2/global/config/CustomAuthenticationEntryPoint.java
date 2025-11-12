@@ -16,11 +16,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * Custom authentication entry point that handles unauthorized access.
- * - API requests: Returns JSON error response (401 Unauthorized)
- * - Page requests: Redirects to configured frontend sign-in page
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -50,26 +45,19 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         }
     }
 
-    /**
-     * Determines if the request is an API request.
-     * Checks for /api/** path or AJAX headers.
-     */
     private boolean isApiRequest(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         String acceptHeader = request.getHeader("Accept");
         String ajaxHeader = request.getHeader(AJAX_HEADER);
 
-        // Check if it's an API path
         if (requestUri.startsWith(API_PREFIX)) {
             return true;
         }
 
-        // Check if it's an AJAX request
         if (AJAX_HEADER_VALUE.equalsIgnoreCase(ajaxHeader)) {
             return true;
         }
 
-        // Check if client accepts JSON (typical for API calls)
         if (acceptHeader != null && acceptHeader.contains(MediaType.APPLICATION_JSON_VALUE)) {
             return true;
         }
@@ -77,9 +65,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         return false;
     }
 
-    /**
-     * Handles API requests by returning a JSON error response.
-     */
     private void handleApiRequest(HttpServletResponse response, AuthenticationException authException)
             throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -95,9 +80,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         log.debug("Returned JSON error response for API request");
     }
 
-    /**
-     * Handles page requests by redirecting to the dashboard sign-in page.
-     */
     private void handlePageRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String targetUrl = request.getRequestURI();

@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Category response DTO
- */
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -23,12 +21,6 @@ public class CategoryResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    /**
-     * Create DTO from Category entity.
-     *
-     * @param category Category entity
-     * @return CategoryResponseDto
-     */
     public static CategoryResponseDto from(Category category) {
         return CategoryResponseDto.builder()
                 .categoryId(category.getCategoryId())

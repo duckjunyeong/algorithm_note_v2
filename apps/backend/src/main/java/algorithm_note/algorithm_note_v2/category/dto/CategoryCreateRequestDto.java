@@ -8,9 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * Category creation request DTO
- */
 @Getter
 @Builder
 @NoArgsConstructor

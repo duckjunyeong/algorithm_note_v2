@@ -26,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 복습 카드 비즈니스 로직 서비스
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,13 +38,6 @@ public class ReviewCardService {
     private final ReviewQuestionService reviewQuestionService;
     private final CategoryService categoryService;
 
-    /**
-     * 복습 카드를 생성합니다.
-     *
-     * @param requestDto 복습 카드 생성 요청 DTO
-     * @param user 카드를 생성할 사용자
-     * @return 생성된 복습 카드의 응답 DTO
-     */
     @Transactional
     public ReviewCardCreateResponseDto createReviewCard(ReviewCardCreateRequestDto requestDto, User user) {
         log.info("Creating review card for user: {}, title: {}", user.getId(), requestDto.getTitle());
@@ -87,12 +77,6 @@ public class ReviewCardService {
         }
     }
 
-    /**
-     * 사용자의 모든 복습 카드를 조회합니다.
-     *
-     * @param user 복습 카드를 조회할 사용자
-     * @return 복습 카드 목록
-     */
     public List<ReviewCardResponseDto> getAllReviewCardsByUser(User user) {
         log.info("Fetching all review cards for user: {}", user.getId());
 
@@ -105,13 +89,6 @@ public class ReviewCardService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 특정 복습 카드를 상세 조회합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param user 소유자 사용자
-     * @return 복습 카드 상세 정보
-     */
     public ReviewCardResponseDto getReviewCardById(Long reviewCardId, User user) {
         log.info("Fetching review card with ID: {} for user: {}", reviewCardId, user.getId());
 
@@ -121,13 +98,6 @@ public class ReviewCardService {
         return ReviewCardResponseDto.from(reviewCard);
     }
 
-    /**
-     * 복습 카드의 상태를 업데이트합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param isActive 활성 상태 (true: 백로그, false: 완료)
-     * @param user 소유자 사용자
-     */
     @Transactional
     public void updateReviewCardStatus(Long reviewCardId, Boolean isActive, User user) {
         log.info("Updating review card status - ID: {}, isActive: {}, user: {}",
@@ -142,12 +112,6 @@ public class ReviewCardService {
         log.info("Successfully updated review card status - ID: {}", reviewCardId);
     }
 
-    /**
-     * 복습 카드의 복습 횟수를 증가시킵니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param user 소유자 사용자
-     */
     @Transactional
     public void incrementReviewCount(Long reviewCardId, User user) {
         log.info("Incrementing review count for card ID: {}, user: {}", reviewCardId, user.getId());
@@ -161,12 +125,6 @@ public class ReviewCardService {
         log.info("Successfully incremented review count for card ID: {}", reviewCardId);
     }
 
-    /**
-     * 복습 카드를 삭제합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param user 소유자 사용자
-     */
     @Transactional
     public void deleteReviewCard(Long reviewCardId, User user) {
         log.info("Deleting review card - ID: {}, user: {}", reviewCardId, user.getId());
@@ -180,13 +138,6 @@ public class ReviewCardService {
         log.info("Successfully deleted review card - ID: {}", reviewCardId);
     }
 
-    /**
-     * 사용자의 활성 상태별 복습 카드를 조회합니다.
-     *
-     * @param user 복습 카드를 조회할 사용자
-     * @param isActive 활성 상태
-     * @return 해당 상태의 복습 카드 목록
-     */
     public List<ReviewCardResponseDto> getReviewCardsByStatus(User user, Boolean isActive) {
         log.info("Fetching review cards by status - user: {}, isActive: {}", user.getId(), isActive);
 
@@ -200,12 +151,6 @@ public class ReviewCardService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 사용자의 복습 카드 통계를 조회합니다.
-     *
-     * @param user 통계를 조회할 사용자
-     * @return 통계 정보
-     */
     public ReviewCardStatsDto getReviewCardStats(User user) {
         log.info("Fetching review card stats for user: {}", user.getId());
 
@@ -220,13 +165,6 @@ public class ReviewCardService {
                 .build();
     }
 
-    /**
-     * 비활성화된 복습 카드의 질문과 답변 목록을 조회합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param user 소유자 사용자
-     * @return 질문별 답변 목록이 포함된 응답 DTO
-     */
     public ReviewCardResultResponseDto getReviewCardResults(Long reviewCardId, User user) {
         log.info("Fetching review card results - cardId: {}, user: {}", reviewCardId, user.getId());
 
@@ -252,13 +190,6 @@ public class ReviewCardService {
         return ReviewCardResultResponseDto.from(reviewQuestions, answersMap);
     }
 
-    /**
-     * 복습 테스트 결과를 저장합니다.
-     *
-     * @param reviewCardId 복습 카드 ID
-     * @param requestDto 업데이트 요청 DTO
-     * @param user 소유자 사용자
-     */
     @Transactional
     public void updateReviewResult(Long reviewCardId, ReviewCardUpdateRequestDto requestDto, User user) {
         log.info("Updating review result - cardId: {}, user: {}", reviewCardId, user.getId());
@@ -325,9 +256,6 @@ public class ReviewCardService {
         log.info("Successfully updated review result - cardId: {}", reviewCardId);
     }
 
-    /**
-     * 복습 카드 통계 DTO
-     */
     @lombok.Getter
     @lombok.Builder
     @lombok.NoArgsConstructor

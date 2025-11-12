@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 복습 카드 응답 DTO
- */
 @Getter
 @Builder
 @NoArgsConstructor

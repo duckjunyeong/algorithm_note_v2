@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * AI 질문 생성 응답 DTO
- */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

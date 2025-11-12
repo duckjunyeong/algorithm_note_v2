@@ -271,7 +271,6 @@ function SelectView({
 }: SelectViewProps) {
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
       <div className="mb-4">
         <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
         <p className="text-sm text-gray-600">
@@ -279,9 +278,7 @@ function SelectView({
         </p>
       </div>
 
-      {/* Main Content Area - Flex Layout */}
       <div className="flex gap-4 flex-1 min-h-[400px]">
-        {/* Questions List */}
         <div className="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[500px]">
           {questions.map((question) => (
             <div

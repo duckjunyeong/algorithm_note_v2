@@ -7,11 +7,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * Answer entity representing user's answers to review questions.
- *
- * 답변 엔티티 - 복습 질문에 대한 사용자의 답변을 나타냅니다.
- */
 @Entity
 @Table(name = "answer")
 @Getter
@@ -45,23 +40,11 @@ public class Answer {
         this.createdAt = LocalDateTime.now();
     }
 
-    /**
-     * 답변의 평가 결과 ENUM
-     */
     public enum EvaluationResult {
         SUCCESS,  // 성공
         FAILURE   // 실패
     }
 
-    /**
-     * Answer를 생성하는 정적 팩토리 메서드
-     *
-     * @param reviewQuestion 소속된 복습 질문
-     * @param content 답변 내용
-     * @param evaluationResult 평가 결과
-     * @return 생성된 Answer 인스턴스
-     * @throws IllegalArgumentException content가 null이거나 비어있을 경우
-     */
     public static Answer createAnswer(ReviewQuestion reviewQuestion, String content, EvaluationResult evaluationResult) {
         if (content == null || content.trim().isEmpty()) {
             throw new IllegalArgumentException("답변 내용은 필수입니다.");

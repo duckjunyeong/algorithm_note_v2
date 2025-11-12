@@ -1,39 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Info, Maximize, X, Send } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-
-const TYPING_SPEED_MS = 15;
-
-interface TypingMessageProps {
-  fullText: string;
-  onComplete: () => void;
-}
-
-const TypingMessage: React.FC<TypingMessageProps> = ({ fullText, onComplete }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const onCompleteRef = useRef(onComplete);
-  onCompleteRef.current = onComplete;
-
-  useEffect(() => {
-    let i = 0;
-    const intervalId = setInterval(() => {
-      if (i < fullText.length) {
-        setDisplayedText(fullText.substring(0, i + 1));
-        i++;
-      } else {
-        clearInterval(intervalId);
-        if (onCompleteRef.current) {
-          onCompleteRef.current();
-        }
-      }
-    }, TYPING_SPEED_MS);
-
-    return () => clearInterval(intervalId);
-  }, [fullText]);
-
-  return <>{displayedText}</>;
-};
+import { SelectableList } from './SelectableList';
 
 interface MessageProps {
   id: number;
@@ -52,15 +21,17 @@ interface ChatModalViewProps {
   loading: boolean;
   initLoading: boolean;
   sessionId: string | null;
-  chatAreaRef: React.RefObject<HTMLDivElement>;
+  chatAreaRef: React.RefObject<HTMLDivElement | null>;
   recommendedQuestions: string[];
   showSaveButton: boolean;
+  showGenerateButton: boolean;
   setInputValue: (value: string) => void;
   handleSendMessage: () => void;
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   handleRecommendationClick: (question: string) => void;
-  handleTypingComplete: (messageId: number, index: number) => void;
   handleSaveNote: () => void;
+  handleGenerateQuestions: () => void;
+  handleSelectItems: (selectedNumbers: number[]) => void;
 }
 
 export const ChatModalView: React.FC<ChatModalViewProps> = ({
@@ -76,12 +47,14 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   chatAreaRef,
   recommendedQuestions,
   showSaveButton,
+  showGenerateButton,
   setInputValue,
   handleSendMessage,
   handleKeyDown,
   handleRecommendationClick,
-  handleTypingComplete,
-  handleSaveNote
+  handleSaveNote,
+  handleGenerateQuestions,
+  handleSelectItems
 }) => {
   const isSessionReady = sessionId !== null;
   const isInputDisabled = initLoading || (!isSessionReady && messages.length === 0);
@@ -98,7 +71,7 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
             onClick={onBackgroundClick || onClose}
           >
             <motion.div
-              className="bg-white text-text-primary rounded-2xl border border-neutral-200 shadow-xl w-[90%] max-w-2xl h-[85vh] flex flex-col overflow-hidden"
+              className="relative bg-white text-text-primary rounded-2xl border border-neutral-200 shadow-xl w-[90%] max-w-2xl h-[85vh] flex flex-col overflow-hidden"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -131,7 +104,7 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                            scrollbar-thin scrollbar-thumb-neutral-200 scrollbar-track-neutral-50
                            hover:scrollbar-thumb-neutral-300"
               >
-                {messages.map((msg, index) => (
+                {messages.map((msg) => (
                   <div
                     key={msg.id}
                     className={`flex gap-4 max-w-[85%] ${
@@ -152,7 +125,17 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                     >
                     {msg.sender === 'bot' ? (
                         !msg.isTyping ? (
-                          <ReactMarkdown>{msg.text}</ReactMarkdown>
+                          msg.text.includes('## ✅') ? (
+                            <>
+                              <ReactMarkdown>{msg.text.split('## ✅')[0]}</ReactMarkdown>
+                              <SelectableList
+                                content={msg.text}
+                                onSelect={handleSelectItems}
+                              />
+                            </>
+                          ) : (
+                            <ReactMarkdown>{msg.text}</ReactMarkdown>
+                          )
                         ) : msg.text ? (
                           msg.text
                         ) : (
@@ -182,6 +165,16 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                     </button>
                   ))}
                 </div>
+              )}
+
+              {/* "생성하기" 버튼 - 오른쪽 하단 고정 */}
+              {showGenerateButton && (
+                <button
+                  onClick={handleGenerateQuestions}
+                  className="absolute bottom-24 right-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors z-10"
+                >
+                  생성하기
+                </button>
               )}
 
               <div className="p-4 md:px-6 border-t border-neutral-100 bg-white flex-shrink-0">

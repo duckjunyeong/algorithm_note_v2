@@ -10,9 +10,7 @@ interface UseAudioRecorderReturn {
   toggleRecording: () => void;
 }
 
-/**
- * 음성 녹음 및 GCS 업로드 로직을 관리하는 Custom Hook
- */
+
 export function useAudioRecorder(): UseAudioRecorderReturn {
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -21,21 +19,16 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  /**
-   * 녹음을 시작합니다.
-   */
+
   const startRecording = useCallback(async () => {
     try {
-      // 브라우저 지원 확인
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         showErrorToast('이 브라우저는 음성 녹음을 지원하지 않습니다');
         return;
       }
 
-      // 마이크 권한 요청
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // MediaRecorder 설정
       const mimeType = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
         ? 'audio/ogg;codecs=opus'
         : MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
@@ -44,22 +37,18 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
 
       const mediaRecorder = new MediaRecorder(stream, { mimeType });
 
-      // 오디오 청크 수집
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
 
-      // 녹음 중지 시 업로드
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         audioChunksRef.current = [];
 
-        // 스트림 정리
         stream.getTracks().forEach((track) => track.stop());
 
-        // GCS 업로드
         await uploadAudio(audioBlob, mimeType);
       };
 
@@ -79,9 +68,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
   }, []);
 
-  /**
-   * 녹음을 중지합니다.
-   */
+ 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
@@ -90,9 +77,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
   }, [isRecording]);
 
-  /**
-   * 음성 파일을 GCS에 업로드하고 STT 분석을 수행합니다.
-   */
+
   const uploadAudio = async (audioBlob: Blob, contentType: string) => {
     setIsUploading(true);
 
@@ -117,7 +102,6 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
 
       showSuccessToast('음성 파일이 업로드되었습니다');
 
-      // 업로드 완료 후 자동으로 STT 분석 실행
       try {
         await SpeechTranscriptionService.transcribeAudio(result.gcsPath);
         showSuccessToast('음성 인식이 완료되었습니다');
@@ -133,9 +117,6 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
   };
 
-  /**
-   * 녹음 시작/중지를 토글합니다.
-   */
   const toggleRecording = useCallback(() => {
     if (isRecording) {
       stopRecording();

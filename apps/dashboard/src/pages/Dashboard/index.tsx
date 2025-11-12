@@ -9,6 +9,7 @@ const DashboardPage: FC = () => {
     selectedTask,
     isConfirmModalOpen,
     isConfirmLoading,
+    isReviewMenuOpen,
     isTaskCreationModalOpen,
     isTaskCreationConfirmOpen,
     isReviewFlowModalOpen,
@@ -33,7 +34,8 @@ const DashboardPage: FC = () => {
     setCompletedSortBy,
     openConfirmModal,
     closeConfirmModal,
-    openTaskCreationModal,
+    openReviewMenu,
+    closeReviewMenu,
     closeTaskCreationModal,
     handleTaskCreationBackgroundClick,
     handleConfirmTaskCreationClose,
@@ -56,6 +58,7 @@ const DashboardPage: FC = () => {
     handleConfirmTask,
     isChatModalOpen,
     closeChatModal,
+    handleChatQuestionsGenerated,
   } = useDashboardPage();
 
   return (
@@ -65,6 +68,7 @@ const DashboardPage: FC = () => {
       selectedTask={selectedTask}
       isConfirmModalOpen={isConfirmModalOpen}
       isConfirmLoading={isConfirmLoading}
+      isReviewMenuOpen={isReviewMenuOpen}
       isTaskCreationModalOpen={isTaskCreationModalOpen}
       isTaskCreationConfirmOpen={isTaskCreationConfirmOpen}
       isReviewFlowModalOpen={isReviewFlowModalOpen}
@@ -87,7 +91,8 @@ const DashboardPage: FC = () => {
       onCompletedSortChange={setCompletedSortBy}
       onOpenConfirmModal={openConfirmModal}
       onCloseConfirmModal={closeConfirmModal}
-      onOpenTaskCreationModal={openTaskCreationModal}
+      onOpenReviewMenu={openReviewMenu}
+      onCloseReviewMenu={closeReviewMenu}
       onCloseTaskCreationModal={closeTaskCreationModal}
       onTaskCreationBackgroundClick={handleTaskCreationBackgroundClick}
       onConfirmTaskCreationClose={handleConfirmTaskCreationClose}
@@ -111,6 +116,7 @@ const DashboardPage: FC = () => {
       onConfirmTask={handleConfirmTask}
       isChatModalOpen={isChatModalOpen}
       onCloseChatModal={closeChatModal}
+      onChatQuestionsGenerated={handleChatQuestionsGenerated}
     />
   );
 };

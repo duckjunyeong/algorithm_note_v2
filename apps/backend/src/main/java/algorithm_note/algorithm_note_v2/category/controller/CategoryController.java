@@ -15,11 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Category REST API Controller
- *
- * Provides APIs for category CRUD operations.
- */
+
 @Slf4j
 @RestController
 @RequestMapping("/api/categories")
@@ -28,12 +24,6 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    /**
-     * Create a new category.
-     *
-     * @param requestDto Category creation request DTO
-     * @return Created category response
-     */
     @PostMapping
     public ResponseEntity<CategoryResponseDto> createCategory(
             @Valid @RequestBody CategoryCreateRequestDto requestDto) {
@@ -48,11 +38,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Get all categories for the authenticated user.
-     *
-     * @return List of categories
-     */
     @GetMapping
     public ResponseEntity<List<CategoryResponseDto>> getCategories() {
         log.info("Fetching all categories for authenticated user");
@@ -65,12 +50,6 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
-    /**
-     * Get a specific category by ID.
-     *
-     * @param categoryId Category ID
-     * @return Category details
-     */
     @GetMapping("/{categoryId}")
     public ResponseEntity<CategoryResponseDto> getCategory(
             @PathVariable Long categoryId) {
@@ -83,12 +62,6 @@ public class CategoryController {
         return ResponseEntity.ok(category);
     }
 
-    /**
-     * Delete a category.
-     *
-     * @param categoryId Category ID
-     * @return Success response
-     */
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long categoryId) {
         log.info("Deleting category with ID: {}", categoryId);
@@ -101,12 +74,6 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Get current authenticated user from SecurityContext.
-     *
-     * @return Current authenticated user
-     * @throws RuntimeException if user is not authenticated
-     */
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

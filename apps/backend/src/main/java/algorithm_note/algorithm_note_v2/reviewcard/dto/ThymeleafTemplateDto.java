@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Thymeleaf 템플릿 데이터 DTO (내부 사용)
- */
 @Getter
 @Builder
 @NoArgsConstructor
@@ -23,9 +20,6 @@ public class ThymeleafTemplateDto {
     private String instruction;
     private List<ProblemDto> problems;
 
-    /**
-     * 문제 DTO
-     */
     @Getter
     @Builder
     @NoArgsConstructor
@@ -34,15 +28,11 @@ public class ThymeleafTemplateDto {
         private String question;
     }
 
-    /**
-     * ReviewCard 목록으로부터 템플릿 데이터 생성
-     */
     public static ThymeleafTemplateDto from(
             List<ReviewCard> cards,
             String examTitle,
             String instruction) {
 
-        // 모든 카드의 질문을 하나의 리스트로 병합
         List<ProblemDto> problems = cards.stream()
                 .flatMap(card -> card.getReviewQuestions().stream())
                 .map(q -> ProblemDto.builder()

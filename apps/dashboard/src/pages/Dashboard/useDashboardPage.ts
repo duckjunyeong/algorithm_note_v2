@@ -13,6 +13,7 @@ export const useDashboardPage = () => {
   const [selectedTask] = useState<Task | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [isConfirmLoading] = useState<boolean>(false);
+  const [isReviewMenuOpen, setIsReviewMenuOpen] = useState<boolean>(false);
   const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
   const [isTaskCreationConfirmOpen, setIsTaskCreationConfirmOpen] = useState<boolean>(false);
   const [isReviewFlowModalOpen, setIsReviewFlowModalOpen] = useState<boolean>(false);
@@ -113,6 +114,14 @@ export const useDashboardPage = () => {
   const openConfirmModal = () => setIsConfirmModalOpen(true);
   const closeConfirmModal = () => setIsConfirmModalOpen(false);
 
+  const openReviewMenu = () => setIsReviewMenuOpen(true);
+  const closeReviewMenu = () => {
+    setIsReviewMenuOpen(false);
+    if (reviewCardsError) {
+      clearError();
+    }
+  };
+
   const openTaskCreationModal = () => setIsTaskCreationModalOpen(true);
   const closeTaskCreationModal = () => {
     setIsTaskCreationModalOpen(false);
@@ -126,7 +135,7 @@ export const useDashboardPage = () => {
       taskType: selectedTaskType,
       field: taskField,
     });
-    closeTaskCreationModal();
+    closeReviewMenu();
     openChatModal();
   };
 
@@ -141,12 +150,19 @@ export const useDashboardPage = () => {
     setTaskField('');
   };
 
+  // ChatModal에서 질문 생성 완료 시 TaskCreationModal 열기
+  const handleChatQuestionsGenerated = () => {
+    closeChatModal();           // ChatModal 닫기
+    openTaskCreationModal();    // TaskCreationModal 열기
+  };
+
   const handleTaskCreationBackgroundClick = () => {
     setIsTaskCreationConfirmOpen(true);
   };
 
   const handleConfirmTaskCreationClose = () => {
     setIsTaskCreationConfirmOpen(false);
+    closeReviewMenu();
     closeTaskCreationModal();
   };
 
@@ -221,6 +237,7 @@ export const useDashboardPage = () => {
     selectedTask,
     isConfirmModalOpen,
     isConfirmLoading,
+    isReviewMenuOpen,
     isTaskCreationModalOpen,
     isTaskCreationConfirmOpen,
     isReviewFlowModalOpen,
@@ -243,7 +260,8 @@ export const useDashboardPage = () => {
     setCompletedSortBy,
     openConfirmModal,
     closeConfirmModal,
-    openTaskCreationModal,
+    openReviewMenu,
+    closeReviewMenu,
     closeTaskCreationModal,
     handleTaskCreationBackgroundClick,
     handleConfirmTaskCreationClose,
@@ -268,5 +286,6 @@ export const useDashboardPage = () => {
     handleConfirmTask,
     isChatModalOpen,
     closeChatModal,
+    handleChatQuestionsGenerated,
   };
 };
