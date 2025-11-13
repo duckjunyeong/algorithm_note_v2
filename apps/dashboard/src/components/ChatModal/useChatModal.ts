@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { createChatService, type ChatService } from '../../services/chatService';
 import type { TaskType, CreateAnswerResponse } from '../../schemas/taskCreation.schema';
 import { useQuestionStore } from '../../store/useQuestionStore';
+import { useAudioRecorder } from '../AudioRecorder/useAudioRecorder';
 
 interface Message {
   id: number;
@@ -53,6 +54,16 @@ export const useChatModal = ({
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const chatServiceRef = useRef<ChatService | undefined>(undefined);
   const currentBotMessageIdRef = useRef<number | null>(null);
+
+  // AudioRecorder 통합
+  const audioRecorder = useAudioRecorder({
+    onTranscriptionComplete: (transcript) => {
+      setInputValue(transcript);
+    },
+    onError: (error) => {
+      toast.error(error);
+    }
+  });
 
   const scrollToBottom = useCallback(() => {
     if (chatAreaRef.current) {
@@ -209,7 +220,16 @@ export const useChatModal = ({
       sender: 'user',
       text: textToSend
     };
-    setMessages(prev => [...prev, newUserMessage]);
+
+    // Add placeholder bot message with typing animation immediately
+    const placeholderBotMessage: Message = {
+      id: Date.now() + 1,
+      sender: 'bot',
+      text: '',
+      isTyping: true
+    };
+
+    setMessages(prev => [...prev, newUserMessage, placeholderBotMessage]);
     if (typeof messageText !== 'string') setInputValue('');
     setLoading(true);
 
@@ -220,13 +240,18 @@ export const useChatModal = ({
     } catch (error: any) {
       console.error('Failed to send message:', error);
       toast.error(error.message || '메시지 전송 실패');
-      const errorResponse: Message = {
-        id: Date.now() + 1,
-        sender: 'bot',
-        text: '죄송합니다. 메시지 처리 중 오류가 발생했습니다. 다시 시도해 주세요.',
-        isTyping: false
-      };
-      setMessages(prev => [...prev, errorResponse]);
+
+      // Remove placeholder and add error message
+      setMessages(prev => {
+        const withoutPlaceholder = prev.slice(0, -1);
+        const errorResponse: Message = {
+          id: Date.now() + 2,
+          sender: 'bot',
+          text: '죄송합니다. 메시지 처리 중 오류가 발생했습니다. 다시 시도해 주세요.',
+          isTyping: false
+        };
+        return [...withoutPlaceholder, errorResponse];
+      });
       setLoading(false);
     }
   }, [inputValue, scrollToBottom]);
@@ -269,6 +294,8 @@ export const useChatModal = ({
     handleKeyDown,
     handleRecommendationClick,
     handleGenerateQuestions,
-    handleSelectItems
+    handleSelectItems,
+    // AudioRecorder 상태
+    audioRecorder
   };
 };

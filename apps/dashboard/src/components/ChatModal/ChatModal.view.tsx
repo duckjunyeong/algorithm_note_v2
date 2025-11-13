@@ -1,5 +1,5 @@
 import React from 'react';
-import { Info, Maximize, X, Send } from 'lucide-react';
+import { Info, Maximize, X, Send, Mic, MicOff, Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { SelectableList } from './SelectableList';
@@ -32,6 +32,13 @@ interface ChatModalViewProps {
   handleSaveNote: () => void;
   handleGenerateQuestions: () => void;
   handleSelectItems: (selectedNumbers: number[]) => void;
+  audioRecorder: {
+    isRecording: boolean;
+    isUploading: boolean;
+    isTranscribing: boolean;
+    error: string | null;
+    toggleRecording: () => void;
+  };
 }
 
 export const ChatModalView: React.FC<ChatModalViewProps> = ({
@@ -54,10 +61,12 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   handleRecommendationClick,
   handleSaveNote,
   handleGenerateQuestions,
-  handleSelectItems
+  handleSelectItems,
+  audioRecorder
 }) => {
   const isSessionReady = sessionId !== null;
-  const isInputDisabled = initLoading || (!isSessionReady && messages.length === 0);
+  const isInputDisabled = initLoading || (!isSessionReady && messages.length === 0) ||
+                          audioRecorder.isRecording || audioRecorder.isUploading || audioRecorder.isTranscribing;
   return (
     <AnimatePresence>
       {isOpen && (
@@ -167,40 +176,73 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                 </div>
               )}
 
-              {/* "생성하기" 버튼 - 오른쪽 하단 고정 */}
-              {showGenerateButton && (
-                <button
-                  onClick={handleGenerateQuestions}
-                  className="absolute bottom-24 right-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors z-10"
-                >
-                  생성하기
-                </button>
-              )}
-
               <div className="p-4 md:px-6 border-t border-neutral-100 bg-white flex-shrink-0">
                 {initLoading && (
                   <div className="text-center text-sm text-text-secondary mb-2">
                     채팅을 초기화하는 중...
                   </div>
                 )}
-                <div className="relative flex items-center bg-background-primary border border-neutral-200 rounded-lg transition-colors focus-within:border-brand">
-                  <textarea
-                    placeholder={isInputDisabled ? "채팅 세션을 초기화하는 중입니다..." : "메시지를 입력하세요..."}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    rows={1}
-                    disabled={isInputDisabled}
-                    className="w-full bg-transparent border-none text-text-primary text-sm resize-none p-3 px-5 leading-normal min-h-[52px] max-h-[200px] placeholder-text-tertiary focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
+                <div className="flex gap-2 items-center">
+                  <div className="relative flex items-center flex-1 bg-background-primary border border-neutral-200 rounded-lg transition-colors focus-within:border-brand">
+                    <textarea
+                      placeholder={isInputDisabled ? "채팅 세션을 초기화하는 중입니다..." : "메시지를 입력하세요..."}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      rows={1}
+                      disabled={isInputDisabled}
+                      className="w-full bg-transparent border-none text-text-primary text-sm resize-none p-3 px-5 leading-normal min-h-[52px] max-h-[200px] placeholder-text-tertiary focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    <button
+                      onClick={() => handleSendMessage()}
+                      disabled={!inputValue.trim() || loading || isInputDisabled}
+                      className="bg-brand border-none text-white rounded px-2 w-9 h-9 flex items-center justify-center cursor-pointer mr-2 transition-colors hover:bg-brand-light disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-brand"
+                    >
+                      <Send size={18} />
+                    </button>
+                  </div>
+
+                  {/* 마이크 버튼 */}
                   <button
-                    onClick={() => handleSendMessage()}
-                    disabled={!inputValue.trim() || loading || isInputDisabled}
-                    className="bg-brand border-none text-white rounded px-2 w-9 h-9 flex items-center justify-center cursor-pointer mr-2 transition-colors hover:bg-brand-light disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-brand"
+                    onClick={audioRecorder.toggleRecording}
+                    disabled={isInputDisabled && !audioRecorder.isRecording}
+                    className={`border-none rounded px-2 w-9 h-9 flex items-center justify-center cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 ${
+                      audioRecorder.isRecording
+                        ? 'bg-red-500 text-white hover:bg-red-600'
+                        : 'bg-brand text-white hover:bg-brand-light disabled:bg-brand'
+                    }`}
+                    aria-label={
+                      audioRecorder.isRecording
+                        ? '녹음 중지'
+                        : audioRecorder.isUploading
+                        ? '업로드 중'
+                        : audioRecorder.isTranscribing
+                        ? 'STT 처리 중'
+                        : '음성 녹음'
+                    }
                   >
-                    <Send size={18} />
+                    {audioRecorder.isRecording ? (
+                      <MicOff size={18} />
+                    ) : audioRecorder.isUploading || audioRecorder.isTranscribing ? (
+                      <Loader2 size={18} className="animate-spin" />
+                    ) : (
+                      <Mic size={18} />
+                    )}
                   </button>
                 </div>
+
+                {/* "생성하기" 버튼 - 입력 영역 아래 */}
+                {showGenerateButton && (
+                  <div className="pt-3 flex justify-end">
+                    <button
+                      onClick={handleGenerateQuestions}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors font-medium text-sm"
+                    >
+                      생성하기
+                    </button>
+                  </div>
+                )}
+
                 {showSaveButton && (
                   <div className="pt-3 flex justify-end pr-2">
                     <button

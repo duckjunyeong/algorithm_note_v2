@@ -38,7 +38,8 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     handleKeyDown,
     handleRecommendationClick,
     handleGenerateQuestions,
-    handleSelectItems
+    handleSelectItems,
+    audioRecorder
   } = useChatModal(props);
 
   // 임시 handleSaveNote 함수 (추후 구현 예정)
@@ -66,7 +67,8 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     handleRecommendationClick,
     handleSaveNote,
     handleGenerateQuestions,
-    handleSelectItems
+    handleSelectItems,
+    audioRecorder
   };
 
   return <ChatModalView {...chatModalViewProps} />;
