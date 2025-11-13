@@ -59,14 +59,7 @@ export function useAudioRecorder(props?: UseAudioRecorderProps): UseAudioRecorde
 
         console.log('STT 완료:', transcriptionResult);
 
-        if (transcriptionResult.transcript) {
-          onTranscriptionComplete?.(transcriptionResult.transcript);
-        } else {
-          const errorMsg = '음성을 인식할 수 없습니다';
-          setError(errorMsg);
-          showErrorToast(errorMsg);
-          onError?.(errorMsg);
-        }
+        onTranscriptionComplete?.(transcriptionResult.transcript || '');
       } catch (sttError) {
         console.error('STT 분석 실패:', sttError);
         const errorMsg = '음성 인식에 실패했습니다';

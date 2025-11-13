@@ -26,6 +26,7 @@ export const useDashboardPage = () => {
   const [taskField, setTaskField] = useState<string>('');
 
   const [isChatModalOpen, setIsChatModalOpen] = useState<boolean>(false);
+  const [isChatCloseConfirmOpen, setIsChatCloseConfirmOpen] = useState<boolean>(false);
 
   const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
@@ -66,6 +67,13 @@ export const useDashboardPage = () => {
     } finally {
       setIsLoadingCategories(false);
     }
+  };
+
+  const handleRetryFetch = async () => {
+    await Promise.all([
+      fetchReviewCards(),
+      loadCategories()
+    ]);
   };
 
   const handleSaveCategory = async (name: string, color: string) => {
@@ -148,6 +156,19 @@ export const useDashboardPage = () => {
     setIsChatModalOpen(false);
     setSelectedTaskType('concept');
     setTaskField('');
+  };
+
+  const handleChatBackgroundClick = () => {
+    setIsChatCloseConfirmOpen(true);
+  };
+
+  const handleConfirmChatClose = () => {
+    setIsChatCloseConfirmOpen(false);
+    closeChatModal();
+  };
+
+  const handleCancelChatClose = () => {
+    setIsChatCloseConfirmOpen(false);
   };
 
   // ChatModal에서 질문 생성 완료 시 TaskCreationModal 열기
@@ -287,5 +308,10 @@ export const useDashboardPage = () => {
     isChatModalOpen,
     closeChatModal,
     handleChatQuestionsGenerated,
+    isChatCloseConfirmOpen,
+    handleChatBackgroundClick,
+    handleConfirmChatClose,
+    handleCancelChatClose,
+    handleRetryFetch,
   };
 };

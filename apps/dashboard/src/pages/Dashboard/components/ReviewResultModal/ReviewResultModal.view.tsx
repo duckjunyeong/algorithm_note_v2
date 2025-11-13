@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import type { QuestionWithAnswers, Answer } from '../../../../../../../libs/api-types/src';
-import ConfirmModal  from '../../../../../../../libs/ui-components/src/components/ConfirmModal';
+import { ConfirmModal } from '../../../../../../../libs/ui-components/src/components/ConfirmModal';
 
 export interface ReviewResultModalViewProps {
   isOpen: boolean;

@@ -29,7 +29,7 @@ export const ConfirmModalView: FC<ConfirmModalViewProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-neutral-900/50"
+      className="fixed inset-0 z-[2000] flex items-center justify-center bg-neutral-900/50"
     >
       <div
         className="w-full max-w-md rounded-xl bg-background-secondary p-6 shadow-xl"

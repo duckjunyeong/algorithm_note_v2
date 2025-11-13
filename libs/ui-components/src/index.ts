@@ -29,3 +29,9 @@ export type { CategoryCreationFormProps } from './components/CategoryCreationFor
 
 
 export { ChatInterface } from './components/ChatInterface';
+
+export { ConfirmModal } from './components/ConfirmModal';
+export type { ConfirmModalViewProps } from './components/ConfirmModal/ConfirmModal.view';
+
+export { NetworkErrorPage } from './components/NetworkErrorPage';
+export type { NetworkErrorPageViewProps } from './components/NetworkErrorPage/NetworkErrorPage.view';

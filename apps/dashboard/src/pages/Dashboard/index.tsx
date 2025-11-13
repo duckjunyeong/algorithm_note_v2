@@ -59,6 +59,11 @@ const DashboardPage: FC = () => {
     isChatModalOpen,
     closeChatModal,
     handleChatQuestionsGenerated,
+    isChatCloseConfirmOpen,
+    handleChatBackgroundClick,
+    handleConfirmChatClose,
+    handleCancelChatClose,
+    handleRetryFetch,
   } = useDashboardPage();
 
   return (
@@ -117,6 +122,11 @@ const DashboardPage: FC = () => {
       isChatModalOpen={isChatModalOpen}
       onCloseChatModal={closeChatModal}
       onChatQuestionsGenerated={handleChatQuestionsGenerated}
+      isChatCloseConfirmOpen={isChatCloseConfirmOpen}
+      onChatBackgroundClick={handleChatBackgroundClick}
+      onConfirmChatClose={handleConfirmChatClose}
+      onCancelChatClose={handleCancelChatClose}
+      onRetryFetch={handleRetryFetch}
     />
   );
 };

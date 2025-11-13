@@ -191,7 +191,7 @@ interface CardItemProps {
 
 function CardItem({ card, isSelected, onToggle }: CardItemProps) {
   const tags = [
-    { label: '정답률', value: `${card.successRate ?? 0}%` },
+    { label: '정답률', value: `${(card.successRate ?? 0).toFixed(1)}%` },
     { label: '중요도', value: card.importance },
     { label: '주기', value: `${card.reviewCycle}일` },
     { label: '반복', value: `${card.reviewCount}회` },
