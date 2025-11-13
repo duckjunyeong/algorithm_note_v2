@@ -7,7 +7,12 @@ import { showSuccessToast, showErrorToast } from '../../../../utils/toast';
 
 type ViewType = 'input' | 'select' | 'category';
 
-export function useTaskCreationModal() {
+interface UseTaskCreationModalProps {
+  selectedTaskType?: 'concept' | 'memorization' | 'approach';
+  selectedTaskField?: string;
+}
+
+export function useTaskCreationModal(props?: UseTaskCreationModalProps) {
   const [currentView, setCurrentView] = useState<ViewType>('input');
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -188,6 +193,8 @@ export function useTaskCreationModal() {
         importance,
         reviewCycle: repetitionCycle,
         url: url || undefined,
+        taskType: props?.selectedTaskType || 'concept',
+        taskField: props?.selectedTaskField,
         questions: selectedQuestionTexts
       };
 

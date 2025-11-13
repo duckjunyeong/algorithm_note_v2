@@ -26,6 +26,8 @@ public class ReviewCardResponseDto {
     private Integer reviewCount;
     private Double successRate;
     private String url;
+    private String taskType;
+    private String taskField;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<ReviewQuestionResponseDto> reviewQuestions;
@@ -42,6 +44,8 @@ public class ReviewCardResponseDto {
                 .reviewCount(reviewCard.getReviewCount())
                 .successRate(reviewCard.getSuccessRate())
                 .url(reviewCard.getUrl())
+                .taskType(reviewCard.getTaskType())
+                .taskField(reviewCard.getTaskField())
                 .createdAt(reviewCard.getCreatedAt())
                 .updatedAt(reviewCard.getUpdatedAt())
                 .reviewQuestions(
@@ -64,6 +68,8 @@ public class ReviewCardResponseDto {
                 .reviewCount(reviewCard.getReviewCount())
                 .successRate(reviewCard.getSuccessRate())
                 .url(reviewCard.getUrl())
+                .taskType(reviewCard.getTaskType())
+                .taskField(reviewCard.getTaskField())
                 .createdAt(reviewCard.getCreatedAt())
                 .updatedAt(reviewCard.getUpdatedAt())
                 .build();

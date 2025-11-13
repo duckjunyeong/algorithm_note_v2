@@ -16,6 +16,7 @@ interface ChatModalViewProps {
   onClose: () => void;
   onBackgroundClick: () => void;
   title: string;
+  mode: 'question-generation' | 'review-test';
   messages: MessageProps[];
   inputValue: string;
   loading: boolean;
@@ -46,6 +47,7 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   onClose,
   onBackgroundClick,
   title,
+  mode,
   messages,
   inputValue,
   loading,
@@ -231,14 +233,14 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                   </button>
                 </div>
 
-                {/* "생성하기" 버튼 - 입력 영역 아래 */}
+                {/* "생성하기" 또는 "제출하기" 버튼 - 입력 영역 아래 */}
                 {showGenerateButton && (
                   <div className="pt-3 flex justify-end">
                     <button
                       onClick={handleGenerateQuestions}
                       className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors font-medium text-sm"
                     >
-                      생성하기
+                      {mode === 'review-test' ? '제출하기' : '생성하기'}
                     </button>
                   </div>
                 )}

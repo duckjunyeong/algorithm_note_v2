@@ -17,6 +17,8 @@ export const API_ENDPOINTS = {
   CHAT: {
     SUBSCRIBE: '/chat/subscribe',
     MESSAGE: '/chat/message',
+    TEST_SUBSCRIBE: '/chat/test/subscribe',
+    TEST_MESSAGE: '/chat/test/message',
   },
 } as const;
 

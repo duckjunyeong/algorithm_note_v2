@@ -56,6 +56,12 @@ public class ReviewCard {
     @Column(name = "url", length = 500)
     private String url;
 
+    @Column(name = "task_type", length = 50, nullable = false)
+    private String taskType;
+
+    @Column(name = "task_field", length = 100)
+    private String taskField;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

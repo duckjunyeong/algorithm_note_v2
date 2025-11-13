@@ -54,6 +54,8 @@ public class ReviewCardService {
                     .importance(requestDto.getImportance())
                     .reviewCycle(requestDto.getReviewCycle())
                     .url(requestDto.getUrl())
+                    .taskType(requestDto.getTaskType())
+                    .taskField(requestDto.getTaskField())
                     .build();
 
             // 3. ReviewCard 저장

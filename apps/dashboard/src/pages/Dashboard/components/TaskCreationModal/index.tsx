@@ -11,6 +11,8 @@ interface TaskCreationModalProps {
   isLoadingCategories: boolean;
   categoryError: string | null;
   onSaveCategory: (name: string, color: string) => Promise<void>;
+  selectedTaskType?: 'concept' | 'memorization' | 'approach';
+  selectedTaskField?: string;
 }
 
 export function TaskCreationModal({
@@ -20,7 +22,9 @@ export function TaskCreationModal({
   categories,
   isLoadingCategories,
   categoryError,
-  onSaveCategory
+  onSaveCategory,
+  selectedTaskType,
+  selectedTaskField
 }: TaskCreationModalProps) {
   const {
     currentView,
@@ -49,7 +53,10 @@ export function TaskCreationModal({
     handleCloseCategoryForm,
     handleRegisterSelectedQuestions,
     resetModal
-  } = useTaskCreationModal();
+  } = useTaskCreationModal({
+    selectedTaskType,
+    selectedTaskField
+  });
 
   const { selectedCategoryId } = useCategoryStore();
 

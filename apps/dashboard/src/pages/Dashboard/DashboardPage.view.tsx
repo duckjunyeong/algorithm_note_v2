@@ -367,6 +367,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           isOpen={isChatModalOpen}
           onClose={onCloseChatModal}
           onBackgroundClick={onChatBackgroundClick}
+          mode="question-generation"
           taskType={selectedTaskType}
           taskField={taskField}
           onQuestionsGenerated={onChatQuestionsGenerated}
@@ -393,6 +394,8 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           isLoadingCategories={isLoadingCategories}
           categoryError={categoryError}
           onSaveCategory={onSaveCategory}
+          selectedTaskType={selectedTaskType}
+          selectedTaskField={taskField}
         />
       )}
     </div>

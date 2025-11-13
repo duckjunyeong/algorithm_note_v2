@@ -4,6 +4,7 @@ import apiClient, { getAuthToken } from './apiClient';
 import { API_ENDPOINTS } from '../constants/api';
 
 export interface ChatServiceOptions {
+  mode: 'question-generation' | 'review-test';
   taskType: TaskType;
   taskField: string;
   onMessage: (content: string) => void;
@@ -73,7 +74,13 @@ export const createChatService = (
     });
 
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
-    const url = `${baseUrl}${API_ENDPOINTS.CHAT.SUBSCRIBE}?${params}`;
+
+    // mode에 따라 엔드포인트 선택
+    const endpoint = options.mode === 'review-test'
+      ? API_ENDPOINTS.CHAT.TEST_SUBSCRIBE
+      : API_ENDPOINTS.CHAT.SUBSCRIBE;
+
+    const url = `${baseUrl}${endpoint}?${params}`;
 
     const tokenGetter = getAuthToken();
     const token = tokenGetter ? await tokenGetter : null;
@@ -93,7 +100,12 @@ export const createChatService = (
   };
 
   const sendMessage = async (message: string) => {
-    await apiClient.post(API_ENDPOINTS.CHAT.MESSAGE, {
+    // mode에 따라 엔드포인트 선택
+    const endpoint = options.mode === 'review-test'
+      ? API_ENDPOINTS.CHAT.TEST_MESSAGE
+      : API_ENDPOINTS.CHAT.MESSAGE;
+
+    await apiClient.post(endpoint, {
       message,
     });
   };

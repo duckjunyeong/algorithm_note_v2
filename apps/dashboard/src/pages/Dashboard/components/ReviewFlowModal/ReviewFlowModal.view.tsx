@@ -1,30 +1,56 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiX, FiChevronLeft } from 'react-icons/fi';
+import { Brain, GraduationCap, Award } from 'lucide-react';
 import type { ReviewFlowView } from './useReviewFlowModal';
-import { SelectionView } from './views/SelectionView';
+import type { AiMode, AiModeOption } from '../../../../components/TaskReviewAiChooser/useTaskReviewAiChooserModal';
+import { TaskReviewAiChooserView } from '../../../../components/TaskReviewAiChooser/TaskReviewAiChooserModal.view';
 import { TestView } from './views/TestView';
 
 export interface ReviewFlowModalViewProps {
   isOpen: boolean;
   currentView: ReviewFlowView;
-  selectedReviewType: string | null;
+  selectedAiMode: AiMode | null;
   reviewCardId: number | null;
   reviewCard: any | null;
-  onSelectReviewType: (typeId: string) => void;
+  onSelectAiMode: (modeId: string) => void;
   onProceedToTest: () => void;
-  onBackToSelection: () => void;
+  onBackToAiSelection: () => void;
   onClose: () => void;
 }
+
+const AI_MODE_OPTIONS: AiModeOption[] = [
+  {
+    id: 'beginner-tutor',
+    title: '입문 튜터',
+    description: '생성된 질문들과 관련된 분야에 대해서 무지한 AI Model입니다.',
+    icon: <Brain size={24} />,
+    iconBgClass: 'bg-green-100 text-green-600',
+  },
+  {
+    id: 'advanced-tutor',
+    title: '학부생 튜터',
+    description: '관련된 분야에 대해서 학부생 수준 AI Model입니다.',
+    icon: <GraduationCap size={24} />,
+    iconBgClass: 'bg-blue-100 text-blue-600',
+  },
+  {
+    id: 'prof-tutor',
+    title: '교수 튜터',
+    description: '생성된 질문들과 관련된 분야에 대해서 교수 수준 AI Model입니다.',
+    icon: <Award size={24} />,
+    iconBgClass: 'bg-purple-100 text-purple-600',
+  },
+];
 
 export function ReviewFlowModalView({
   isOpen,
   currentView,
-  selectedReviewType,
+  selectedAiMode,
   reviewCardId,
   reviewCard,
-  onSelectReviewType,
+  onSelectAiMode,
   onProceedToTest,
-  onBackToSelection,
+  onBackToAiSelection,
   onClose,
 }: ReviewFlowModalViewProps) {
   if (!isOpen) return null;
@@ -61,73 +87,67 @@ export function ReviewFlowModalView({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="absolute inset-0" onClick={onClose} />
-      <div className="relative bg-background-secondary rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-neutral-200 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            {currentView === 'test' && (
-              <button
-                onClick={onBackToSelection}
-                className="text-text-secondary hover:text-text-primary transition-colors"
-                aria-label="뒤로가기"
-              >
-                <FiChevronLeft size={24} />
-              </button>
-            )}
-            <h2 className="text-xl font-semibold text-text-primary">
-              {currentView === 'selection' ? '테스트 방식 선택' : '복습 테스트'}
-            </h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-text-secondary hover:text-text-primary transition-colors"
-            aria-label="닫기"
+      <AnimatePresence mode="wait">
+        {currentView === 'ai-selection' ? (
+          <motion.div
+            key="ai-selection"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
           >
-            <FiX size={24} />
-          </button>
-        </div>
+            <TaskReviewAiChooserView
+              aiModes={AI_MODE_OPTIONS}
+              selectedAiModeId={selectedAiMode}
+              onAiModeSelect={onSelectAiMode}
+              onCancel={onClose}
+              onNext={onProceedToTest}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="test"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.3 }}
+            className="relative bg-background-secondary rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden"
+          >
+            <div className="flex items-center justify-between p-6 border-b border-neutral-200 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={onBackToAiSelection}
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                  aria-label="뒤로가기"
+                >
+                  <FiChevronLeft size={24} />
+                </button>
+                <h2 className="text-xl font-semibold text-text-primary">
+                  복습 테스트
+                </h2>
+              </div>
+              <button
+                onClick={onClose}
+                className="text-text-secondary hover:text-text-primary transition-colors"
+                aria-label="닫기"
+              >
+                <FiX size={24} />
+              </button>
+            </div>
 
-        {/* Content with Animation */}
-        <div className="relative flex-1 overflow-hidden min-h-0">
-          <AnimatePresence mode="wait" initial={false}>
-            {currentView === 'selection' ? (
-              <motion.div
-                key="selection"
-                initial="enterFromLeft"
-                animate="center"
-                exit="exitToLeft"
-                variants={slideVariants}
-                transition={transition}
-              >
-                <div className="h-full overflow-y-auto">
-                  <SelectionView
-                    selectedReviewType={selectedReviewType}
-                    onSelectReviewType={onSelectReviewType}
-                    onProceedToTest={onProceedToTest}
-                  />
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="test"
-                initial="enterFromRight"
-                animate="center"
-                exit="exitToRight"
-                variants={slideVariants}
-                transition={transition}
-              >
-                <div className="h-full overflow-y-auto">
-                  <TestView
-                    reviewCardId={reviewCardId}
-                    reviewCard={reviewCard}
-                    onClose={onClose}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
+            <div className="relative flex-1 overflow-hidden min-h-0">
+              <div className="h-full overflow-y-auto">
+                <TestView
+                  reviewCardId={reviewCardId}
+                  reviewCard={reviewCard}
+                  selectedAiMode={selectedAiMode}
+                  onClose={onClose}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

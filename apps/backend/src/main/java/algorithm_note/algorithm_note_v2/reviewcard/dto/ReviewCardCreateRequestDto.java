@@ -36,6 +36,13 @@ public class ReviewCardCreateRequestDto {
     @Pattern(regexp = "^(https?://)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$|^$", message = "올바른 URL 형식이 아닙니다")
     private String url;
 
+    @NotBlank(message = "태스크 타입은 필수입니다")
+    @Pattern(regexp = "^(concept|memorization|approach)$", message = "올바른 태스크 타입이 아닙니다")
+    private String taskType;
+
+    @Size(max = 100, message = "태스크 필드는 100자 이내여야 합니다")
+    private String taskField;
+
     @NotNull(message = "질문 목록을 입력해주세요")
     @Size(min = 1, message = "최소 1개의 질문을 추가해주세요")
     @Size(max = 10, message = "질문은 최대 10개까지 추가할 수 있습니다")

@@ -1,17 +1,17 @@
-import type { TemplateOption } from './useTaskReviewAiChooserModal';
+import type { AiModeOption } from './useTaskReviewAiChooserModal';
 
 interface TaskReviewAiChooserViewProps {
-  templates: TemplateOption[];
-  selectedTemplateId: string | null;
-  onTemplateSelect: (id: string) => void;
+  aiModes: AiModeOption[];
+  selectedAiModeId: string | null;
+  onAiModeSelect: (id: string) => void;
   onCancel: () => void;
   onNext: () => void;
 }
 
 export function TaskReviewAiChooserView({
-  templates,
-  selectedTemplateId,
-  onTemplateSelect,
+  aiModes,
+  selectedAiModeId,
+  onAiModeSelect,
   onCancel,
   onNext,
 }: TaskReviewAiChooserViewProps) {
@@ -21,56 +21,72 @@ export function TaskReviewAiChooserView({
       <header className="flex justify-between items-start mb-6">
         <div>
           <h2 className="text-lg font-semibold text-text-primary">
-            Choose template
+            AI 모드 선택
           </h2>
           <p className="text-sm text-text-secondary mt-1">
-            Select a template to start organizing your content.
+            테스트에 사용할 AI 모드를 선택해주세요.
           </p>
         </div>
-        <span className="text-sm text-text-tertiary flex-shrink-0 ml-4">
-          1/3
-        </span>
       </header>
 
-      <div className="space-y-3 mb-8">
-        {templates.map((template) => {
-          const isSelected = selectedTemplateId === template.id;
-          
+      <div className="space-y-3 mb-4">
+        {aiModes.map((aiMode) => {
+          const isSelected = selectedAiModeId === aiMode.id;
+
           const itemClasses = [
             'flex', 'items-center', 'space-x-4', 'p-4', 'rounded-lg',
-            'cursor-pointer', 'transition-all', 'duration-200',
+            'cursor-pointer', 'transition-all', 'duration-200', 'relative',
             isSelected
-              ? 'border-2 border-brand-DEFAULT' 
-              : 'border border-neutral-100 hover:border-neutral-300' 
+              ? 'border-2 border-brand-DEFAULT bg-brand-100 shadow-md'
+              : 'border-2 border-transparent bg-neutral-50 hover:border-brand-200 hover:bg-neutral-100'
           ].join(' ');
 
           return (
             <div
-              key={template.id}
+              key={aiMode.id}
               className={itemClasses}
-              onClick={() => onTemplateSelect(template.id)}
+              onClick={() => onAiModeSelect(aiMode.id)}
               role="radio"
               aria-checked={isSelected}
               tabIndex={0}
-              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onTemplateSelect(template.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onAiModeSelect(aiMode.id);
+                }
+              }}
             >
-              <div 
-                className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg ${template.iconBgClass}`}
+              <div
+                className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg ${aiMode.iconBgClass}`}
               >
-                {template.icon}
+                {aiMode.icon}
               </div>
-              
-              <div>
+
+              <div className="flex-1">
                 <h3 className="font-medium text-text-primary">
-                  {template.title}
+                  {aiMode.title}
                 </h3>
                 <p className="text-sm text-text-secondary">
-                  {template.description}
+                  {aiMode.description}
                 </p>
               </div>
+
+              {isSelected && (
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-brand-DEFAULT flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
             </div>
           );
         })}
+      </div>
+
+      <div className="mb-8 p-4 bg-neutral-50 rounded-lg">
+        <p className="text-sm text-text-secondary text-center">
+          AI Model의 수준이 높아지면 꼬리질문을 덜 하게 됩니다.
+        </p>
       </div>
 
       <footer className="flex justify-end space-x-3">
@@ -78,13 +94,14 @@ export function TaskReviewAiChooserView({
           onClick={onCancel}
           className="px-5 py-2.5 rounded-md bg-neutral-50 text-text-primary font-medium text-sm hover:bg-neutral-100 transition-colors"
         >
-          Cancel
+          취소
         </button>
         <button
           onClick={onNext}
-          className="px-5 py-2.5 rounded-md bg-neutral-black text-text-inverse font-medium text-sm hover:bg-neutral-800 transition-colors"
+          disabled={!selectedAiModeId}
+          className="px-5 py-2.5 rounded-md bg-neutral-black text-text-inverse font-medium text-sm hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next
+          다음
         </button>
       </footer>
     </div>

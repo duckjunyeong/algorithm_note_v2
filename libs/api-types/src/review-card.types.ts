@@ -14,6 +14,8 @@ export interface ReviewCard {
   reviewCount: number;
   successRate?: number;
   url?: string;
+  taskType: 'concept' | 'memorization' | 'approach';
+  taskField?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -35,6 +37,8 @@ export interface CreateReviewCardRequest {
   importance: number;
   reviewCycle: number;
   url?: string;
+  taskType: 'concept' | 'memorization' | 'approach';
+  taskField?: string;
   questions: Array<{
     text: string;
   }>;

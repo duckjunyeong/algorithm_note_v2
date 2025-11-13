@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { AiMode } from '../../../../../../components/TaskReviewAiChooser/useTaskReviewAiChooserModal';
 import { AnswerService } from '../../../../../../services/answerService';
 import { ReviewQuestionService } from '../../../../../../services/reviewQuestionService';
 import { ReviewCardService } from '../../../../../../services/reviewCardService';
@@ -15,10 +16,11 @@ export interface ReviewQuestion {
 export interface UseTestViewProps {
   reviewCardId: number | null;
   reviewCard: any | null;
+  selectedAiMode: AiMode | null;
   onClose: () => void;
 }
 
-export function useTestView({ reviewCardId, reviewCard, onClose }: UseTestViewProps) {
+export function useTestView({ reviewCardId, reviewCard, selectedAiMode, onClose }: UseTestViewProps) {
   const [currentView, setCurrentView] = useState<'input' | 'evaluation' | 'result'>('input');
   const [questions, setQuestions] = useState<ReviewQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -157,7 +159,8 @@ export function useTestView({ reviewCardId, reviewCard, onClose }: UseTestViewPr
       await AnswerService.createAnswer({
         questionId: currentQuestion.reviewQuestionId,
         content: answerContent,
-        evaluationResult: result
+        evaluationResult: result,
+        aiMode: selectedAiMode || undefined
       });
 
       setQuestionResults(prev => {

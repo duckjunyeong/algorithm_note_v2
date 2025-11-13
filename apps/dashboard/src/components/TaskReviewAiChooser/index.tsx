@@ -1,26 +1,26 @@
 import type { TaskReviewAiChooserProps } from './useTaskReviewAiChooserModal';
 import { useTaskReviewAiChooser } from './useTaskReviewAiChooserModal';
-import { TaskReviewAiChooserView } from './TaskReviewAiChooserModal.view';   
+import { TaskReviewAiChooserView } from './TaskReviewAiChooserModal.view';
 
 export function TaskReviewAiChooserModal({
-  templates,
-  selectedTemplateId,
-  onTemplateSelect,
+  aiModes,
+  selectedAiModeId,
+  onAiModeSelect,
   onCancel,
   onNext,
 }: TaskReviewAiChooserProps) {
-  
+
   const { handleCancel, handleNext } = useTaskReviewAiChooser({
-    onTemplateSelect, 
+    onAiModeSelect,
     onCancel,
     onNext,
   });
 
   return (
     <TaskReviewAiChooserView
-      templates={templates}
-      selectedTemplateId={selectedTemplateId}
-      onTemplateSelect={onTemplateSelect} 
+      aiModes={aiModes}
+      selectedAiModeId={selectedAiModeId}
+      onAiModeSelect={onAiModeSelect}
       onCancel={handleCancel}
       onNext={handleNext}
     />

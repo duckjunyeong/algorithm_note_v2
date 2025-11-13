@@ -28,10 +28,12 @@ interface UseChatModalProps {
   onClose: () => void;
   onBackgroundClick?: () => void;
   title?: string;
+  mode: 'question-generation' | 'review-test';
   taskType: TaskType;
   taskField: string;
   scrapedInfo?: ScrapedInfo;
   onQuestionsGenerated?: () => void;
+  onTestCompleted?: (result: any) => void;
 }
 
 export const useChatModal = ({
@@ -39,9 +41,11 @@ export const useChatModal = ({
   onClose,
   onBackgroundClick = () => {},
   title = "추가 태스크 생성",
+  mode,
   taskType,
   taskField,
-  onQuestionsGenerated
+  onQuestionsGenerated,
+  onTestCompleted
 }: UseChatModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -135,6 +139,7 @@ export const useChatModal = ({
       setInitLoading(true);
 
       chatServiceRef.current = createChatService({
+        mode,
         taskType,
         taskField,
         onMessage: (content) => {
@@ -189,10 +194,15 @@ export const useChatModal = ({
         try {
           await chatServiceRef.current?.subscribe();
 
+          // mode에 따라 다른 환영 메시지
+          const welcomeText = mode === 'review-test'
+            ? '안녕하세요! 테스트를 시작하겠습니다. 준비되셨나요?'
+            : '안녕하세요! 학습하신 내용을 입력해주시면 맞춤 질문을 생성해드리겠습니다.';
+
           const welcomeMessage: Message = {
             id: Date.now(),
             sender: 'bot',
-            text: '안녕하세요! 학습하신 내용을 입력해주시면 맞춤 질문을 생성해드리겠습니다.',
+            text: welcomeText,
             isTyping: false
           };
           setMessages([welcomeMessage]);
@@ -209,7 +219,7 @@ export const useChatModal = ({
       chatServiceRef.current?.disconnect();
       chatServiceRef.current = undefined;
     };
-  }, [isOpen, taskType, taskField, scrollToBottom]);
+  }, [isOpen, mode, taskType, taskField, scrollToBottom]);
 
   const handleSendMessage = useCallback(async (messageText?: string) => {
     const textToSend = (typeof messageText === 'string' ? messageText : inputValue).trim();

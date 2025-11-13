@@ -9,6 +9,7 @@ interface ChatModalProps {
   onClose: () => void;
   onBackgroundClick?: () => void;
   title?: string;
+  mode: 'question-generation' | 'review-test';
   taskType: 'concept' | 'memorization' | 'approach';
   taskField: string;
   scrapedInfo?: {
@@ -16,6 +17,7 @@ interface ChatModalProps {
     analysisResult: any; // 실제 데이터 타입에 맞게 조정하세요.
   };
   onQuestionsGenerated?: () => void;
+  onTestCompleted?: (result: any) => void;
 }
 
 export const ChatModal: React.FC<ChatModalProps> = (props) => {
@@ -52,6 +54,7 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     onClose,
     onBackgroundClick: onBackgroundClick || onClose, // 기본값 설정
     title: title || "추가 태스크 생성", // 기본값 설정
+    mode: props.mode,
     messages,
     inputValue,
     loading,

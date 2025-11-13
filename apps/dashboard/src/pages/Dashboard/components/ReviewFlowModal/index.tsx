@@ -5,12 +5,12 @@ import { ReviewFlowModalView } from './ReviewFlowModal.view';
 export function ReviewFlowModal(props: UseReviewFlowModalProps) {
   const {
     currentView,
-    selectedReviewType,
+    selectedAiMode,
     reviewCardId,
     reviewCard,
-    handleSelectReviewType,
+    handleSelectAiMode,
     handleProceedToTest,
-    handleBackToSelection,
+    handleBackToAiSelection,
     handleClose,
     isOpen,
   } = useReviewFlowModal(props);
@@ -19,12 +19,12 @@ export function ReviewFlowModal(props: UseReviewFlowModalProps) {
     <ReviewFlowModalView
       isOpen={isOpen}
       currentView={currentView}
-      selectedReviewType={selectedReviewType}
+      selectedAiMode={selectedAiMode}
       reviewCardId={reviewCardId}
       reviewCard={reviewCard}
-      onSelectReviewType={handleSelectReviewType}
+      onSelectAiMode={handleSelectAiMode}
       onProceedToTest={handleProceedToTest}
-      onBackToSelection={handleBackToSelection}
+      onBackToAiSelection={handleBackToAiSelection}
       onClose={handleClose}
     />
   );

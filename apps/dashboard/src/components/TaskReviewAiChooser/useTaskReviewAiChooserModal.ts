@@ -1,26 +1,28 @@
 import React, { useState, useCallback } from 'react';
 
-export interface TemplateOption {
-  id: string;
+export type AiMode = 'beginner-tutor' | 'advanced-tutor' | 'prof-tutor';
+
+export interface AiModeOption {
+  id: AiMode;
   title: string;
   description: string;
   icon: React.ReactNode;
-  iconBgClass: string; 
+  iconBgClass: string;
 }
 
 export interface TaskReviewAiChooserProps {
-  templates: TemplateOption[];
-  selectedTemplateId: string | null;
-  onTemplateSelect: (id: string) => void;
+  aiModes: AiModeOption[];
+  selectedAiModeId: string | null;
+  onAiModeSelect: (id: string) => void;
   onCancel: () => void;
   onNext: () => void;
 }
 
 export function useTaskReviewAiChooser({
-  onTemplateSelect,
+  onAiModeSelect,
   onCancel,
   onNext,
-}: Pick<TaskReviewAiChooserProps, 'onTemplateSelect' | 'onCancel' | 'onNext'>) {
+}: Pick<TaskReviewAiChooserProps, 'onAiModeSelect' | 'onCancel' | 'onNext'>) {
   
 
   const handleCancel = useCallback(() => {
