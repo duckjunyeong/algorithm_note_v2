@@ -110,8 +110,8 @@ public class ChatController {
 
                 String systemPrompt = promptService.formatPrompt(
                     session.getTaskType(),
-                    session.getTaskField(),
-                    session.getUserName()
+                    session.getUserName(),
+                    session.getTaskField()
                 );
 
                 ResponseStream<GenerateContentResponse> stream =

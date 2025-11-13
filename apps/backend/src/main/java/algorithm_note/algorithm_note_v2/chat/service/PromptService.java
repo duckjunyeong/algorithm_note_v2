@@ -33,13 +33,12 @@ public class PromptService {
     public String formatPrompt(String taskType, String userName, String taskField) {
         String prompt = getPromptByTaskType(taskType);
 
-        prompt = prompt.replace("{{USER_NAME}}", userName != null ? userName : "사용자");
+        // Prepare values for String.format
+        String formattedUserName = userName != null ? userName : "사용자";
+        String formattedDomain = (taskField != null && !taskField.trim().isEmpty()) ? taskField : "NULL";
 
-        if (taskField != null && !taskField.trim().isEmpty()) {
-            prompt = prompt.replace("{{DOMAIN}}", taskField);
-        } else {
-            prompt = prompt.replace("{{DOMAIN}}", "NULL");
-        }
+        // Use String.format to replace %s placeholders
+        prompt = String.format(prompt, formattedUserName, formattedDomain);
 
         log.debug("Formatted prompt for taskType: {}, userName: {}, taskField: {}",
                 taskType, userName, taskField);

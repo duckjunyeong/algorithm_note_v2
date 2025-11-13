@@ -47,18 +47,32 @@ export const createChatService = (
 
     es.onerror = () => {
       console.error('SSE connection error');
-      es.close();
-      eventSource = null;
+
+      // EventSource를 완전히 종료하여 브라우저 자동 재연결 방지
+      try {
+        es.close();
+      } catch (error) {
+        console.warn('Error closing EventSource:', error);
+      }
+
+      // eventSource를 null로 설정하여 중복 연결 방지
+      if (eventSource === es) {
+        eventSource = null;
+      }
 
       if (retryCount < MAX_RETRIES) {
         retryCount++;
         const delay = BASE_RETRY_DELAY * Math.pow(2, retryCount - 1);
-        console.log(`Reconnecting in ${delay}ms (attempt ${retryCount}/${MAX_RETRIES})...`);
+        console.log(`Reconnecting in ${delay}ms (attempt ${retryCount}/${MAX_RETRIES}) with fresh token...`);
 
-        setTimeout(() => {
-          subscribe().catch((error) => {
+        setTimeout(async () => {
+          try {
+            // 재연결 시 새로운 토큰으로 완전히 새로운 EventSource 인스턴스 생성
+            await subscribe();
+          } catch (error) {
             console.error('Reconnection failed:', error);
-          });
+            options.onError(error instanceof Error ? error : new Error('재연결 실패'));
+          }
         }, delay);
       } else {
         console.error('Max reconnection attempts reached');
@@ -68,6 +82,17 @@ export const createChatService = (
   };
 
   const subscribe = async () => {
+    // 기존 연결이 있다면 완전히 정리
+    if (eventSource) {
+      console.log('Closing existing EventSource before creating new one');
+      try {
+        eventSource.close();
+      } catch (error) {
+        console.warn('Error closing existing EventSource:', error);
+      }
+      eventSource = null;
+    }
+
     const params = new URLSearchParams({
       taskType: options.taskType,
       taskField: options.taskField,
@@ -82,6 +107,7 @@ export const createChatService = (
 
     const url = `${baseUrl}${endpoint}?${params}`;
 
+    // 매번 최신 토큰을 가져와서 사용 (재연결 시 갱신된 토큰 사용)
     const tokenGetter = getAuthToken();
     const token = tokenGetter ? await tokenGetter : null;
 
@@ -90,10 +116,12 @@ export const createChatService = (
       return;
     }
 
+    console.log('Creating new EventSource with fresh token');
     eventSource = new EventSourcePolyfill(url, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
+      heartbeatTimeout: 120000, // 2분 heartbeat 타임아웃 (서버는 15초마다 전송)
     });
 
     setupEventListeners(eventSource);
@@ -111,9 +139,21 @@ export const createChatService = (
   };
 
   const disconnect = () => {
+    console.log('Disconnecting chat service');
+
+    // 재시도 카운터를 최대치로 설정하여 자동 재연결 방지
     retryCount = MAX_RETRIES;
-    eventSource?.close();
-    eventSource = null;
+
+    // EventSource가 있다면 완전히 종료
+    if (eventSource) {
+      try {
+        eventSource.close();
+        console.log('EventSource closed successfully');
+      } catch (error) {
+        console.warn('Error closing EventSource:', error);
+      }
+      eventSource = null;
+    }
   };
 
   return { subscribe, sendMessage, disconnect };
