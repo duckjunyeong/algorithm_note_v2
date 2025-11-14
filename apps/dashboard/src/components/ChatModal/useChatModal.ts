@@ -36,6 +36,7 @@ interface UseChatModalProps {
   scrapedInfo?: ScrapedInfo;
   onQuestionsGenerated?: () => void;
   onTestCompleted?: (result: any) => void;
+  onNext?: () => void;
 }
 
 export const useChatModal = ({
@@ -49,7 +50,8 @@ export const useChatModal = ({
   tutorLevel,
   reviewCardId,
   onQuestionsGenerated,
-  onTestCompleted
+  onTestCompleted,
+  onNext
 }: UseChatModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
@@ -59,6 +61,7 @@ export const useChatModal = ({
   const [showSaveButton] = useState<boolean>(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<string[]>([]);
   const [showGenerateButton, setShowGenerateButton] = useState<boolean>(false);
+  const [showNextButton, setShowNextButton] = useState<boolean>(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const chatServiceRef = useRef<ChatService | undefined>(undefined);
   const currentBotMessageIdRef = useRef<number | null>(null);
@@ -182,10 +185,16 @@ export const useChatModal = ({
               msg.isTyping ? { ...msg, isTyping: false } : msg
             );
 
-            // 마지막 봇 메시지에서 "생성된 질문" 패턴 확인
             const lastBotMessage = updated[updated.length - 1];
-            if (lastBotMessage?.sender === 'bot' && lastBotMessage.text.includes('🎯 생성된 질문')) {
-              setShowGenerateButton(true);
+            if (lastBotMessage?.sender === 'bot') {
+              if (lastBotMessage.text.includes('🎯 생성된 질문')) {
+                setShowGenerateButton(true);
+              }
+
+              if (lastBotMessage.text.includes('## 🏁 테스트 종료')) {
+                setShowNextButton(true);
+                setShowGenerateButton(false);
+              }
             }
 
             return updated;
@@ -305,13 +314,14 @@ export const useChatModal = ({
     showSaveButton,
     generatedQuestions,
     showGenerateButton,
+    showNextButton,
     setInputValue,
     handleSendMessage,
     handleKeyDown,
     handleRecommendationClick,
     handleGenerateQuestions,
     handleSelectItems,
-    // AudioRecorder 상태
+    onNext,
     audioRecorder
   };
 };

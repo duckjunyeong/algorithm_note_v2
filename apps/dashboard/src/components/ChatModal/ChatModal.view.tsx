@@ -26,6 +26,7 @@ interface ChatModalViewProps {
   recommendedQuestions: string[];
   showSaveButton: boolean;
   showGenerateButton: boolean;
+  showNextButton: boolean;
   setInputValue: (value: string) => void;
   handleSendMessage: () => void;
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
@@ -33,6 +34,7 @@ interface ChatModalViewProps {
   handleSaveNote: () => void;
   handleGenerateQuestions: () => void;
   handleSelectItems: (selectedNumbers: number[]) => void;
+  onNext?: () => void;
   audioRecorder: {
     isRecording: boolean;
     isUploading: boolean;
@@ -57,6 +59,7 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   recommendedQuestions,
   showSaveButton,
   showGenerateButton,
+  showNextButton,
   setInputValue,
   handleSendMessage,
   handleKeyDown,
@@ -64,6 +67,7 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   handleSaveNote,
   handleGenerateQuestions,
   handleSelectItems,
+  onNext,
   audioRecorder
 }) => {
   const isSessionReady = sessionId !== null;
@@ -233,14 +237,24 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                   </button>
                 </div>
 
-                {/* "생성하기" 또는 "제출하기" 버튼 - 입력 영역 아래 */}
-                {showGenerateButton && (
+                {showGenerateButton && !showNextButton && (
                   <div className="pt-3 flex justify-end">
                     <button
                       onClick={handleGenerateQuestions}
                       className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors font-medium text-sm"
                     >
                       {mode === 'review-test' ? '제출하기' : '생성하기'}
+                    </button>
+                  </div>
+                )}
+
+                {showNextButton && mode === 'review-test' && (
+                  <div className="pt-3 flex justify-end">
+                    <button
+                      onClick={onNext}
+                      className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors font-medium text-sm"
+                    >
+                      다음
                     </button>
                   </div>
                 )}

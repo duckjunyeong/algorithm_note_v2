@@ -20,6 +20,7 @@ interface ChatModalProps {
   };
   onQuestionsGenerated?: () => void;
   onTestCompleted?: (result: any) => void;
+  onNext?: () => void;
 }
 
 export const ChatModal: React.FC<ChatModalProps> = (props) => {
@@ -37,16 +38,17 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     recommendedQuestions,
     showSaveButton,
     showGenerateButton,
+    showNextButton,
     setInputValue,
     handleSendMessage,
     handleKeyDown,
     handleRecommendationClick,
     handleGenerateQuestions,
     handleSelectItems,
+    onNext,
     audioRecorder
   } = useChatModal(props);
 
-  // 임시 handleSaveNote 함수 (추후 구현 예정)
   const handleSaveNote = () => {
     console.log('저장 버튼 클릭됨');
   };
@@ -54,8 +56,8 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
   const chatModalViewProps = {
     isOpen,
     onClose,
-    onBackgroundClick: onBackgroundClick || onClose, // 기본값 설정
-    title: title || "추가 태스크 생성", // 기본값 설정
+    onBackgroundClick: onBackgroundClick || onClose,
+    title: title || "추가 태스크 생성",
     mode: props.mode,
     messages,
     inputValue,
@@ -66,6 +68,7 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     recommendedQuestions,
     showSaveButton,
     showGenerateButton,
+    showNextButton,
     setInputValue,
     handleSendMessage,
     handleKeyDown,
@@ -73,6 +76,7 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     handleSaveNote,
     handleGenerateQuestions,
     handleSelectItems,
+    onNext,
     audioRecorder
   };
 
