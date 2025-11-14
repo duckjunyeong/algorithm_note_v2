@@ -36,6 +36,15 @@ public class ChatSession implements Serializable {
     @TimeToLive
     private Long ttl;
 
+    private String sessionMode;
+
+    private String tutorLevel;
+
+    private Long reviewCardId;
+
+    @Builder.Default
+    private List<String> reviewQuestions = new ArrayList<>();
+
     @Getter
     @Builder
     @NoArgsConstructor

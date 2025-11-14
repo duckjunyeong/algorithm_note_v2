@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import type React from 'react';
 
-export type AiMode = 'beginner-tutor' | 'advanced-tutor' | 'prof-tutor';
+export type AiMode = 'beginner-tutor' | 'advanced-tutor' | 'prof-tutor' | 'normal-tutor';
 
 export interface AiModeOption {
   id: AiMode;
@@ -10,31 +11,66 @@ export interface AiModeOption {
   iconBgClass: string;
 }
 
-export interface TaskReviewAiChooserProps {
-  aiModes: AiModeOption[];
-  selectedAiModeId: string | null;
-  onAiModeSelect: (id: string) => void;
-  onCancel: () => void;
-  onNext: () => void;
+export interface UseTaskReviewAiChooserModalProps {
+  isOpen: boolean;
+  reviewCardId: number | null;
+  reviewCard: any | null;
+  onClose: () => void;
 }
 
-export function useTaskReviewAiChooser({
-  onAiModeSelect,
-  onCancel,
-  onNext,
-}: Pick<TaskReviewAiChooserProps, 'onAiModeSelect' | 'onCancel' | 'onNext'>) {
-  
+const AI_MODE_TO_TUTOR_LEVEL: Record<AiMode, string> = {
+  'beginner-tutor': 'beginner',
+  'advanced-tutor': 'advanced',
+  'prof-tutor': 'professor',
+  'normal-tutor': 'normal',
+};
+
+export function useTaskReviewAiChooserModal({
+  isOpen,
+  reviewCardId,
+  reviewCard,
+  onClose,
+}: UseTaskReviewAiChooserModalProps) {
+  const [selectedAiMode, setSelectedAiMode] = useState<AiMode | null>(null);
+  const [selectedTutorLevel, setSelectedTutorLevel] = useState<string | null>(null);
+  const [showChatModal, setShowChatModal] = useState<boolean>(false);
+
+  const handleSelectAiMode = useCallback((modeId: string) => {
+    const aiMode = modeId as AiMode;
+    setSelectedAiMode(aiMode);
+    setSelectedTutorLevel(AI_MODE_TO_TUTOR_LEVEL[aiMode]);
+  }, []);
 
   const handleCancel = useCallback(() => {
-    onCancel();
-  }, [onCancel]);
+    setSelectedAiMode(null);
+    setSelectedTutorLevel(null);
+    setShowChatModal(false);
+    onClose();
+  }, [onClose]);
 
   const handleNext = useCallback(() => {
-    onNext();
-  }, [onNext]);
+    if (selectedAiMode && selectedTutorLevel) {
+      setShowChatModal(true);
+    }
+  }, [selectedAiMode, selectedTutorLevel]);
+
+  const handleChatModalClose = useCallback(() => {
+    setShowChatModal(false);
+    setSelectedAiMode(null);
+    setSelectedTutorLevel(null);
+    onClose();
+  }, [onClose]);
 
   return {
+    isOpen,
+    selectedAiMode,
+    selectedTutorLevel,
+    reviewCardId,
+    reviewCard,
+    showChatModal,
+    handleSelectAiMode,
     handleCancel,
     handleNext,
+    handleChatModalClose,
   };
 }

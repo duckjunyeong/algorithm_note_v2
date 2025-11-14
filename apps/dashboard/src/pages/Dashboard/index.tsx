@@ -12,7 +12,7 @@ const DashboardPage: FC = () => {
     isReviewMenuOpen,
     isTaskCreationModalOpen,
     isTaskCreationConfirmOpen,
-    isReviewFlowModalOpen,
+    isTaskReviewAiChooserOpen,
     selectedReviewCardId,
     selectedReviewCard,
     isReviewResultModalOpen,
@@ -40,8 +40,8 @@ const DashboardPage: FC = () => {
     handleTaskCreationBackgroundClick,
     handleConfirmTaskCreationClose,
     handleCancelTaskCreationClose,
-    openReviewFlowModal,
-    closeReviewFlowModal,
+    openTaskReviewAiChooser,
+    closeTaskReviewAiChooser,
     openReviewResultModal,
     closeReviewResultModal,
     handleReviewCardDeleteSuccess,
@@ -64,6 +64,9 @@ const DashboardPage: FC = () => {
     handleConfirmChatClose,
     handleCancelChatClose,
     handleRetryFetch,
+    isReviewTestChatModalOpen,
+    closeReviewTestChatModal,
+    reviewTestTutorLevel,
   } = useDashboardPage();
 
   return (
@@ -76,7 +79,7 @@ const DashboardPage: FC = () => {
       isReviewMenuOpen={isReviewMenuOpen}
       isTaskCreationModalOpen={isTaskCreationModalOpen}
       isTaskCreationConfirmOpen={isTaskCreationConfirmOpen}
-      isReviewFlowModalOpen={isReviewFlowModalOpen}
+      isTaskReviewAiChooserOpen={isTaskReviewAiChooserOpen}
       selectedReviewCardId={selectedReviewCardId}
       selectedReviewCard={selectedReviewCard}
       backlogCards={backlogCards}
@@ -102,8 +105,8 @@ const DashboardPage: FC = () => {
       onTaskCreationBackgroundClick={handleTaskCreationBackgroundClick}
       onConfirmTaskCreationClose={handleConfirmTaskCreationClose}
       onCancelTaskCreationClose={handleCancelTaskCreationClose}
-      onOpenReviewFlowModal={openReviewFlowModal}
-      onCloseReviewFlowModal={closeReviewFlowModal}
+      onOpenTaskReviewAiChooser={openTaskReviewAiChooser}
+      onCloseTaskReviewAiChooser={closeTaskReviewAiChooser}
       isReviewResultModalOpen={isReviewResultModalOpen}
       selectedResultReviewCardId={selectedResultReviewCardId}
       onOpenReviewResultModal={openReviewResultModal}
@@ -127,6 +130,9 @@ const DashboardPage: FC = () => {
       onConfirmChatClose={handleConfirmChatClose}
       onCancelChatClose={handleCancelChatClose}
       onRetryFetch={handleRetryFetch}
+      isReviewTestChatModalOpen={isReviewTestChatModalOpen}
+      onCloseReviewTestChatModal={closeReviewTestChatModal}
+      reviewTestTutorLevel={reviewTestTutorLevel}
     />
   );
 };

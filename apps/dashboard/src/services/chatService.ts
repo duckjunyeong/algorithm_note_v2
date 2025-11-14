@@ -7,6 +7,8 @@ export interface ChatServiceOptions {
   mode: 'question-generation' | 'review-test';
   taskType: TaskType;
   taskField: string;
+  tutorLevel?: string;
+  reviewCardId?: number;
   onMessage: (content: string) => void;
   onError: (error: Error) => void;
   onDone: () => void;
@@ -93,17 +95,24 @@ export const createChatService = (
       eventSource = null;
     }
 
-    const params = new URLSearchParams({
-      taskType: options.taskType,
-      taskField: options.taskField,
-    });
-
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
-    // mode에 따라 엔드포인트 선택
-    const endpoint = options.mode === 'review-test'
-      ? API_ENDPOINTS.CHAT.TEST_SUBSCRIBE
-      : API_ENDPOINTS.CHAT.SUBSCRIBE;
+    let endpoint: string;
+    let params: URLSearchParams;
+
+    if (options.mode === 'review-test') {
+      endpoint = API_ENDPOINTS.CHAT.TEST_SUBSCRIBE;
+      params = new URLSearchParams({
+        reviewCardId: options.reviewCardId!.toString(),
+        tutorLevel: options.tutorLevel!,
+      });
+    } else {
+      endpoint = API_ENDPOINTS.CHAT.SUBSCRIBE;
+      params = new URLSearchParams({
+        taskType: options.taskType,
+        taskField: options.taskField,
+      });
+    }
 
     const url = `${baseUrl}${endpoint}?${params}`;
 

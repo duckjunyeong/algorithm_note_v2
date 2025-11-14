@@ -12,9 +12,11 @@ interface ChatModalProps {
   mode: 'question-generation' | 'review-test';
   taskType: 'concept' | 'memorization' | 'approach';
   taskField: string;
+  tutorLevel?: string;
+  reviewCardId?: number;
   scrapedInfo?: {
     confirmationKey: string;
-    analysisResult: any; // 실제 데이터 타입에 맞게 조정하세요.
+    analysisResult: any;
   };
   onQuestionsGenerated?: () => void;
   onTestCompleted?: (result: any) => void;

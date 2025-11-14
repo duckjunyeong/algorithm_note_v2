@@ -31,6 +31,8 @@ interface UseChatModalProps {
   mode: 'question-generation' | 'review-test';
   taskType: TaskType;
   taskField: string;
+  tutorLevel?: string;
+  reviewCardId?: number;
   scrapedInfo?: ScrapedInfo;
   onQuestionsGenerated?: () => void;
   onTestCompleted?: (result: any) => void;
@@ -44,6 +46,8 @@ export const useChatModal = ({
   mode,
   taskType,
   taskField,
+  tutorLevel,
+  reviewCardId,
   onQuestionsGenerated,
   onTestCompleted
 }: UseChatModalProps) => {
@@ -142,6 +146,8 @@ export const useChatModal = ({
         mode,
         taskType,
         taskField,
+        tutorLevel,
+        reviewCardId,
         onMessage: (content) => {
           setMessages(prev => {
             const updated = [...prev];
@@ -219,7 +225,7 @@ export const useChatModal = ({
       chatServiceRef.current?.disconnect();
       chatServiceRef.current = undefined;
     };
-  }, [isOpen, mode, taskType, taskField, scrollToBottom]);
+  }, [isOpen, mode, taskType, taskField, tutorLevel, reviewCardId, scrollToBottom]);
 
   const handleSendMessage = useCallback(async (messageText?: string) => {
     const textToSend = (typeof messageText === 'string' ? messageText : inputValue).trim();

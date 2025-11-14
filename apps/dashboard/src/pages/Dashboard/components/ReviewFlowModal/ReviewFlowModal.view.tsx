@@ -3,13 +3,15 @@ import { FiX, FiChevronLeft } from 'react-icons/fi';
 import { Brain, GraduationCap, Award } from 'lucide-react';
 import type { ReviewFlowView } from './useReviewFlowModal';
 import type { AiMode, AiModeOption } from '../../../../components/TaskReviewAiChooser/useTaskReviewAiChooserModal';
-import { TaskReviewAiChooserView } from '../../../../components/TaskReviewAiChooser/TaskReviewAiChooserModal.view';
+import { TaskReviewAiChooserModal } from '../../../../components/TaskReviewAiChooser';
 import { TestView } from './views/TestView';
+import { ChatModal } from '../../../../components/ChatModal';
 
 export interface ReviewFlowModalViewProps {
   isOpen: boolean;
   currentView: ReviewFlowView;
   selectedAiMode: AiMode | null;
+  selectedTutorLevel: string | null;
   reviewCardId: number | null;
   reviewCard: any | null;
   onSelectAiMode: (modeId: string) => void;
@@ -46,6 +48,7 @@ export function ReviewFlowModalView({
   isOpen,
   currentView,
   selectedAiMode,
+  selectedTutorLevel,
   reviewCardId,
   reviewCard,
   onSelectAiMode,
@@ -54,6 +57,21 @@ export function ReviewFlowModalView({
   onClose,
 }: ReviewFlowModalViewProps) {
   if (!isOpen) return null;
+
+  if (currentView === 'chat-test') {
+    return (
+      <ChatModal
+        isOpen={true}
+        onClose={onClose}
+        mode="review-test"
+        tutorLevel={selectedTutorLevel || 'beginner'}
+        reviewCardId={reviewCardId || 0}
+        taskType={reviewCard?.taskType || 'concept'}
+        taskField={reviewCard?.taskField || ''}
+        title={`${reviewCard?.title || '복습'} - AI 튜터 테스트`}
+      />
+    );
+  }
 
   const slideVariants = {
     enterFromRight: {
@@ -95,8 +113,9 @@ export function ReviewFlowModalView({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <TaskReviewAiChooserView
+            <TaskReviewAiChooserModal
               aiModes={AI_MODE_OPTIONS}
               selectedAiModeId={selectedAiMode}
               onAiModeSelect={onSelectAiMode}
@@ -112,6 +131,7 @@ export function ReviewFlowModalView({
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.3 }}
             className="relative bg-background-secondary rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-6 border-b border-neutral-200 flex-shrink-0">
               <div className="flex items-center gap-3">

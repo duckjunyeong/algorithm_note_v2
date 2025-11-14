@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -39,6 +40,7 @@ public class ChatSessionManager {
 
         ChatSession session = ChatSession.builder()
                 .sessionId(sessionId)
+                .sessionMode("generation")
                 .taskType(taskType)
                 .taskField(taskField)
                 .userName(userName)
@@ -48,6 +50,34 @@ public class ChatSessionManager {
 
         chatSessionRepository.save(session);
         log.info("Created chat session: {} for user: {}", sessionId, userName);
+
+        return session;
+    }
+
+    public ChatSession createTestSession(Long userId, String tutorLevel, String userName, Long reviewCardId, List<String> reviewQuestions) {
+        String sessionId = "user-" + userId;
+
+        if (chatSessionRepository.existsById(sessionId)) {
+            deleteSession(sessionId);
+        }
+
+        Client client = Client.builder().apiKey(apiKey).build();
+        clientCache.put(sessionId, client);
+        log.info("Created Gemini Client for test session: {}", sessionId);
+
+        ChatSession session = ChatSession.builder()
+                .sessionId(sessionId)
+                .sessionMode("test")
+                .tutorLevel(tutorLevel)
+                .userName(userName)
+                .reviewCardId(reviewCardId)
+                .reviewQuestions(reviewQuestions)
+                .createdAt(LocalDateTime.now())
+                .ttl(SESSION_TTL)
+                .build();
+
+        chatSessionRepository.save(session);
+        log.info("Created test session: {} for user: {} with tutor level: {}", sessionId, userName, tutorLevel);
 
         return session;
     }

@@ -8,7 +8,7 @@ import type { Task } from './useDashboardPage';
 import { ConfirmModal } from '../../../../../libs/ui-components/src/components/ConfirmModal';
 import { ReviewTaskCreationMenu } from '../../../../../libs/ui-components/src/components/ReviewTaskCreationMenu';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
-import { ReviewFlowModal } from './components/ReviewFlowModal';
+import { TaskReviewAiChooserModal } from '../../components/TaskReviewAiChooser';
 import { ReviewResultModal } from './components/ReviewResultModal';
 import { ExamSheetModal } from './components/ExamSheetModal';
 import { AudioRecorder } from '../../components/AudioRecorder';
@@ -46,7 +46,7 @@ export interface DashboardPageViewProps {
   isReviewMenuOpen: boolean;
   isTaskCreationModalOpen: boolean;
   isTaskCreationConfirmOpen: boolean;
-  isReviewFlowModalOpen: boolean;
+  isTaskReviewAiChooserOpen: boolean;
   selectedReviewCardId: number | null;
   onOpenConfirmModal: () => void;
   isReviewResultModalOpen: boolean;
@@ -64,8 +64,8 @@ export interface DashboardPageViewProps {
   onTaskCreationBackgroundClick: () => void;
   onConfirmTaskCreationClose: () => void;
   onCancelTaskCreationClose: () => void;
-  onOpenReviewFlowModal: (reviewCardId: number) => void;
-  onCloseReviewFlowModal: () => void;
+  onOpenTaskReviewAiChooser: (reviewCardId: number) => void;
+  onCloseTaskReviewAiChooser: () => void;
   onSaveCategory: (name: string, color: string) => Promise<void>;
   onCreateTask: (data: {
     taskType: 'concept' | 'approach' | 'memorization';
@@ -92,6 +92,9 @@ export interface DashboardPageViewProps {
   onConfirmChatClose: () => void;
   onCancelChatClose: () => void;
   onRetryFetch: () => Promise<void>;
+  isReviewTestChatModalOpen: boolean;
+  onCloseReviewTestChatModal: () => void;
+  reviewTestTutorLevel: string | null;
 }
 
 
@@ -118,7 +121,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isTaskCreationModalOpen,
   isTaskCreationConfirmOpen,
   isReviewResultModalOpen,
-  isReviewFlowModalOpen,
+  isTaskReviewAiChooserOpen,
   selectedReviewCardId,
   selectedResultReviewCardId,
   onOpenReviewResultModal,
@@ -133,8 +136,8 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onTaskCreationBackgroundClick,
   onConfirmTaskCreationClose,
   onCancelTaskCreationClose,
-  onOpenReviewFlowModal,
-  onCloseReviewFlowModal,
+  onOpenTaskReviewAiChooser,
+  onCloseTaskReviewAiChooser,
   onSaveCategory,
   onCreateTask,
   selectedTaskType,
@@ -150,6 +153,9 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onConfirmChatClose,
   onCancelChatClose,
   onRetryFetch,
+  isReviewTestChatModalOpen,
+  onCloseReviewTestChatModal,
+  reviewTestTutorLevel,
 }) => {
   return (
     <div className="relative min-h-screen bg-background-tertiary">
@@ -252,7 +258,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
                     ]}
-                    onTestStart={() => onOpenReviewFlowModal(card.reviewCardId)}
+                    onTestStart={() => onOpenTaskReviewAiChooser(card.reviewCardId)}
                   />
                 ))
               )}
@@ -332,11 +338,11 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         cancelText="취소"
       />
 
-      <ReviewFlowModal
-        isOpen={isReviewFlowModalOpen}
+      <TaskReviewAiChooserModal
+        isOpen={isTaskReviewAiChooserOpen}
         reviewCardId={selectedReviewCardId}
         reviewCard={selectedReviewCard}
-        onClose={onCloseReviewFlowModal}
+        onClose={onCloseTaskReviewAiChooser}
       />
 
       <ReviewResultModal
@@ -396,6 +402,18 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           onSaveCategory={onSaveCategory}
           selectedTaskType={selectedTaskType}
           selectedTaskField={taskField}
+        />
+      )}
+
+      {isReviewTestChatModalOpen && selectedReviewCard && (
+        <ChatModal
+          isOpen={isReviewTestChatModalOpen}
+          onClose={onCloseReviewTestChatModal}
+          mode="review-test"
+          tutorLevel={reviewTestTutorLevel || 'normal'}
+          reviewCardId={selectedReviewCard.reviewCardId}
+          taskType={selectedReviewCard.taskType as 'concept' | 'memorization' | 'approach'}
+          taskField={selectedReviewCard.taskField || ''}
         />
       )}
     </div>

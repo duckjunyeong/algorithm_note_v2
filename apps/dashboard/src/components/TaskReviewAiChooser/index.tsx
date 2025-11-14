@@ -1,28 +1,33 @@
-import type { TaskReviewAiChooserProps } from './useTaskReviewAiChooserModal';
-import { useTaskReviewAiChooser } from './useTaskReviewAiChooserModal';
+import { useTaskReviewAiChooserModal } from './useTaskReviewAiChooserModal';
+import type { UseTaskReviewAiChooserModalProps } from './useTaskReviewAiChooserModal';
 import { TaskReviewAiChooserView } from './TaskReviewAiChooserModal.view';
 
-export function TaskReviewAiChooserModal({
-  aiModes,
-  selectedAiModeId,
-  onAiModeSelect,
-  onCancel,
-  onNext,
-}: TaskReviewAiChooserProps) {
-
-  const { handleCancel, handleNext } = useTaskReviewAiChooser({
-    onAiModeSelect,
-    onCancel,
-    onNext,
-  });
+export function TaskReviewAiChooserModal(props: UseTaskReviewAiChooserModalProps) {
+  const {
+    isOpen,
+    selectedAiMode,
+    selectedTutorLevel,
+    reviewCardId,
+    reviewCard,
+    showChatModal,
+    handleSelectAiMode,
+    handleCancel,
+    handleNext,
+    handleChatModalClose,
+  } = useTaskReviewAiChooserModal(props);
 
   return (
     <TaskReviewAiChooserView
-      aiModes={aiModes}
-      selectedAiModeId={selectedAiModeId}
-      onAiModeSelect={onAiModeSelect}
+      isOpen={isOpen}
+      selectedAiMode={selectedAiMode}
+      selectedTutorLevel={selectedTutorLevel}
+      reviewCardId={reviewCardId}
+      reviewCard={reviewCard}
+      showChatModal={showChatModal}
+      onAiModeSelect={handleSelectAiMode}
       onCancel={handleCancel}
       onNext={handleNext}
+      onChatModalClose={handleChatModalClose}
     />
   );
 }

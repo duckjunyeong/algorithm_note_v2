@@ -16,9 +16,11 @@ export const useDashboardPage = () => {
   const [isReviewMenuOpen, setIsReviewMenuOpen] = useState<boolean>(false);
   const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState<boolean>(false);
   const [isTaskCreationConfirmOpen, setIsTaskCreationConfirmOpen] = useState<boolean>(false);
-  const [isReviewFlowModalOpen, setIsReviewFlowModalOpen] = useState<boolean>(false);
+  const [isTaskReviewAiChooserOpen, setIsTaskReviewAiChooserOpen] = useState<boolean>(false);
   const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
   const [isReviewResultModalOpen, setIsReviewResultModalOpen] = useState<boolean>(false);
+  const [isReviewTestChatModalOpen, setIsReviewTestChatModalOpen] = useState<boolean>(false);
+  const [reviewTestTutorLevel, setReviewTestTutorLevel] = useState<string | null>(null);
   const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
   const [isExamSheetModalOpen, setIsExamSheetModalOpen] = useState<boolean>(false);
 
@@ -191,14 +193,29 @@ export const useDashboardPage = () => {
     setIsTaskCreationConfirmOpen(false);
   };
 
-  const openReviewFlowModal = (reviewCardId: number) => {
-    setSelectedReviewCardId(reviewCardId);
-    setIsReviewFlowModalOpen(true);
+  const openTaskReviewAiChooser = (reviewCardId: number) => {
+    const reviewCard = backlogCards.find(card => card.reviewCardId === reviewCardId) ||
+                      completedCards.find(card => card.reviewCardId === reviewCardId);
+
+    if (reviewCard?.taskType !== 'concept') {
+      setSelectedReviewCardId(reviewCardId);
+      setReviewTestTutorLevel('normal');
+      setIsReviewTestChatModalOpen(true);
+    } else {
+      setSelectedReviewCardId(reviewCardId);
+      setIsTaskReviewAiChooserOpen(true);
+    }
   };
 
-  const closeReviewFlowModal = () => {
-    setIsReviewFlowModalOpen(false);
+  const closeTaskReviewAiChooser = () => {
+    setIsTaskReviewAiChooserOpen(false);
     setSelectedReviewCardId(null);
+  };
+
+  const closeReviewTestChatModal = () => {
+    setIsReviewTestChatModalOpen(false);
+    setSelectedReviewCardId(null);
+    setReviewTestTutorLevel(null);
   };
 
   const openReviewResultModal = (reviewCardId: number) => {
@@ -261,7 +278,7 @@ export const useDashboardPage = () => {
     isReviewMenuOpen,
     isTaskCreationModalOpen,
     isTaskCreationConfirmOpen,
-    isReviewFlowModalOpen,
+    isTaskReviewAiChooserOpen,
     selectedReviewCardId,
     selectedReviewCard,
     backlogCards: filteredBacklogCards,
@@ -287,8 +304,8 @@ export const useDashboardPage = () => {
     handleTaskCreationBackgroundClick,
     handleConfirmTaskCreationClose,
     handleCancelTaskCreationClose,
-    openReviewFlowModal,
-    closeReviewFlowModal,
+    openTaskReviewAiChooser,
+    closeTaskReviewAiChooser,
     isReviewResultModalOpen,
     selectedResultReviewCardId,
     openReviewResultModal,
@@ -313,5 +330,8 @@ export const useDashboardPage = () => {
     handleConfirmChatClose,
     handleCancelChatClose,
     handleRetryFetch,
+    isReviewTestChatModalOpen,
+    closeReviewTestChatModal,
+    reviewTestTutorLevel,
   };
 };

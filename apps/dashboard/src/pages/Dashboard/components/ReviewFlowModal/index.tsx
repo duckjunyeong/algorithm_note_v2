@@ -6,6 +6,7 @@ export function ReviewFlowModal(props: UseReviewFlowModalProps) {
   const {
     currentView,
     selectedAiMode,
+    selectedTutorLevel,
     reviewCardId,
     reviewCard,
     handleSelectAiMode,
@@ -20,6 +21,7 @@ export function ReviewFlowModal(props: UseReviewFlowModalProps) {
       isOpen={isOpen}
       currentView={currentView}
       selectedAiMode={selectedAiMode}
+      selectedTutorLevel={selectedTutorLevel}
       reviewCardId={reviewCardId}
       reviewCard={reviewCard}
       onSelectAiMode={handleSelectAiMode}
