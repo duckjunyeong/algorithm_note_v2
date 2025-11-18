@@ -305,7 +305,6 @@ export const useChatModal = ({
     handleSendMessage(question);
   }, [handleSendMessage]);
 
-
   return {
     isOpen,
     onClose,

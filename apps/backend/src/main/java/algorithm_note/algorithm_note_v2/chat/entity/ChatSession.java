@@ -43,7 +43,16 @@ public class ChatSession implements Serializable {
     private Long reviewCardId;
 
     @Builder.Default
-    private List<String> reviewQuestions = new ArrayList<>();
+    private List<ReviewQuestionInfo> reviewQuestions = new ArrayList<>();
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReviewQuestionInfo implements Serializable {
+        private Long reviewQuestionId;
+        private String questionText;
+    }
 
     @Getter
     @Builder

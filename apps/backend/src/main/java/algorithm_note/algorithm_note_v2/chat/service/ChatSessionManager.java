@@ -54,7 +54,7 @@ public class ChatSessionManager {
         return session;
     }
 
-    public ChatSession createTestSession(Long userId, String tutorLevel, String userName, Long reviewCardId, List<String> reviewQuestions) {
+    public ChatSession createTestSession(Long userId, String tutorLevel, String userName, Long reviewCardId, List<ChatSession.ReviewQuestionInfo> reviewQuestions) {
         String sessionId = "user-" + userId;
 
         if (chatSessionRepository.existsById(sessionId)) {
@@ -134,5 +134,25 @@ public class ChatSessionManager {
     public void deleteSessionByUserId(Long userId) {
         String sessionId = "user-" + userId;
         deleteSession(sessionId);
+    }
+
+    public ChatSession getSessionByReviewCardIdAndUserId(Long reviewCardId, Long userId) {
+        log.debug("Getting session by reviewCardId: {} for userId: {}", reviewCardId, userId);
+
+        ChatSession session = chatSessionRepository.findByReviewCardId(reviewCardId)
+                .orElseThrow(() -> {
+                    log.warn("Session not found for reviewCardId: {}", reviewCardId);
+                    return new SessionNotFoundException("해당 복습 카드의 세션을 찾을 수 없습니다: " + reviewCardId);
+                });
+
+        String expectedSessionId = "user-" + userId;
+        if (!expectedSessionId.equals(session.getSessionId())) {
+            log.warn("Session ownership mismatch - reviewCardId: {}, expected userId: {}, actual sessionId: {}",
+                    reviewCardId, userId, session.getSessionId());
+            throw new SessionNotFoundException("세션에 접근할 권한이 없습니다.");
+        }
+
+        log.info("Retrieved session for reviewCardId: {} and userId: {}", reviewCardId, userId);
+        return session;
     }
 }

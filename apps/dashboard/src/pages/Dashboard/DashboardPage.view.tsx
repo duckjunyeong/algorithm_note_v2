@@ -258,7 +258,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
                     ]}
-                    onTestStart={() => onOpenTaskReviewAiChooser(card.reviewCardId)}
+                    onTestStart={() => onOpenTaskReviewAiChooser(card.reviewCardId)} // AiChooser컴포넌트가 true로 변경된다. 
                   />
                 ))
               )}
@@ -339,18 +339,19 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
       />
 
       <TaskReviewAiChooserModal
+        key={selectedReviewCardId || 'no-card'}
         isOpen={isTaskReviewAiChooserOpen}
         reviewCardId={selectedReviewCardId}
         reviewCard={selectedReviewCard}
         onClose={onCloseTaskReviewAiChooser}
       />
 
-      <ReviewResultModal
+      {/* <ReviewResultModal
         isOpen={isReviewResultModalOpen}
         reviewCardId={selectedResultReviewCardId}
         onClose={onCloseReviewResultModal}
         onDeleteSuccess={onReviewCardDeleteSuccess}
-      />
+      /> */}
 
       <ExamSheetModal
         isOpen={isExamSheetModalOpen}
@@ -405,17 +406,6 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         />
       )}
 
-      {isReviewTestChatModalOpen && selectedReviewCard && (
-        <ChatModal
-          isOpen={isReviewTestChatModalOpen}
-          onClose={onCloseReviewTestChatModal}
-          mode="review-test"
-          tutorLevel={reviewTestTutorLevel || 'normal'}
-          reviewCardId={selectedReviewCard.reviewCardId}
-          taskType={selectedReviewCard.taskType as 'concept' | 'memorization' | 'approach'}
-          taskField={selectedReviewCard.taskField || ''}
-        />
-      )}
     </div>
   );
 };

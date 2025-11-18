@@ -10,10 +10,13 @@ export function TaskReviewAiChooserModal(props: UseTaskReviewAiChooserModalProps
     reviewCardId,
     reviewCard,
     showChatModal,
+    showResultModal,
     handleSelectAiMode,
     handleCancel,
     handleNext,
     handleChatModalClose,
+    handleReviewTestNext,
+    handleTaskResultClose,
   } = useTaskReviewAiChooserModal(props);
 
   return (
@@ -24,10 +27,13 @@ export function TaskReviewAiChooserModal(props: UseTaskReviewAiChooserModalProps
       reviewCardId={reviewCardId}
       reviewCard={reviewCard}
       showChatModal={showChatModal}
+      showResultModal={showResultModal}
       onAiModeSelect={handleSelectAiMode}
       onCancel={handleCancel}
       onNext={handleNext}
       onChatModalClose={handleChatModalClose}
+      onReviewTestNext={handleReviewTestNext}
+      onTaskResultClose={handleTaskResultClose}
     />
   );
 }

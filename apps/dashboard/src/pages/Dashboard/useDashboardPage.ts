@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useReviewCardStore } from '../../store/useReviewCardStore';
 import { useCategoryStore } from '../../store/useCategoryStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { categoryService } from '../../services/categoryService';
 import { showErrorToast, showSuccessToast } from '../../utils/toast';
 import { sortBySuccessRate, sortByImportance, filterByCategory } from '../../utils/reviewCardUtils';
@@ -50,6 +51,7 @@ export const useDashboardPage = () => {
   } = useReviewCardStore();
 
   const { categories, setCategories, addCategory } = useCategoryStore();
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     fetchReviewCards();
@@ -194,17 +196,9 @@ export const useDashboardPage = () => {
   };
 
   const openTaskReviewAiChooser = (reviewCardId: number) => {
-    const reviewCard = backlogCards.find(card => card.reviewCardId === reviewCardId) ||
-                      completedCards.find(card => card.reviewCardId === reviewCardId);
-
-    if (reviewCard?.taskType !== 'concept') {
-      setSelectedReviewCardId(reviewCardId);
-      setReviewTestTutorLevel('normal');
-      setIsReviewTestChatModalOpen(true);
-    } else {
-      setSelectedReviewCardId(reviewCardId);
-      setIsTaskReviewAiChooserOpen(true);
-    }
+    console.log("Opening TaskReviewAiChooser for reviewCardId:", reviewCardId);
+    setSelectedReviewCardId(reviewCardId);
+    setIsTaskReviewAiChooserOpen(true);
   };
 
   const closeTaskReviewAiChooser = () => {
@@ -214,8 +208,6 @@ export const useDashboardPage = () => {
 
   const closeReviewTestChatModal = () => {
     setIsReviewTestChatModalOpen(false);
-    setSelectedReviewCardId(null);
-    setReviewTestTutorLevel(null);
   };
 
   const openReviewResultModal = (reviewCardId: number) => {
@@ -243,6 +235,7 @@ export const useDashboardPage = () => {
   const closeExamSheetModal = () => {
     setIsExamSheetModalOpen(false);
   };
+
 
   const handleCreateTask = async (data: {
     taskType: 'concept' | 'approach' | 'memorization';

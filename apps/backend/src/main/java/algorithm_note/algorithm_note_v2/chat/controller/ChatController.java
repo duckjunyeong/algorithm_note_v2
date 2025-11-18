@@ -2,6 +2,7 @@ package algorithm_note.algorithm_note_v2.chat.controller;
 
 import algorithm_note.algorithm_note_v2.chat.dto.ChatDoneEventDto;
 import algorithm_note.algorithm_note_v2.chat.dto.ChatMessageRequestDto;
+import algorithm_note.algorithm_note_v2.chat.dto.ChatSessionResponseDto;
 import algorithm_note.algorithm_note_v2.chat.dto.ChatStreamChunkDto;
 import algorithm_note.algorithm_note_v2.chat.entity.ChatSession;
 import algorithm_note.algorithm_note_v2.chat.exception.EmitterNotFoundException;
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -171,11 +173,14 @@ public class ChatController {
             .findByIdAndUserWithQuestions(reviewCardId, user)
             .orElseThrow(() -> new IllegalArgumentException("ReviewCard not found: " + reviewCardId));
 
-        List<String> questionTexts = reviewCard.getReviewQuestions().stream()
-            .map(ReviewQuestion::getQuestionText)
+        List<ChatSession.ReviewQuestionInfo> questionInfos = reviewCard.getReviewQuestions().stream()
+            .map(q -> ChatSession.ReviewQuestionInfo.builder()
+                .reviewQuestionId(q.getReviewQuestionId())
+                .questionText(q.getQuestionText())
+                .build())
             .collect(Collectors.toList());
 
-        log.info("Loaded {} questions for reviewCardId: {}", questionTexts.size(), reviewCardId);
+        log.info("Loaded {} questions for reviewCardId: {}", questionInfos.size(), reviewCardId);
 
         emitterRepository.deleteById(userId);
         try {
@@ -188,13 +193,13 @@ public class ChatController {
         emitterRepository.save(userId, emitter);
         emitterRepository.configureCallbacks(userId, emitter);
 
-        chatSessionManager.createTestSession(userId, tutorLevel, userName, reviewCardId, questionTexts);
+        chatSessionManager.createTestSession(userId, tutorLevel, userName, reviewCardId, questionInfos);
 
         try {
             Map<String, Object> data = new HashMap<>();
             data.put("sessionId", "user-" + userId);
             data.put("reviewCardId", reviewCardId);
-            data.put("questionCount", questionTexts.size());
+            data.put("questionCount", questionInfos.size());
             data.put("message", "Test session connected successfully");
 
             emitter.send(SseEmitter.event()
@@ -235,10 +240,14 @@ public class ChatController {
                 String sessionId = "user-" + userId;
                 Client client = chatSessionManager.getClient(sessionId);
 
+                List<String> questionTexts = session.getReviewQuestions().stream()
+                    .map(ChatSession.ReviewQuestionInfo::getQuestionText)
+                    .collect(Collectors.toList());
+
                 String systemPrompt = promptService.formatTestPrompt(
                     session.getTutorLevel(),
                     session.getUserName(),
-                    session.getReviewQuestions()
+                    questionTexts
                 );
 
                 ResponseStream<GenerateContentResponse> stream =
@@ -274,6 +283,21 @@ public class ChatController {
                 }
             }
         });
+    }
+
+    @GetMapping("/session/review-card/{reviewCardId}")
+    public ResponseEntity<ChatSessionResponseDto> getReviewCardSession(
+        @PathVariable Long reviewCardId,
+        @AuthenticationPrincipal User user
+    ) {
+        Long userId = user.getId();
+        log.info("Getting chat session for reviewCardId: {} and userId: {}", reviewCardId, userId);
+
+        ChatSession session = chatSessionManager.getSessionByUserId(userId);
+        ChatSessionResponseDto response = ChatSessionResponseDto.from(session);
+
+        log.info("Successfully retrieved chat session for reviewCardId: {}", reviewCardId);
+        return ResponseEntity.ok(response);
     }
 
     @Scheduled(fixedRate = 15000)

@@ -1,5 +1,6 @@
 package algorithm_note.algorithm_note_v2.reviewcard.controller;
 
+import algorithm_note.algorithm_note_v2.chat.service.ChatSessionManager;
 import algorithm_note.algorithm_note_v2.reviewcard.dto.*;
 import algorithm_note.algorithm_note_v2.reviewcard.service.PdfGenerationService;
 import algorithm_note.algorithm_note_v2.reviewcard.service.ReviewCardService;
@@ -29,6 +30,7 @@ public class ReviewCardController {
 
     private final ReviewCardService reviewCardService;
     private final PdfGenerationService pdfGenerationService;
+    private final ChatSessionManager chatSessionManager;
 
     @PostMapping("/create")
     public ResponseEntity<ReviewCardCreateResponseDto> createReviewCard(
@@ -151,6 +153,17 @@ public class ReviewCardController {
         reviewCardService.updateReviewResult(reviewCardId, requestDto, currentUser);
 
         log.info("Successfully updated review result - ID: {}", reviewCardId);
+
+        // Clean up chat session after successful review completion
+        try {
+            chatSessionManager.deleteSessionByUserId(currentUser.getId());
+            log.info("Cleaned up chat session for userId: {} after completing reviewCard: {}",
+                    currentUser.getId(), reviewCardId);
+        } catch (Exception e) {
+            // Log but don't fail the request if session doesn't exist
+            log.debug("No chat session to clean up for userId: {} (reviewCard: {})",
+                    currentUser.getId(), reviewCardId, e);
+        }
 
         return ResponseEntity.ok().build();
     }

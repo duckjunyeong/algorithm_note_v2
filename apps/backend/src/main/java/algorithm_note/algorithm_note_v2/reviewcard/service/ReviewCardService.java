@@ -196,11 +196,9 @@ public class ReviewCardService {
     public void updateReviewResult(Long reviewCardId, ReviewCardUpdateRequestDto requestDto, User user) {
         log.info("Updating review result - cardId: {}, user: {}", reviewCardId, user.getId());
 
-        // 1. ReviewCard 조회 및 권한 검증
         ReviewCard card = reviewCardRepository.findByIdAndUserWithQuestions(reviewCardId, user)
                 .orElseThrow(() -> new ReviewCardNotFoundException("복습 카드를 찾을 수 없습니다."));
 
-        // 2. 질문별 테스트 결과 반영
         List<ReviewCardUpdateRequestDto.QuestionUpdateDto> questionUpdates =
                 requestDto.getQuestionUpdates() != null ? requestDto.getQuestionUpdates() : Collections.emptyList();
 

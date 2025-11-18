@@ -2,6 +2,7 @@ import { Brain, GraduationCap, Award } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { AiMode } from './useTaskReviewAiChooserModal';
 import { ChatModal } from '../ChatModal';
+import { TaskResultModal } from '../TaskResultModal';
 
 interface TaskReviewAiChooserViewProps {
   isOpen: boolean;
@@ -10,10 +11,13 @@ interface TaskReviewAiChooserViewProps {
   reviewCardId: number | null;
   reviewCard: any | null;
   showChatModal: boolean;
+  showResultModal: boolean;
   onAiModeSelect: (id: string) => void;
   onCancel: () => void;
   onNext: () => void;
   onChatModalClose: () => void;
+  onReviewTestNext: () => void;
+  onTaskResultClose: () => void;
 }
 
 const AI_MODE_OPTIONS = [
@@ -47,14 +51,29 @@ export function TaskReviewAiChooserView({
   reviewCardId,
   reviewCard,
   showChatModal,
+  showResultModal,
   onAiModeSelect,
   onCancel,
   onNext,
   onChatModalClose,
+  onReviewTestNext,
+  onTaskResultClose,
 }: TaskReviewAiChooserViewProps) {
-  if (!isOpen) return null;
+  console.log('[TaskReviewAiChooserView] Render:', {
+    isOpen,
+    showChatModal,
+    showResultModal,
+    reviewCardId,
+    reviewCard,
+  });
+
+  if (!isOpen) {
+    console.log('[TaskReviewAiChooserView] Not rendering - isOpen is false');
+    return null;
+  }
 
   if (showChatModal) {
+    console.log('[TaskReviewAiChooserView] Rendering ChatModal');
     return (
       <ChatModal
         isOpen={true}
@@ -65,10 +84,23 @@ export function TaskReviewAiChooserView({
         taskType={reviewCard?.taskType || 'concept'}
         taskField={reviewCard?.taskField || ''}
         title={`${reviewCard?.title || '복습'} - AI 튜터 테스트`}
+        onNext={onReviewTestNext}
       />
     );
   }
 
+  if (showResultModal && reviewCardId) {
+    console.log('[TaskReviewAiChooserView] Rendering TaskResultModal');
+    return (
+      <TaskResultModal
+        isOpen={true}
+        onClose={onTaskResultClose}
+        reviewCardId={reviewCardId}
+      />
+    );
+  }
+
+  console.log('[TaskReviewAiChooserView] Rendering AI Mode Selection Dialog');
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="absolute inset-0" onClick={onCancel} />

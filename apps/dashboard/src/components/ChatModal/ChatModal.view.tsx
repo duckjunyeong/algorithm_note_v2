@@ -263,7 +263,9 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                 {showNextButton && mode === 'review-test' && (
                   <div className="pt-3 flex justify-end">
                     <button
-                      onClick={onNext}
+                      onClick={() => {
+                        onNext?.();
+                      }}
                       className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors font-medium text-sm"
                     >
                       다음
