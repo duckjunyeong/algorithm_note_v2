@@ -84,7 +84,6 @@ export const useChatModal = ({
 
   // 질문 목록 파싱 함수
   const parseGeneratedQuestions = useCallback((text: string): string[] => {
-    // "## 🎯 생성된 질문" 섹션 찾기
     const questionSectionRegex = /##\s*🎯\s*생성된 질문([\s\S]*?)(?=##|$)/;
     const match = text.match(questionSectionRegex);
 
@@ -92,7 +91,6 @@ export const useChatModal = ({
 
     const content = match[1];
 
-    // 번호 목록 추출: 1. 질문, 2. 질문, ...
     const listRegex = /^\d+\.\s+(.+?)$/gm;
     const questions: string[] = [];
     let listMatch;
@@ -102,6 +100,15 @@ export const useChatModal = ({
     }
 
     return questions;
+  }, []);
+
+  const extractQuestionNumber = useCallback((text: string): { current?: number; total?: number } => {
+    const match = text.match(/##\s*🤔\s*질문\s*\[(\d+)\/(\d+)\]/);
+    if (!match) return {};
+    return {
+      current: parseInt(match[1], 10),
+      total: parseInt(match[2], 10)
+    };
   }, []);
 
   // "생성하기" 버튼 클릭 핸들러
@@ -322,6 +329,7 @@ export const useChatModal = ({
     handleGenerateQuestions,
     handleSelectItems,
     onNext,
-    audioRecorder
+    audioRecorder,
+    extractQuestionNumber
   };
 };

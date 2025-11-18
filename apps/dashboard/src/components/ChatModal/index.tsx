@@ -46,7 +46,8 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     handleGenerateQuestions,
     handleSelectItems,
     onNext,
-    audioRecorder
+    audioRecorder,
+    extractQuestionNumber
   } = useChatModal(props);
 
   const handleSaveNote = () => {
@@ -77,7 +78,8 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     handleGenerateQuestions,
     handleSelectItems,
     onNext,
-    audioRecorder
+    audioRecorder,
+    extractQuestionNumber
   };
 
   return <ChatModalView {...chatModalViewProps} />;

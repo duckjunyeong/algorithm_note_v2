@@ -3,6 +3,7 @@ import { Info, Maximize, X, Send, Mic, MicOff, Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { SelectableList } from './SelectableList';
+import { QuestionCard } from './QuestionCard';
 
 interface MessageProps {
   id: number;
@@ -42,6 +43,7 @@ interface ChatModalViewProps {
     error: string | null;
     toggleRecording: () => void;
   };
+  extractQuestionNumber: (text: string) => { current?: number; total?: number };
 }
 
 export const ChatModalView: React.FC<ChatModalViewProps> = ({
@@ -68,7 +70,8 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   handleGenerateQuestions,
   handleSelectItems,
   onNext,
-  audioRecorder
+  audioRecorder,
+  extractQuestionNumber
 }) => {
   const isSessionReady = sessionId !== null;
   const isInputDisabled = initLoading || (!isSessionReady && messages.length === 0) ||
@@ -140,7 +143,16 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                     >
                     {msg.sender === 'bot' ? (
                         !msg.isTyping ? (
-                          msg.text.includes('## ✅') ? (
+                          msg.text.includes('## 🤔 질문') ? (
+                            <>
+                              <ReactMarkdown>{msg.text.split('## 🤔 질문')[0]}</ReactMarkdown>
+                              <QuestionCard
+                                content={msg.text}
+                                questionNumber={extractQuestionNumber(msg.text).current}
+                                totalQuestions={extractQuestionNumber(msg.text).total}
+                              />
+                            </>
+                          ) : msg.text.includes('## ✅') ? (
                             <>
                               <ReactMarkdown>{msg.text.split('## ✅')[0]}</ReactMarkdown>
                               <SelectableList
@@ -155,9 +167,9 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                           msg.text
                         ) : (
                           <div className="inline-flex gap-1">
-                            <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-[typing_1.4s_infinite_ease-in-out_0s]"></span>
-                            <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-[typing_1.4s_infinite_ease-in-out_0.2s]"></span>
-                            <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-[typing_1.4s_infinite_ease-in-out_0.4s]"></span>
+                            <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-typing"></span>
+                            <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-typing-delay-200"></span>
+                            <span className="w-1.5 h-1.5 bg-neutral-400 rounded-full animate-typing-delay-400"></span>
                           </div>
                         )
                       ) : (
