@@ -296,6 +296,21 @@ export const useDashboardPage = () => {
     }
   };
 
+  const handleDeleteReviewCard = async () => {
+    if (!selectedSettingsReviewCardId) return;
+
+    try {
+      await ReviewCardService.deleteReviewCard(selectedSettingsReviewCardId);
+      removeCard(selectedSettingsReviewCardId);
+      showSuccessToast('복습 카드가 삭제되었습니다.');
+      closeReviewCardSettingsModal();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : '복습 카드 삭제에 실패했습니다.';
+      showErrorToast(errorMsg);
+      throw error;
+    }
+  };
+
 
   const handleCreateTask = async (data: {
     taskType: 'concept' | 'approach' | 'memorization';
@@ -372,6 +387,7 @@ export const useDashboardPage = () => {
     openReviewCardSettingsModal,
     closeReviewCardSettingsModal,
     handleSaveReviewCardSettings,
+    handleDeleteReviewCard,
     handleSaveCategory,
     handleCreateTask,
     toggleSidebar,

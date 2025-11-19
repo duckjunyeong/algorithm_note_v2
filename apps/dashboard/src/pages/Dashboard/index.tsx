@@ -53,6 +53,7 @@ const DashboardPage: FC = () => {
     openReviewCardSettingsModal,
     closeReviewCardSettingsModal,
     handleSaveReviewCardSettings,
+    handleDeleteReviewCard,
     handleSaveCategory,
     handleCreateTask,
     toggleSidebar,
@@ -125,6 +126,7 @@ const DashboardPage: FC = () => {
       onOpenReviewCardSettingsModal={openReviewCardSettingsModal}
       onCloseReviewCardSettingsModal={closeReviewCardSettingsModal}
       onSaveReviewCardSettings={handleSaveReviewCardSettings}
+      onDeleteReviewCard={handleDeleteReviewCard}
       onSaveCategory={handleSaveCategory}
       onCreateTask={handleCreateTask}
       selectedTaskType={selectedTaskType}

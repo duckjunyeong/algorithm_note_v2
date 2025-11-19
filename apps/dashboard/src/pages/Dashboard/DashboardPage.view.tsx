@@ -76,6 +76,7 @@ export interface DashboardPageViewProps {
       questionText: string;
     }>;
   }) => Promise<void>;
+  onDeleteReviewCard: () => Promise<void>;
   onCloseConfirmModal: () => void;
   onOpenReviewMenu: () => void;
   onCloseReviewMenu: () => void;
@@ -154,6 +155,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onOpenReviewCardSettingsModal,
   onCloseReviewCardSettingsModal,
   onSaveReviewCardSettings,
+  onDeleteReviewCard,
   onOpenReviewMenu,
   onCloseReviewMenu,
   onCloseTaskCreationModal,
@@ -216,7 +218,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
 
           <div className="mt-6 flex flex-col gap-6 lg:flex-row">
             <div className="flex w-full flex-col justify-between rounded-lg bg-background-secondary p-4 lg:w-1/3">
-              <h2 className="text-base font-semibold text-text-primary">전체 진행률</h2>
+              <h2 className="text-base font-semibold text-text-primary">스트릭</h2>
              
             </div>
             
@@ -450,6 +452,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           isLoadingCategories={isLoadingCategories}
           categoryError={categoryError}
           onSave={onSaveReviewCardSettings}
+          onDeleteCard={onDeleteReviewCard}
           onClose={onCloseReviewCardSettingsModal}
           onAddCategoryClick={() => console.log('Add category clicked')}
         />

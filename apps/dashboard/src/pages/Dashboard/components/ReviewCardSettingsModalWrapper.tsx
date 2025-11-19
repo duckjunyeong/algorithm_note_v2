@@ -26,6 +26,7 @@ interface ReviewCardSettingsModalWrapperProps {
       questionText: string;
     }>;
   }) => Promise<void>;
+  onDeleteCard: () => Promise<void>;
   onClose: () => void;
   onAddCategoryClick: () => void;
 }

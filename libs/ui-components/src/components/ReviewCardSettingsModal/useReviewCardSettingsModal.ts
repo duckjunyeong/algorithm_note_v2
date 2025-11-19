@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ConfirmModal } from '../ConfirmModal';
 
 interface Question {
   reviewQuestionId: number;
@@ -34,6 +35,7 @@ export interface UseReviewCardSettingsModalProps {
       questionText: string;
     }>;
   }) => Promise<void>;
+  onDeleteCard: () => Promise<void>;
   onClose: () => void;
   onAddCategoryClick: () => void;
 }
@@ -48,6 +50,7 @@ export function useReviewCardSettingsModal({
   isLoadingCategories,
   categoryError,
   onSave,
+  onDeleteCard,
   onClose,
   onAddCategoryClick,
 }: UseReviewCardSettingsModalProps) {
@@ -66,6 +69,8 @@ export function useReviewCardSettingsModal({
   const [deletedQuestionIds, setDeletedQuestionIds] = useState<number[]>([]);
   const [updatedQuestions, setUpdatedQuestions] = useState<Map<number, string>>(new Map());
   const [addedQuestions, setAddedQuestions] = useState<string[]>([]);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     setQuestions(initialQuestions.map(q => ({ ...q, isEditing: false })));
@@ -173,6 +178,27 @@ export function useReviewCardSettingsModal({
     }
   };
 
+  const handleDeleteCardClick = () => {
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await onDeleteCard();
+      onClose();
+    } catch (error) {
+      console.error('Failed to delete card:', error);
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteConfirmOpen(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteConfirmOpen(false);
+  };
+
   return {
     questions,
     editingQuestionId,
@@ -186,6 +212,8 @@ export function useReviewCardSettingsModal({
     isLoadingCategories,
     categoryError,
     isSaving,
+    isDeleteConfirmOpen,
+    isDeleting,
     handleDeleteQuestion,
     handleStartEditQuestion,
     handleSaveEditQuestion,
@@ -198,6 +226,9 @@ export function useReviewCardSettingsModal({
     handleCategorySelect,
     handleAddCategoryClick: onAddCategoryClick,
     handleSave,
+    handleDeleteCardClick,
+    handleConfirmDelete,
+    handleCancelDelete,
     handleClose: onClose,
   };
 }

@@ -174,13 +174,24 @@ export function ReviewCardSettingsModalView({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200">
-          <Button variant="secondary" onClick={onClose} disabled={isSaving}>
-            취소
-          </Button>
-          <Button variant="primary" onClick={onSave} disabled={isSaving}>
-            {isSaving ? '저장 중...' : '저장하기'}
-          </Button>
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+          <button
+            type="button"
+            onClick={onDeleteCard}
+            disabled={isSaving}
+            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FiTrash2 size={16} />
+            카드 삭제
+          </button>
+          <div className="flex items-center gap-3">
+            <Button variant="secondary" onClick={onClose} disabled={isSaving}>
+              취소
+            </Button>
+            <Button variant="primary" onClick={onSave} disabled={isSaving}>
+              {isSaving ? '저장 중...' : '저장하기'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
