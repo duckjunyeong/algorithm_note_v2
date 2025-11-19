@@ -35,6 +35,8 @@ export function TaskCreationModal({
     questions,
     selectedQuestions,
     editingQuestion,
+    title,
+    setTitle,
     repetitionCycle,
     setRepetitionCycle,
     importance,
@@ -86,13 +88,14 @@ export function TaskCreationModal({
       questions={questions}
       selectedQuestions={selectedQuestions}
       editingQuestion={editingQuestion}
+      title={title}
+      setTitle={setTitle}
       repetitionCycle={repetitionCycle}
       setRepetitionCycle={setRepetitionCycle}
       importance={importance}
       setImportance={setImportance}
       url={url}
       setUrl={setUrl}
-
       categories={categories}
       selectedCategoryId={selectedCategoryId}
       isLoadingCategories={isLoadingCategories}
@@ -102,7 +105,6 @@ export function TaskCreationModal({
       onAddCategoryClick={handleAddCategoryClick}
       onCloseCategoryForm={handleCloseCategoryForm}
       onSaveCategory={onSaveCategory}
-
       onContinue={handleContinue}
       onQuestionToggle={handleQuestionToggle}
       onQuestionEdit={handleQuestionEdit}

@@ -17,13 +17,14 @@ interface TaskCreationModalViewProps {
   questions: CreateAnswerResponse | null;
   selectedQuestions: Set<number>;
   editingQuestion: { id: number; text: string } | null;
+  title: string;
+  setTitle: (value: string) => void;
   repetitionCycle: number;
   setRepetitionCycle: (value: number) => void;
   importance: number;
   setImportance: (value: number) => void;
   url: string;
   setUrl: (value: string) => void;
-  // Category 관련 props
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
   isLoadingCategories: boolean;
@@ -33,7 +34,6 @@ interface TaskCreationModalViewProps {
   onAddCategoryClick: () => void;
   onCloseCategoryForm: () => void;
   onSaveCategory: (name: string, color: string) => Promise<void>;
-  // 질문 관련 props
   onContinue: () => void;
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
@@ -55,13 +55,14 @@ export function TaskCreationModalView({
   questions,
   selectedQuestions,
   editingQuestion,
+  title,
+  setTitle,
   repetitionCycle,
   setRepetitionCycle,
   importance,
   setImportance,
   url,
   setUrl,
-  // Category props
   categories,
   selectedCategoryId,
   isLoadingCategories,
@@ -71,7 +72,6 @@ export function TaskCreationModalView({
   onAddCategoryClick,
   onCloseCategoryForm,
   onSaveCategory,
-  // Question props
   onContinue,
   onQuestionToggle,
   onQuestionEdit,
@@ -119,7 +119,8 @@ export function TaskCreationModalView({
                   <LoadingView />
                 ) : questions ? (
                   <SelectView
-                    title={questions.title}
+                    title={title}
+                    setTitle={setTitle}
                     questions={questions.questions}
                     selectedQuestions={selectedQuestions}
                     repetitionCycle={repetitionCycle}
@@ -128,7 +129,6 @@ export function TaskCreationModalView({
                     setImportance={setImportance}
                     url={url}
                     setUrl={setUrl}
-                    // Category props
                     categories={categories}
                     selectedCategoryId={selectedCategoryId}
                     isLoadingCategories={isLoadingCategories}
@@ -138,7 +138,6 @@ export function TaskCreationModalView({
                     onAddCategoryClick={onAddCategoryClick}
                     onCloseCategoryForm={onCloseCategoryForm}
                     onSaveCategory={onSaveCategory}
-                    // Question props
                     onQuestionToggle={onQuestionToggle}
                     onQuestionEdit={onQuestionEdit}
                     onQuestionDelete={onQuestionDelete}
@@ -216,6 +215,7 @@ function InputView({ value, onChange, errorMessage, isLoading, onContinue }: Inp
 
 interface SelectViewProps {
   title: string;
+  setTitle: (value: string) => void;
   questions: Array<{ id: number; text: string }>;
   selectedQuestions: Set<number>;
   repetitionCycle: number;
@@ -224,7 +224,6 @@ interface SelectViewProps {
   setImportance: (value: number) => void;
   url: string;
   setUrl: (value: string) => void;
-  // Category props
   categories: Array<{ categoryId: number; name: string; color: string }>;
   selectedCategoryId: number | null;
   isLoadingCategories: boolean;
@@ -234,7 +233,6 @@ interface SelectViewProps {
   onAddCategoryClick: () => void;
   onCloseCategoryForm: () => void;
   onSaveCategory: (name: string, color: string) => Promise<void>;
-  // Question props
   onQuestionToggle: (questionId: number) => void;
   onQuestionEdit: (questionId: number) => void;
   onQuestionDelete: (questionId: number) => void;
@@ -244,6 +242,7 @@ interface SelectViewProps {
 
 function SelectView({
   title,
+  setTitle,
   questions,
   selectedQuestions,
   repetitionCycle,
@@ -252,7 +251,6 @@ function SelectView({
   setImportance,
   url,
   setUrl,
-  // Category props
   categories,
   selectedCategoryId,
   isLoadingCategories,
@@ -262,7 +260,6 @@ function SelectView({
   onAddCategoryClick,
   onCloseCategoryForm,
   onSaveCategory,
-  // Question props
   onQuestionToggle,
   onQuestionEdit,
   onQuestionDelete,
@@ -272,8 +269,17 @@ function SelectView({
   return (
     <div className="flex flex-col h-full">
       <div className="mb-4">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
-        <p className="text-sm text-gray-600">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          제목 <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="복습 카드의 제목을 입력하세요"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <p className="text-sm text-gray-600 mt-3">
           생성된 질문을 클릭하여 선택하거나 수정/삭제할 수 있습니다.
         </p>
       </div>

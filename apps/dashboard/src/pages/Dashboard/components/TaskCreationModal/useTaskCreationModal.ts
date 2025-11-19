@@ -23,6 +23,7 @@ export function useTaskCreationModal(props?: UseTaskCreationModalProps) {
   const [editingQuestion, setEditingQuestion] = useState<{ id: number; text: string } | null>(null);
 
   // 질문 설정 상태 관리
+  const [title, setTitle] = useState('');
   const [repetitionCycle, setRepetitionCycle] = useState(3);
   const [importance, setImportance] = useState(5);
   const [url, setUrl] = useState('');
@@ -46,6 +47,7 @@ export function useTaskCreationModal(props?: UseTaskCreationModalProps) {
     setIsLoading(false);
     setSelectedQuestions(new Set());
     setEditingQuestion(null);
+    setTitle('');
     setRepetitionCycle(3);
     setImportance(5);
     setUrl('');
@@ -177,18 +179,21 @@ export function useTaskCreationModal(props?: UseTaskCreationModalProps) {
       return;
     }
 
+    if (!title.trim()) {
+      setErrorMessage('제목을 입력해주세요');
+      return;
+    }
+
     setErrorMessage('');
     setIsLoading(true);
 
     try {
-      // 선택된 질문들만 필터링
       const selectedQuestionTexts = questions.questions
         .filter(q => selectedQuestions.has(q.id))
         .map(q => ({ text: q.text }));
 
-      // 복습 카드 생성 요청 데이터 구성
       const reviewCardData = {
-        title: questions.title,
+        title: title.trim(),
         categoryId: selectedCategoryId,
         importance,
         reviewCycle: repetitionCycle,
@@ -200,10 +205,8 @@ export function useTaskCreationModal(props?: UseTaskCreationModalProps) {
 
       await createReviewCard(reviewCardData);
 
-      // 성공 토스트 표시
       showSuccessToast('복습 카드가 성공적으로 생성되었습니다');
 
-      // 성공시 모달 상태 리셋
       resetModal();
     } catch (error) {
       const errorMsg = error instanceof Error
@@ -214,7 +217,7 @@ export function useTaskCreationModal(props?: UseTaskCreationModalProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedQuestions, questions, selectedCategoryId, importance, repetitionCycle, url, createReviewCard, resetModal]);
+  }, [selectedQuestions, questions, selectedCategoryId, title, importance, repetitionCycle, url, createReviewCard, resetModal, props?.selectedTaskType, props?.selectedTaskField]);
 
   return {
     currentView,
@@ -225,6 +228,8 @@ export function useTaskCreationModal(props?: UseTaskCreationModalProps) {
     questions,
     selectedQuestions,
     editingQuestion,
+    title,
+    setTitle,
     repetitionCycle,
     setRepetitionCycle,
     importance,
