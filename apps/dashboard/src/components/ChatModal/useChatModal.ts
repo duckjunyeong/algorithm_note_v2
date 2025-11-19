@@ -50,7 +50,7 @@ export const useChatModal = ({
   tutorLevel,
   reviewCardId,
   onQuestionsGenerated,
-  onTestCompleted,
+  // onTestCompleted,
   onNext
 }: UseChatModalProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -66,6 +66,7 @@ export const useChatModal = ({
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const chatServiceRef = useRef<ChatService | undefined>(undefined);
   const currentBotMessageIdRef = useRef<number | null>(null);
+  const responseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // AudioRecorder 통합
   const audioRecorder = useAudioRecorder({
@@ -84,6 +85,21 @@ export const useChatModal = ({
   }, []);
 
   // 질문 목록 파싱 함수
+  const handleTimeout = useCallback(() => {
+    setMessages(prev => {
+      const withoutPlaceholder = prev.slice(0, -1);
+      const errorResponse: Message = {
+        id: Date.now() + 2,
+        sender: 'bot',
+        text: '서버에 문제가 있습니다. 잠시 후 다시 시도해주세요',
+        isTyping: false
+      };
+      return [...withoutPlaceholder, errorResponse];
+    });
+    setLoading(false);
+    responseTimeoutRef.current = null;
+  }, []);
+
   const parseGeneratedQuestions = useCallback((text: string): string[] => {
     const questionSectionRegex = /##\s*🎯\s*생성된 질문([\s\S]*?)(?=##|$)/;
     const match = text.match(questionSectionRegex);
@@ -160,6 +176,11 @@ export const useChatModal = ({
         tutorLevel,
         reviewCardId,
         onMessage: (content) => {
+          if (responseTimeoutRef.current) {
+            clearTimeout(responseTimeoutRef.current);
+            responseTimeoutRef.current = null;
+          }
+
           setInitLoading(false);
           setConnectionState('connected');
 
@@ -191,6 +212,11 @@ export const useChatModal = ({
           setConnectionState('error');
         },
         onDone: () => {
+          if (responseTimeoutRef.current) {
+            clearTimeout(responseTimeoutRef.current);
+            responseTimeoutRef.current = null;
+          }
+
           setMessages(prev => {
             const updated = prev.map(msg =>
               msg.isTyping ? { ...msg, isTyping: false } : msg
@@ -229,6 +255,10 @@ export const useChatModal = ({
     }
 
     return () => {
+      if (responseTimeoutRef.current) {
+        clearTimeout(responseTimeoutRef.current);
+        responseTimeoutRef.current = null;
+      }
       chatServiceRef.current?.disconnect();
       chatServiceRef.current = undefined;
     };
@@ -258,13 +288,23 @@ export const useChatModal = ({
 
     setTimeout(scrollToBottom, 10);
 
+    responseTimeoutRef.current = setTimeout(() => {
+      if (loading) {
+        handleTimeout();
+      }
+    }, 45000);
+
     try {
       await chatServiceRef.current?.sendMessage(textToSend);
     } catch (error: any) {
+      if (responseTimeoutRef.current) {
+        clearTimeout(responseTimeoutRef.current);
+        responseTimeoutRef.current = null;
+      }
+
       console.error('Failed to send message:', error);
       toast.error(error.message || '메시지 전송 실패');
 
-      // Remove placeholder and add error message
       setMessages(prev => {
         const withoutPlaceholder = prev.slice(0, -1);
         const errorResponse: Message = {
@@ -277,7 +317,7 @@ export const useChatModal = ({
       });
       setLoading(false);
     }
-  }, [inputValue, scrollToBottom]);
+  }, [inputValue, scrollToBottom, loading, handleTimeout]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -310,6 +350,11 @@ export const useChatModal = ({
       tutorLevel,
       reviewCardId,
       onMessage: (content) => {
+        if (responseTimeoutRef.current) {
+          clearTimeout(responseTimeoutRef.current);
+          responseTimeoutRef.current = null;
+        }
+
         setInitLoading(false);
         setConnectionState('connected');
 
@@ -341,6 +386,11 @@ export const useChatModal = ({
         setConnectionState('error');
       },
       onDone: () => {
+        if (responseTimeoutRef.current) {
+          clearTimeout(responseTimeoutRef.current);
+          responseTimeoutRef.current = null;
+        }
+
         setMessages(prev => {
           const updated = prev.map(msg =>
             msg.isTyping ? { ...msg, isTyping: false } : msg
