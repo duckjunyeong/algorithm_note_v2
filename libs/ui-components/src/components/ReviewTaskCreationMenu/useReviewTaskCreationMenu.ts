@@ -26,6 +26,7 @@ export function useReviewTaskCreationMenu({
 
   const handleTaskTypeSelect = useCallback((type: 'concept' | 'memorization' | 'approach') => {
     onSelectTaskType(type);
+    console.log('Selected task type:', type);
   }, [onSelectTaskType]);
 
   const handleConfirmClick = useCallback(() => {

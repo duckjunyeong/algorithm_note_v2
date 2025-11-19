@@ -1,6 +1,6 @@
 import React from 'react';
 import { Info, Maximize, X, Send, Mic, MicOff, Loader2 } from 'lucide-react';
-import { AnimatePresence, m, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { SelectableList } from './SelectableList';
 import { QuestionCard } from './QuestionCard';
