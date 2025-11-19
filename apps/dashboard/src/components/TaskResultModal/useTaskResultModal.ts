@@ -3,6 +3,7 @@ import { ChatSessionService } from '../../services/chatSessionService';
 import { ReviewCardService } from '../../services/reviewCardService';
 import { parseConversationByQuestions } from './utils/conversationParser';
 import type { QuestionConversation } from './utils/conversationParser';
+import { showSuccessToast, showErrorToast } from '../../utils/toast';
 
 interface UseTaskResultModalProps {
   isOpen: boolean;
@@ -90,9 +91,11 @@ export const useTaskResultModal = ({
         questionUpdates
       });
 
+      showSuccessToast('테스트 평가가 완료되었습니다! 🎉');
       onClose();
     } catch (err) {
       console.error('결과 저장 실패:', err);
+      showErrorToast('결과를 저장하는데 실패했습니다.');
       setError('결과를 저장하는데 실패했습니다.');
     } finally {
       setIsSaving(false);

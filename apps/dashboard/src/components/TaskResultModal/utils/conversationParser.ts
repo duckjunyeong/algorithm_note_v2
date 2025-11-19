@@ -10,6 +10,38 @@ export interface QuestionConversation {
   }>;
 }
 
+export function filterAIMessages(
+  messages: Array<{ role: 'user' | 'model'; content: string }>
+): Array<{ role: 'user' | 'model'; content: string }> {
+  const firstAIIndex = messages.findIndex(msg => msg.role === 'model');
+
+  if (firstAIIndex === -1) {
+    return [...messages];
+  }
+
+  const tempMessages = [
+    ...messages.slice(0, firstAIIndex),
+    ...messages.slice(firstAIIndex + 1)
+  ];
+
+  let lastAIIndexInTemp = -1;
+  for (let i = tempMessages.length - 1; i >= 0; i--) {
+    if (tempMessages[i].role === 'model') {
+      lastAIIndexInTemp = i;
+      break;
+    }
+  }
+
+  if (lastAIIndexInTemp !== -1) {
+    return [
+      ...tempMessages.slice(0, lastAIIndexInTemp),
+      ...tempMessages.slice(lastAIIndexInTemp + 1)
+    ];
+  }
+
+  return tempMessages;
+}
+
 export function parseConversationByQuestions(
   conversationHistory: ChatMessage[],
   reviewQuestions: ReviewQuestionInfo[]
@@ -33,7 +65,7 @@ export function parseConversationByQuestions(
             questionIndex: currentQuestionIndex + 1,
             questionText: questionInfo.questionText,
             reviewQuestionId: questionInfo.reviewQuestionId,
-            messages: [...currentMessages]
+            messages: filterAIMessages([...currentMessages])
           });
         }
       }
@@ -57,7 +89,7 @@ export function parseConversationByQuestions(
         questionIndex: currentQuestionIndex + 1,
         questionText: questionInfo.questionText,
         reviewQuestionId: questionInfo.reviewQuestionId,
-        messages: [...currentMessages]
+        messages: filterAIMessages([...currentMessages])
       });
     }
   }
