@@ -14,7 +14,7 @@ export interface ReviewCard {
   reviewCount: number;
   successRate?: number;
   url?: string;
-  taskType: 'concept' | 'memorization' | 'approach';
+  taskType?: 'concept' | 'memorization' | 'approach';
   taskField?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -58,7 +58,7 @@ export interface GetReviewCardsResponse {
 // 복습 결과 업데이트 요청 인터페이스
 export interface UpdateReviewResultRequest {
   title?: string;
-  categoryId?: number;
+  categoryId?: number | null;
   importance?: number;
   reviewCycle?: number;
   url?: string;

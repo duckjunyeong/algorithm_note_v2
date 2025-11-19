@@ -5,12 +5,14 @@ interface TaskResultModalProps {
   isOpen: boolean;
   onClose: () => void;
   reviewCardId: number;
+  onCompletionSuccess?: () => void;
 }
 
 export const TaskResultModal = ({
   isOpen,
   onClose,
-  reviewCardId
+  reviewCardId,
+  onCompletionSuccess
 }: TaskResultModalProps) => {
   const {
     questions,
@@ -26,7 +28,8 @@ export const TaskResultModal = ({
   } = useTaskResultModal({
     isOpen,
     reviewCardId,
-    onClose
+    onClose,
+    onCompletionSuccess
   });
 
   console.log('[TaskResultModal] Render:', currentQuestion);

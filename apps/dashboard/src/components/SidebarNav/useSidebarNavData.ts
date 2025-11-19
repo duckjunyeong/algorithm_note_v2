@@ -1,17 +1,8 @@
 // SidebarNav/useSidebarNavData.ts
 import type { IconType } from 'react-icons';
 import {
-  FiHome,
   FiCheckSquare,
-  FiList,
-  FiRepeat,
   FiCreditCard,
-  FiTrendingUp,
-  FiBriefcase,
-  FiDollarSign,
-  FiFileText,
-  FiRotateCcw,
-  FiBookOpen,
 } from 'react-icons/fi';
 
 export interface NavItem {

@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { AudioUploadService } from '../../services/audioUploadService';
 import { SpeechTranscriptionService } from '../../services/speechTranscriptionService';
-import { showSuccessToast, showErrorToast } from '../../utils/toast';
+import { showErrorToast } from '../../utils/toast';
 
 interface UseAudioRecorderProps {
   onTranscriptionComplete?: (transcript: string) => void;

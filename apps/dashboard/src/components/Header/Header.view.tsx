@@ -1,7 +1,7 @@
 // Header/Header.view.tsx
 import React from 'react';
 import type { BreadcrumbItem } from './useHeader';
-import { FiMenu, FiChevronDown, FiLogOut } from 'react-icons/fi';
+import { FiMenu, FiLogOut } from 'react-icons/fi';
 import { useClerk } from "@clerk/clerk-react";
 
 interface HeaderViewProps {
@@ -19,7 +19,7 @@ export const HeaderView = ({
   appName,
   userName,
   userEmail,
-  breadcrumbs,
+  // breadcrumbs,
   isDropdownOpen,
   dropdownRef,
   toggleDropdown,

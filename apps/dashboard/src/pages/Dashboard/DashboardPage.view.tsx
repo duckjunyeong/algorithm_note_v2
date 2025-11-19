@@ -9,10 +9,8 @@ import { ConfirmModal } from '../../../../../libs/ui-components/src/components/C
 import { ReviewTaskCreationMenu } from '../../../../../libs/ui-components/src/components/ReviewTaskCreationMenu';
 import { ReviewCard } from '../../../../../libs/ui-components/src/components/ReviewCard';
 import { TaskReviewAiChooserModal } from '../../components/TaskReviewAiChooser';
-import { ReviewResultModal } from './components/ReviewResultModal';
 import { ExamSheetModal } from './components/ExamSheetModal';
 import { ReviewCardSettingsModalWrapper } from './components/ReviewCardSettingsModalWrapper';
-import { AudioRecorder } from '../../components/AudioRecorder';
 import { ChatModal } from "../../components/ChatModal";
 import { TaskCreationModal } from './components/TaskCreationModal';
 import { NetworkErrorPage } from '../../../../../libs/ui-components/src';
@@ -140,13 +138,13 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isReviewMenuOpen,
   isTaskCreationModalOpen,
   isTaskCreationConfirmOpen,
-  isReviewResultModalOpen,
+  // isReviewResultModalOpen,
   isTaskReviewAiChooserOpen,
   selectedReviewCardId,
-  selectedResultReviewCardId,
+  // selectedResultReviewCardId,
   onOpenReviewResultModal,
-  onCloseReviewResultModal,
-  onReviewCardDeleteSuccess,
+  // onCloseReviewResultModal,
+  // onReviewCardDeleteSuccess,
   isExamSheetModalOpen,
   onOpenExamSheetModal,
   onCloseExamSheetModal,
@@ -165,7 +163,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onOpenTaskReviewAiChooser,
   onCloseTaskReviewAiChooser,
   onSaveCategory,
-  onCreateTask,
+  // onCreateTask,
   selectedTaskType,
   onSelectTaskType,
   taskField,
@@ -179,9 +177,9 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   onConfirmChatClose,
   onCancelChatClose,
   onRetryFetch,
-  isReviewTestChatModalOpen,
-  onCloseReviewTestChatModal,
-  reviewTestTutorLevel,
+  // isReviewTestChatModalOpen,
+  // onCloseReviewTestChatModal,
+  // reviewTestTutorLevel,
 }) => {
   return (
     <div className="relative min-h-screen bg-background-tertiary">

@@ -22,7 +22,7 @@ export const useDashboardPage = () => {
   const [selectedReviewCardId, setSelectedReviewCardId] = useState<number | null>(null);
   const [isReviewResultModalOpen, setIsReviewResultModalOpen] = useState<boolean>(false);
   const [isReviewTestChatModalOpen, setIsReviewTestChatModalOpen] = useState<boolean>(false);
-  const [reviewTestTutorLevel, setReviewTestTutorLevel] = useState<string | null>(null);
+  const [reviewTestTutorLevel] = useState<string | null>(null);
   const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
   const [isExamSheetModalOpen, setIsExamSheetModalOpen] = useState<boolean>(false);
   const [isReviewCardSettingsModalOpen, setIsReviewCardSettingsModalOpen] = useState<boolean>(false);
@@ -54,7 +54,7 @@ export const useDashboardPage = () => {
   } = useReviewCardStore();
 
   const { categories, setCategories, addCategory } = useCategoryStore();
-  const user = useAuthStore((state) => state.user);
+  // const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     fetchReviewCards();
@@ -161,8 +161,8 @@ export const useDashboardPage = () => {
   const openChatModal = () => setIsChatModalOpen(true);
   const closeChatModal = () => {
     setIsChatModalOpen(false);
-    setSelectedTaskType('concept');
-    setTaskField('');
+    //setSelectedTaskType('memorization');
+    //setTaskField('');
   };
 
   const handleChatBackgroundClick = () => {
