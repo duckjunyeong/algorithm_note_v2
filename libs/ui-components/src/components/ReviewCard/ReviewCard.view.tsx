@@ -41,7 +41,7 @@ export function ReviewCardView({
     <div
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="relative flex cursor-pointer flex-col gap-4 rounded-lg border border-neutral-100 bg-background-secondary p-4 shadow-sm transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1"
+      className="relative flex cursor-pointer flex-col gap-4 rounded-lg border border-neutral-100 bg-background-secondary p-4 shadow-sm transition-all duration-200 ease-out hover:shadow-lg hover:scale-[1.02]"
     >
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-text-secondary">{id}</span>
@@ -72,11 +72,11 @@ export function ReviewCardView({
       <AnimatePresence>
         {isHovering && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="absolute inset-0 flex items-center justify-center gap-3 bg-black bg-opacity-40 rounded-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 flex items-center justify-center gap-3 bg-black bg-opacity-30 rounded-lg"
           >
             {/* 기존 버튼 (테스트 시작 또는 결과 보기) */}
             <motion.button
@@ -86,22 +86,18 @@ export function ReviewCardView({
                 e.stopPropagation();
                 onButtonClick();
               }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-2 rounded-lg px-6 py-3 text-white font-semibold shadow-lg transition-colors ${
-                isActive
-                  ? 'bg-blue-600 hover:bg-blue-700'
-                  : 'bg-green-600 hover:bg-green-700'
-              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-2 rounded-lg px-4 py-2 text-white font-semibold shadow-sm bg-neutral-800 hover:bg-neutral-900 transition-colors"
             >
               {isActive ? (
                 <>
-                  <FiPlay size={20} />
+                  <FiPlay size={16} />
                   테스트 시작
                 </>
               ) : (
                 <>
-                  <FiEye size={20} />
+                  <FiEye size={16} />
                   결과 보기
                 </>
               )}
@@ -116,11 +112,11 @@ export function ReviewCardView({
                   e.stopPropagation();
                   onOpenUrl();
                 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 rounded-lg px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-lg transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-2 rounded-lg px-4 py-2 bg-neutral-700 hover:bg-neutral-800 text-white font-semibold shadow-sm transition-colors"
               >
-                <FiExternalLink size={20} />
+                <FiExternalLink size={16} />
                 문제 바로가기
               </motion.button>
             )}
