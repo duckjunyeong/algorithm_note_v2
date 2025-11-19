@@ -1,6 +1,6 @@
 import React from 'react';
 import { Info, Maximize, X, Send, Mic, MicOff, Loader2 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { SelectableList } from './SelectableList';
 import { QuestionCard } from './QuestionCard';
@@ -22,6 +22,7 @@ interface ChatModalViewProps {
   inputValue: string;
   loading: boolean;
   initLoading: boolean;
+  connectionState: 'connecting' | 'connected' | 'error';
   sessionId: string | null;
   chatAreaRef: React.RefObject<HTMLDivElement | null>;
   recommendedQuestions: string[];
@@ -35,6 +36,7 @@ interface ChatModalViewProps {
   handleSaveNote: () => void;
   handleGenerateQuestions: () => void;
   handleSelectItems: (selectedNumbers: number[]) => void;
+  handleRetry: () => void;
   onNext?: () => void;
   audioRecorder: {
     isRecording: boolean;
@@ -56,6 +58,7 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   inputValue,
   loading,
   initLoading,
+  connectionState,
   sessionId,
   chatAreaRef,
   recommendedQuestions,
@@ -69,12 +72,14 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   handleSaveNote,
   handleGenerateQuestions,
   handleSelectItems,
+  handleRetry,
   onNext,
   audioRecorder,
   extractQuestionNumber
 }) => {
+  console.log('[ChatModalView] Render:', { isOpen, title, mode, messages });
   const isSessionReady = sessionId !== null;
-  const isInputDisabled = initLoading || (!isSessionReady && messages.length === 0) ||
+  const isInputDisabled = (!isSessionReady && messages.length === 0) ||
                           audioRecorder.isRecording || audioRecorder.isUploading || audioRecorder.isTranscribing;
   return (
     <AnimatePresence>
@@ -122,7 +127,27 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                            scrollbar-thin scrollbar-thumb-neutral-200 scrollbar-track-neutral-50
                            hover:scrollbar-thumb-neutral-300"
               >
-                {messages.map((msg) => (
+                {connectionState === 'connecting' ? (
+                  <div className="flex h-64 items-center justify-center">
+                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+                  </div>
+                ) : connectionState === 'error' ? (
+                  <div className="flex h-64 items-center justify-center">
+                    <div className="text-center">
+                      <div className="mb-4 text-red-500 text-lg font-medium">
+                        채팅 연결에 실패했습니다
+                      </div>
+                      <button
+                        onClick={handleRetry}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        재시도
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {messages.map((msg) => (
                   <div
                     key={msg.id}
                     className={`flex gap-4 max-w-[85%] ${
@@ -177,10 +202,12 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
                       )}
                     </div>
                   </div>
-                ))}
+                    ))}
+                  </>
+                )}
               </div>
 
-              {messages.length <= 1 && !loading && (
+              {messages.length <= 1 && !loading && connectionState === 'connected' && (
                 <div className="p-4 md:px-6 pt-0 flex flex-wrap justify-end gap-2.5">
                   {recommendedQuestions.map((q, i) => (
                     <button
@@ -195,15 +222,10 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
               )}
 
               <div className="p-4 md:px-6 border-t border-neutral-100 bg-white flex-shrink-0">
-                {initLoading && (
-                  <div className="text-center text-sm text-text-secondary mb-2">
-                    채팅을 초기화하는 중...
-                  </div>
-                )}
                 <div className="flex gap-2 items-center">
                   <div className="relative flex items-center flex-1 bg-background-primary border border-neutral-200 rounded-lg transition-colors focus-within:border-brand">
                     <textarea
-                      placeholder={isInputDisabled ? "채팅 세션을 초기화하는 중입니다..." : "메시지를 입력하세요..."}
+                      placeholder="메시지를 입력하세요..."
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyDown={handleKeyDown}

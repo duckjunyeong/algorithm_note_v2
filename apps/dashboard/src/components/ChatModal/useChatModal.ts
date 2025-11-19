@@ -57,6 +57,7 @@ export const useChatModal = ({
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [initLoading, setInitLoading] = useState<boolean>(false);
+  const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'error'>('connecting');
   const [sessionId] = useState<string | null>(null);
   const [showSaveButton] = useState<boolean>(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<string[]>([]);
@@ -159,8 +160,8 @@ export const useChatModal = ({
         tutorLevel,
         reviewCardId,
         onMessage: (content) => {
-          // 첫 메시지가 도착하면 초기 로딩 종료
           setInitLoading(false);
+          setConnectionState('connected');
 
           setMessages(prev => {
             const updated = [...prev];
@@ -185,9 +186,9 @@ export const useChatModal = ({
         },
         onError: (error) => {
           console.error('Chat error:', error);
-          toast.error('채팅 연결에 실패했습니다.');
           setLoading(false);
           setInitLoading(false);
+          setConnectionState('error');
         },
         onDone: () => {
           setMessages(prev => {
@@ -218,15 +219,11 @@ export const useChatModal = ({
       (async () => {
         try {
           await chatServiceRef.current?.subscribe();
-
-          // Backend에서 자동으로 첫 메시지를 전송하므로 환영 메시지 제거
-          // 빈 메시지 배열로 시작하고 initLoading은 첫 메시지 도착 시까지 유지
           setMessages([]);
-          // initLoading은 onMessage 또는 onDone에서 false로 설정됨
         } catch (error) {
           console.error('Subscribe error:', error);
-          toast.error('채팅 연결 중 오류가 발생했습니다.');
           setInitLoading(false);
+          setConnectionState('error');
         }
       })();
     }
@@ -299,6 +296,88 @@ export const useChatModal = ({
     handleSendMessage(question);
   }, [handleSendMessage]);
 
+  const handleRetry = useCallback(() => {
+    setConnectionState('connecting');
+    setInitLoading(true);
+    chatServiceRef.current?.disconnect();
+    chatServiceRef.current = undefined;
+    setMessages([]);
+
+    chatServiceRef.current = createChatService({
+      mode,
+      taskType,
+      taskField,
+      tutorLevel,
+      reviewCardId,
+      onMessage: (content) => {
+        setInitLoading(false);
+        setConnectionState('connected');
+
+        setMessages(prev => {
+          const updated = [...prev];
+          const lastMsg = updated[updated.length - 1];
+
+          if (lastMsg?.sender === 'bot' && lastMsg.isTyping) {
+            lastMsg.text += content;
+          } else {
+            const newBotMessage: Message = {
+              id: Date.now(),
+              sender: 'bot',
+              text: content,
+              isTyping: true
+            };
+            currentBotMessageIdRef.current = newBotMessage.id;
+            updated.push(newBotMessage);
+          }
+
+          return updated;
+        });
+        setTimeout(scrollToBottom, 10);
+      },
+      onError: (error) => {
+        console.error('Chat error:', error);
+        setLoading(false);
+        setInitLoading(false);
+        setConnectionState('error');
+      },
+      onDone: () => {
+        setMessages(prev => {
+          const updated = prev.map(msg =>
+            msg.isTyping ? { ...msg, isTyping: false } : msg
+          );
+
+          const lastBotMessage = updated[updated.length - 1];
+          if (lastBotMessage?.sender === 'bot') {
+            if (lastBotMessage.text.includes('🎯 생성된 질문')) {
+              setShowGenerateButton(true);
+            }
+
+            if (lastBotMessage.text.includes('## 🏁 테스트 종료')) {
+              setShowNextButton(true);
+              setShowGenerateButton(false);
+            }
+          }
+
+          return updated;
+        });
+        setLoading(false);
+        currentBotMessageIdRef.current = null;
+        setTimeout(scrollToBottom, 50);
+      }
+    });
+
+    (async () => {
+      try {
+        await chatServiceRef.current?.subscribe();
+        setMessages([]);
+      } catch (error) {
+        console.error('Subscribe error:', error);
+        setInitLoading(false);
+        setConnectionState('error');
+      }
+    })();
+  }, [mode, taskType, taskField, tutorLevel, reviewCardId, scrollToBottom]);
+
   return {
     isOpen,
     onClose,
@@ -308,6 +387,7 @@ export const useChatModal = ({
     inputValue,
     loading,
     initLoading,
+    connectionState,
     sessionId,
     chatAreaRef,
     recommendedQuestions,
@@ -321,6 +401,7 @@ export const useChatModal = ({
     handleRecommendationClick,
     handleGenerateQuestions,
     handleSelectItems,
+    handleRetry,
     onNext,
     audioRecorder,
     extractQuestionNumber

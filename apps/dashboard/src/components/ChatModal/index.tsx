@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChatModalView } from './ChatModal.view';
 import { useChatModal } from './useChatModal';
-import 'react-toastify/dist/ReactToastify.css'; // Toastify CSS 임포트
+import 'react-toastify/dist/ReactToastify.css';
 
 // Props 인터페이스 정의
 interface ChatModalProps {
@@ -33,6 +33,7 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     inputValue,
     loading,
     initLoading,
+    connectionState,
     sessionId,
     chatAreaRef,
     recommendedQuestions,
@@ -45,6 +46,7 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     handleRecommendationClick,
     handleGenerateQuestions,
     handleSelectItems,
+    handleRetry,
     onNext,
     audioRecorder,
     extractQuestionNumber
@@ -64,6 +66,7 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     inputValue,
     loading,
     initLoading,
+    connectionState,
     sessionId,
     chatAreaRef,
     recommendedQuestions,
@@ -77,6 +80,7 @@ export const ChatModal: React.FC<ChatModalProps> = (props) => {
     handleSaveNote,
     handleGenerateQuestions,
     handleSelectItems,
+    handleRetry,
     onNext,
     audioRecorder,
     extractQuestionNumber
