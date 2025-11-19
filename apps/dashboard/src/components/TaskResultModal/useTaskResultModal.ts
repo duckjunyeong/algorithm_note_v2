@@ -9,12 +9,14 @@ interface UseTaskResultModalProps {
   isOpen: boolean;
   reviewCardId: number;
   onClose: () => void;
+  onCompletionSuccess?: () => void;
 }
 
 export const useTaskResultModal = ({
   isOpen,
   reviewCardId,
-  onClose
+  onClose,
+  onCompletionSuccess
 }: UseTaskResultModalProps) => {
   const [questions, setQuestions] = useState<QuestionConversation[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -92,6 +94,7 @@ export const useTaskResultModal = ({
       });
 
       showSuccessToast('테스트 평가가 완료되었습니다! 🎉');
+      onCompletionSuccess?.();
       onClose();
     } catch (err) {
       console.error('결과 저장 실패:', err);

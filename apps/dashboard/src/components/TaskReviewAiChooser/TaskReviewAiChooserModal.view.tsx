@@ -12,6 +12,7 @@ interface TaskReviewAiChooserViewProps {
   reviewCard: any | null;
   showChatModal: boolean;
   showResultModal: boolean;
+  onCompletionSuccess?: () => void;
   onAiModeSelect: (id: string) => void;
   onCancel: () => void;
   onNext: () => void;
@@ -52,6 +53,7 @@ export function TaskReviewAiChooserView({
   reviewCard,
   showChatModal,
   showResultModal,
+  onCompletionSuccess,
   onAiModeSelect,
   onCancel,
   onNext,
@@ -96,6 +98,7 @@ export function TaskReviewAiChooserView({
         isOpen={true}
         onClose={onTaskResultClose}
         reviewCardId={reviewCardId}
+        onCompletionSuccess={onCompletionSuccess}
       />
     );
   }

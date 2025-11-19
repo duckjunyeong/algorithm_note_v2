@@ -344,6 +344,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
         reviewCardId={selectedReviewCardId}
         reviewCard={selectedReviewCard}
         onClose={onCloseTaskReviewAiChooser}
+        onCompletionSuccess={onCloseTaskReviewAiChooser}
       />
 
       {/* <ReviewResultModal

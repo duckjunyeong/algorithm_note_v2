@@ -204,6 +204,7 @@ export const useDashboardPage = () => {
   const closeTaskReviewAiChooser = () => {
     setIsTaskReviewAiChooserOpen(false);
     setSelectedReviewCardId(null);
+    fetchReviewCards();
   };
 
   const closeReviewTestChatModal = () => {

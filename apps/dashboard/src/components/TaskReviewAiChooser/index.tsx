@@ -11,6 +11,7 @@ export function TaskReviewAiChooserModal(props: UseTaskReviewAiChooserModalProps
     reviewCard,
     showChatModal,
     showResultModal,
+    onCompletionSuccess,
     handleSelectAiMode,
     handleCancel,
     handleNext,
@@ -28,6 +29,7 @@ export function TaskReviewAiChooserModal(props: UseTaskReviewAiChooserModalProps
       reviewCard={reviewCard}
       showChatModal={showChatModal}
       showResultModal={showResultModal}
+      onCompletionSuccess={onCompletionSuccess}
       onAiModeSelect={handleSelectAiMode}
       onCancel={handleCancel}
       onNext={handleNext}

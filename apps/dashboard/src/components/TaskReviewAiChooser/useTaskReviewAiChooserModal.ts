@@ -16,6 +16,7 @@ export interface UseTaskReviewAiChooserModalProps {
   reviewCardId: number | null;
   reviewCard: any | null;
   onClose: () => void;
+  onCompletionSuccess?: () => void;
 }
 
 const AI_MODE_TO_TUTOR_LEVEL: Record<AiMode, string> = {
@@ -30,6 +31,7 @@ export function useTaskReviewAiChooserModal({
   reviewCardId,
   reviewCard,
   onClose,
+  onCompletionSuccess,
 }: UseTaskReviewAiChooserModalProps) {
   const [selectedAiMode, setSelectedAiMode] = useState<AiMode | null>(null);
   const [selectedTutorLevel, setSelectedTutorLevel] = useState<string | null>(null);
@@ -108,6 +110,7 @@ export function useTaskReviewAiChooserModal({
     reviewCard,
     showChatModal,
     showResultModal,
+    onCompletionSuccess,
     handleSelectAiMode,
     handleCancel,
     handleNext,
