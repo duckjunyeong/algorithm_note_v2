@@ -66,8 +66,12 @@ export interface UpdateReviewResultRequest {
   deletedQuestionIds: number[];
   questionUpdates: Array<{
     reviewQuestionId: number;
+    questionText?: string;
     successCount: number;
     failCount: number;
+  }>;
+  addedQuestions?: Array<{
+    questionText: string;
   }>;
 }
 

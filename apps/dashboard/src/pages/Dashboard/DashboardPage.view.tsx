@@ -11,6 +11,7 @@ import { ReviewCard } from '../../../../../libs/ui-components/src/components/Rev
 import { TaskReviewAiChooserModal } from '../../components/TaskReviewAiChooser';
 import { ReviewResultModal } from './components/ReviewResultModal';
 import { ExamSheetModal } from './components/ExamSheetModal';
+import { ReviewCardSettingsModalWrapper } from './components/ReviewCardSettingsModalWrapper';
 import { AudioRecorder } from '../../components/AudioRecorder';
 import { ChatModal } from "../../components/ChatModal";
 import { TaskCreationModal } from './components/TaskCreationModal';
@@ -57,6 +58,24 @@ export interface DashboardPageViewProps {
   isExamSheetModalOpen: boolean;
   onOpenExamSheetModal: () => void;
   onCloseExamSheetModal: () => void;
+  isReviewCardSettingsModalOpen: boolean;
+  selectedSettingsReviewCardId: number | null;
+  onOpenReviewCardSettingsModal: (reviewCardId: number) => void;
+  onCloseReviewCardSettingsModal: () => void;
+  onSaveReviewCardSettings: (data: {
+    categoryId: number | null;
+    importance: number;
+    reviewCycle: number;
+    url: string;
+    deletedQuestionIds: number[];
+    questionUpdates: Array<{
+      reviewQuestionId: number;
+      questionText: string;
+    }>;
+    addedQuestions: Array<{
+      questionText: string;
+    }>;
+  }) => Promise<void>;
   onCloseConfirmModal: () => void;
   onOpenReviewMenu: () => void;
   onCloseReviewMenu: () => void;
@@ -130,6 +149,11 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
   isExamSheetModalOpen,
   onOpenExamSheetModal,
   onCloseExamSheetModal,
+  isReviewCardSettingsModalOpen,
+  selectedSettingsReviewCardId,
+  onOpenReviewCardSettingsModal,
+  onCloseReviewCardSettingsModal,
+  onSaveReviewCardSettings,
   onOpenReviewMenu,
   onCloseReviewMenu,
   onCloseTaskCreationModal,
@@ -258,7 +282,8 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                       { label: '주기', value: `${card.reviewCycle}일` },
                       { label: '반복', value: `${card.reviewCount}회` },
                     ]}
-                    onTestStart={() => onOpenTaskReviewAiChooser(card.reviewCardId)} // AiChooser컴포넌트가 true로 변경된다. 
+                    onTestStart={() => onOpenTaskReviewAiChooser(card.reviewCardId)}
+                    onSettingsClick={() => onOpenReviewCardSettingsModal(card.reviewCardId)}
                   />
                 ))
               )}
@@ -317,6 +342,7 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
                       { label: '반복', value: `${card.reviewCount}회` },
                     ]}
                     onResultView={() => onOpenReviewResultModal(card.reviewCardId)}
+                    onSettingsClick={() => onOpenReviewCardSettingsModal(card.reviewCardId)}
                   />
                 ))
               )}
@@ -404,6 +430,28 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
           onSaveCategory={onSaveCategory}
           selectedTaskType={selectedTaskType}
           selectedTaskField={taskField}
+        />
+      )}
+
+      {isReviewCardSettingsModalOpen && selectedSettingsReviewCardId && (
+        <ReviewCardSettingsModalWrapper
+          reviewCardId={selectedSettingsReviewCardId}
+          title={backlogCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.title ||
+                 completedCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.title || ''}
+          initialRepetitionCycle={backlogCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.reviewCycle ||
+                                   completedCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.reviewCycle || 7}
+          initialImportance={backlogCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.importance ||
+                             completedCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.importance || 5}
+          initialUrl={backlogCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.url ||
+                      completedCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.url || ''}
+          initialCategoryId={backlogCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.categoryId ||
+                             completedCards.find(c => c.reviewCardId === selectedSettingsReviewCardId)?.categoryId || null}
+          categories={categories}
+          isLoadingCategories={isLoadingCategories}
+          categoryError={categoryError}
+          onSave={onSaveReviewCardSettings}
+          onClose={onCloseReviewCardSettingsModal}
+          onAddCategoryClick={() => console.log('Add category clicked')}
         />
       )}
 

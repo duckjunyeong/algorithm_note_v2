@@ -21,6 +21,7 @@ export function ReviewCard({
   isActive,
   onTestStart,
   onResultView,
+  onSettingsClick,
   url,
 }: ReviewCardProps) {
   const {
@@ -31,7 +32,8 @@ export function ReviewCard({
     handleMouseLeave,
     handleButtonClick,
     handleOpenUrl,
-  } = useReviewCard({ isActive, onTestStart, onResultView, url });
+    handleSettingsClick,
+  } = useReviewCard({ isActive, onTestStart, onResultView, onSettingsClick, url });
 
   return (
     <ReviewCardView
@@ -46,6 +48,7 @@ export function ReviewCard({
       onMouseLeave={handleMouseLeave}
       onButtonClick={handleButtonClick}
       onOpenUrl={handleOpenUrl}
+      onSettingsClick={handleSettingsClick}
     />
   );
 }

@@ -3,6 +3,7 @@ import { useReviewCardStore } from '../../store/useReviewCardStore';
 import { useCategoryStore } from '../../store/useCategoryStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { categoryService } from '../../services/categoryService';
+import { ReviewCardService } from '../../services/reviewCardService';
 import { showErrorToast, showSuccessToast } from '../../utils/toast';
 import { sortBySuccessRate, sortByImportance, filterByCategory } from '../../utils/reviewCardUtils';
 
@@ -24,6 +25,8 @@ export const useDashboardPage = () => {
   const [reviewTestTutorLevel, setReviewTestTutorLevel] = useState<string | null>(null);
   const [selectedResultReviewCardId, setSelectedResultReviewCardId] = useState<number | null>(null);
   const [isExamSheetModalOpen, setIsExamSheetModalOpen] = useState<boolean>(false);
+  const [isReviewCardSettingsModalOpen, setIsReviewCardSettingsModalOpen] = useState<boolean>(false);
+  const [selectedSettingsReviewCardId, setSelectedSettingsReviewCardId] = useState<number | null>(null);
 
   const [selectedTaskType, setSelectedTaskType] = useState<'concept' | 'memorization' | 'approach'>('concept');
   const [taskField, setTaskField] = useState<string>('');
@@ -237,6 +240,62 @@ export const useDashboardPage = () => {
     setIsExamSheetModalOpen(false);
   };
 
+  const openReviewCardSettingsModal = (reviewCardId: number) => {
+    setSelectedSettingsReviewCardId(reviewCardId);
+    setIsReviewCardSettingsModalOpen(true);
+  };
+
+  const closeReviewCardSettingsModal = () => {
+    setIsReviewCardSettingsModalOpen(false);
+    setSelectedSettingsReviewCardId(null);
+  };
+
+  const handleSaveReviewCardSettings = async (data: {
+    categoryId: number | null;
+    importance: number;
+    reviewCycle: number;
+    url: string;
+    deletedQuestionIds: number[];
+    questionUpdates: Array<{
+      reviewQuestionId: number;
+      questionText: string;
+    }>;
+    addedQuestions: Array<{
+      questionText: string;
+    }>;
+  }) => {
+    if (!selectedSettingsReviewCardId) return;
+
+    try {
+      const card = backlogCards.find(c => c.reviewCardId === selectedSettingsReviewCardId) ||
+                   completedCards.find(c => c.reviewCardId === selectedSettingsReviewCardId);
+
+      await ReviewCardService.updateReviewResult(selectedSettingsReviewCardId, {
+        categoryId: data.categoryId,
+        importance: data.importance,
+        reviewCycle: data.reviewCycle,
+        url: data.url,
+        isActive: card?.isActive ?? true,
+        deletedQuestionIds: data.deletedQuestionIds,
+        questionUpdates: data.questionUpdates.map(q => ({
+          reviewQuestionId: q.reviewQuestionId,
+          questionText: q.questionText,
+          successCount: 0,
+          failCount: 0,
+        })),
+        addedQuestions: data.addedQuestions,
+      });
+
+      showSuccessToast('설정이 저장되었습니다.');
+      await fetchReviewCards();
+      closeReviewCardSettingsModal();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : '설정 저장에 실패했습니다.';
+      showErrorToast(errorMsg);
+      throw error;
+    }
+  };
+
 
   const handleCreateTask = async (data: {
     taskType: 'concept' | 'approach' | 'memorization';
@@ -308,6 +367,11 @@ export const useDashboardPage = () => {
     isExamSheetModalOpen,
     openExamSheetModal,
     closeExamSheetModal,
+    isReviewCardSettingsModalOpen,
+    selectedSettingsReviewCardId,
+    openReviewCardSettingsModal,
+    closeReviewCardSettingsModal,
+    handleSaveReviewCardSettings,
     handleSaveCategory,
     handleCreateTask,
     toggleSidebar,

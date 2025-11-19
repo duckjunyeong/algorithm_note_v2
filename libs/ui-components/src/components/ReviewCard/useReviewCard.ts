@@ -4,10 +4,11 @@ export interface UseReviewCardProps {
   isActive?: boolean;
   onTestStart?: () => void;
   onResultView?: () => void;
+  onSettingsClick?: () => void;
   url?: string;
 }
 
-export function useReviewCard({ isActive = true, onTestStart, onResultView, url }: UseReviewCardProps) {
+export function useReviewCard({ isActive = true, onTestStart, onResultView, onSettingsClick, url }: UseReviewCardProps) {
   const [isHovering, setIsHovering] = useState<boolean>(false);
 
   const handleMouseEnter = () => {
@@ -33,6 +34,12 @@ export function useReviewCard({ isActive = true, onTestStart, onResultView, url 
     }
   };
 
+  const handleSettingsClick = () => {
+    if (onSettingsClick) {
+      onSettingsClick();
+    }
+  };
+
   return {
     isHovering,
     isActive,
@@ -41,5 +48,6 @@ export function useReviewCard({ isActive = true, onTestStart, onResultView, url 
     handleMouseLeave,
     handleButtonClick,
     handleOpenUrl,
+    handleSettingsClick,
   };
 }

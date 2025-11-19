@@ -48,6 +48,11 @@ const DashboardPage: FC = () => {
     isExamSheetModalOpen,
     openExamSheetModal,
     closeExamSheetModal,
+    isReviewCardSettingsModalOpen,
+    selectedSettingsReviewCardId,
+    openReviewCardSettingsModal,
+    closeReviewCardSettingsModal,
+    handleSaveReviewCardSettings,
     handleSaveCategory,
     handleCreateTask,
     toggleSidebar,
@@ -115,6 +120,11 @@ const DashboardPage: FC = () => {
       isExamSheetModalOpen={isExamSheetModalOpen}
       onOpenExamSheetModal={openExamSheetModal}
       onCloseExamSheetModal={closeExamSheetModal}
+      isReviewCardSettingsModalOpen={isReviewCardSettingsModalOpen}
+      selectedSettingsReviewCardId={selectedSettingsReviewCardId}
+      onOpenReviewCardSettingsModal={openReviewCardSettingsModal}
+      onCloseReviewCardSettingsModal={closeReviewCardSettingsModal}
+      onSaveReviewCardSettings={handleSaveReviewCardSettings}
       onSaveCategory={handleSaveCategory}
       onCreateTask={handleCreateTask}
       selectedTaskType={selectedTaskType}

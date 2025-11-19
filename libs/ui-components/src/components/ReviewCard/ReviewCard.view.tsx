@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCircle, FiPlay, FiEye, FiExternalLink } from 'react-icons/fi';
+import { FiCircle, FiPlay, FiEye, FiExternalLink, FiSettings } from 'react-icons/fi';
 
 interface Tag {
   label: string;
@@ -20,6 +20,7 @@ export interface ReviewCardViewProps {
   onMouseLeave: () => void;
   onButtonClick: () => void;
   onOpenUrl: () => void;
+  onSettingsClick: () => void;
 }
 
 export function ReviewCardView({
@@ -34,6 +35,7 @@ export function ReviewCardView({
   onMouseLeave,
   onButtonClick,
   onOpenUrl,
+  onSettingsClick,
 }: ReviewCardViewProps) {
 
   console.log('Rendering ReviewCardView:', { id, isActive });
@@ -120,6 +122,21 @@ export function ReviewCardView({
                 문제 바로가기
               </motion.button>
             )}
+
+            <motion.button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSettingsClick();
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-2 rounded-lg px-4 py-2 bg-neutral-700 hover:bg-neutral-800 text-white font-semibold shadow-sm transition-colors"
+            >
+              <FiSettings size={16} />
+              설정
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

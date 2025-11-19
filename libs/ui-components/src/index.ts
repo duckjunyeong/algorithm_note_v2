@@ -35,3 +35,6 @@ export type { ConfirmModalViewProps } from './components/ConfirmModal/ConfirmMod
 
 export { NetworkErrorPage } from './components/NetworkErrorPage';
 export type { NetworkErrorPageViewProps } from './components/NetworkErrorPage/NetworkErrorPage.view';
+
+export { ReviewCardSettingsModal } from './components/ReviewCardSettingsModal';
+export type { ReviewCardSettingsModalProps } from './components/ReviewCardSettingsModal';
