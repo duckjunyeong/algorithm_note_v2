@@ -37,41 +37,39 @@ export const TaskResultModalView = ({
     }
 
   return (
-    <div className="fixed inset-0 z-[1050] flex items-center justify-center bg-black/50">
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-xl flex flex-col">
-        <div className="flex items-center justify-between p-6 border-b dark:border-gray-800">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              테스트 결과 평가
-            </h2>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-neutral-black bg-opacity-70">
+      <div className="relative w-full max-w-4xl max-h-[90vh] bg-white text-text-primary rounded-2xl border border-neutral-200 shadow-xl flex flex-col overflow-hidden">
+        <div className="flex justify-between items-center p-5 md:px-6 border-b border-neutral-100 flex-shrink-0">
+          <div className="flex items-center gap-3 text-lg font-semibold">
+            <span>테스트 결과 평가</span>
             {questions.length > 0 && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <span className="bg-neutral-50 text-text-tertiary text-xs font-medium px-2 py-1 rounded-lg">
                 Question {currentQuestionIndex + 1} / {questions.length}
-              </p>
+              </span>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="bg-transparent border-none text-text-secondary cursor-pointer p-2 rounded hover:bg-neutral-50 hover:text-text-primary transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X size={20} />
           </button>
         </div>
 
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center p-6">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-              <p className="mt-4 text-gray-500 dark:text-gray-400">대화 내역을 불러오는 중...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto"></div>
+              <p className="mt-4 text-text-secondary">대화 내역을 불러오는 중...</p>
             </div>
           </div>
         ) : error ? (
           <div className="flex-1 flex items-center justify-center p-6">
             <div className="text-center">
-              <p className="text-red-600 dark:text-red-400">{error}</p>
+              <p className="text-semantic-error">{error}</p>
               <button
                 onClick={onClose}
-                className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+                className="mt-4 px-4 py-2 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors text-text-primary"
               >
                 닫기
               </button>
@@ -79,13 +77,13 @@ export const TaskResultModalView = ({
           </div>
         ) : !currentQuestion ? (
           <div className="flex-1 flex items-center justify-center p-6">
-            <p className="text-gray-500 dark:text-gray-400">질문을 찾을 수 없습니다.</p>
+            <p className="text-text-secondary">질문을 찾을 수 없습니다.</p>
           </div>
         ) : (
           <>
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="flex-grow overflow-y-auto p-4 md:px-6 flex flex-col gap-6 scrollbar-thin scrollbar-thumb-neutral-200 scrollbar-track-neutral-50 hover:scrollbar-thumb-neutral-300">
+              <div className="mb-2">
+                <h3 className="text-lg font-semibold text-text-primary">
                   {currentQuestion.questionText}
                 </h3>
               </div>
@@ -99,8 +97,8 @@ export const TaskResultModalView = ({
                     <div
                       className={`max-w-[80%] rounded-lg p-4 ${
                         message.role === 'user'
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                          ? 'bg-brand text-white'
+                          : 'bg-neutral-50 text-text-primary'
                       }`}
                     >
                       <div className="text-xs font-semibold mb-2 opacity-70">
@@ -113,12 +111,12 @@ export const TaskResultModalView = ({
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 p-6 border-t dark:border-gray-800">
+            <div className="flex justify-end gap-3 p-6 border-t border-neutral-100">
               <button
                 type="button"
                 onClick={() => onEvaluate('FAILURE')}
                 disabled={isSaving || hasEvaluated}
-                className="px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="px-6 py-3 bg-semantic-error text-white rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSaving ? '저장 중...' : '실패'}
               </button>
@@ -126,7 +124,7 @@ export const TaskResultModalView = ({
                 type="button"
                 onClick={() => onEvaluate('SUCCESS')}
                 disabled={isSaving || hasEvaluated}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="px-6 py-3 bg-semantic-success text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSaving ? '저장 중...' : '성공'}
               </button>
@@ -135,7 +133,7 @@ export const TaskResultModalView = ({
                   type="button"
                   onClick={onComplete}
                   disabled={isSaving}
-                  className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="px-6 py-3 bg-brand text-white rounded-lg font-medium hover:bg-brand-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSaving ? '저장 중...' : '완료'}
                 </button>
