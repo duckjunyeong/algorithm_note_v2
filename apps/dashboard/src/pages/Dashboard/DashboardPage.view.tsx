@@ -14,6 +14,7 @@ import { ReviewCardSettingsModalWrapper } from './components/ReviewCardSettingsM
 import { ChatModal } from "../../components/ChatModal";
 import { TaskCreationModal } from './components/TaskCreationModal';
 import { NetworkErrorPage } from '../../../../../libs/ui-components/src';
+import { StreakCounter } from '../../components/StreakCounter';
 
 export interface DashboardPageViewProps {
   isSidebarOpen: boolean;
@@ -215,9 +216,9 @@ export const DashboardPageView: FC<DashboardPageViewProps> = ({
               </div>
 
           <div className="mt-6 flex flex-col gap-6 lg:flex-row">
-            <div className="flex w-full flex-col justify-between rounded-lg bg-background-secondary p-4 lg:w-1/3">
-              <h2 className="text-base font-semibold text-text-primary">스트릭</h2>
-             
+            <div className="flex w-full flex-col rounded-lg bg-background-secondary p-4 lg:w-1/3">
+              <h2 className="mb-2 text-base font-semibold text-text-primary">스트릭</h2>
+                 <StreakCounter />
             </div>
             
             <div className="flex w-full flex-col gap-4 rounded-lg bg-background-secondary p-4 lg:w-2/3">

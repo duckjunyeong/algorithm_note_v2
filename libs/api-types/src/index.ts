@@ -36,3 +36,11 @@ export type {
   TranscribeAudioRequest,
   TranscribeAudioResponse
 } from './speech-transcription.types';
+
+export type {
+  ActivityRecord,
+  StreakInfo,
+  RecordCompletionRequest,
+  RecordCompletionResponse,
+  StreakInfoResponse
+} from './activity.types';

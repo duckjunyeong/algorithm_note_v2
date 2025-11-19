@@ -4,6 +4,7 @@ import { ReviewCardService } from '../../services/reviewCardService';
 import { parseConversationByQuestions } from './utils/conversationParser';
 import type { QuestionConversation } from './utils/conversationParser';
 import { showSuccessToast, showErrorToast } from '../../utils/toast';
+import { useStreakStore } from '../../store/useStreakStore';
 
 interface UseTaskResultModalProps {
   isOpen: boolean;
@@ -25,6 +26,8 @@ export const useTaskResultModal = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [canComplete, setCanComplete] = useState<boolean>(false);
+
+  const { recordCompletion } = useStreakStore();
 
   useEffect(() => {
     if (!isOpen) {
@@ -92,6 +95,8 @@ export const useTaskResultModal = ({
         deletedQuestionIds: [],
         questionUpdates
       });
+
+      await recordCompletion();
 
       showSuccessToast('테스트 평가가 완료되었습니다! 🎉');
       onCompletionSuccess?.();
