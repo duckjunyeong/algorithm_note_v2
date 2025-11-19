@@ -159,6 +159,9 @@ export const useChatModal = ({
         tutorLevel,
         reviewCardId,
         onMessage: (content) => {
+          // 첫 메시지가 도착하면 초기 로딩 종료
+          setInitLoading(false);
+
           setMessages(prev => {
             const updated = [...prev];
             const lastMsg = updated[updated.length - 1];
@@ -216,19 +219,10 @@ export const useChatModal = ({
         try {
           await chatServiceRef.current?.subscribe();
 
-          // mode에 따라 다른 환영 메시지
-          const welcomeText = mode === 'review-test'
-            ? '안녕하세요! 테스트를 시작하겠습니다. 준비되셨나요?'
-            : '안녕하세요! 학습하신 내용을 입력해주시면 맞춤 질문을 생성해드리겠습니다.';
-
-          const welcomeMessage: Message = {
-            id: Date.now(),
-            sender: 'bot',
-            text: welcomeText,
-            isTyping: false
-          };
-          setMessages([welcomeMessage]);
-          setInitLoading(false);
+          // Backend에서 자동으로 첫 메시지를 전송하므로 환영 메시지 제거
+          // 빈 메시지 배열로 시작하고 initLoading은 첫 메시지 도착 시까지 유지
+          setMessages([]);
+          // initLoading은 onMessage 또는 onDone에서 false로 설정됨
         } catch (error) {
           console.error('Subscribe error:', error);
           toast.error('채팅 연결 중 오류가 발생했습니다.');

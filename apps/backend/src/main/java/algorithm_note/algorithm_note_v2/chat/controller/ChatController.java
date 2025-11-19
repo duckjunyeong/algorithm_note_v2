@@ -83,13 +83,64 @@ public class ChatController {
                 .data(data));
 
             log.info("SSE connection established for userId: {}", userId);
+
+            // Automatically send initial guidance message after connection
+            ChatSession session = chatSessionManager.getSessionByUserId(userId);
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String sessionId = "user-" + userId;
+                    Client client = chatSessionManager.getClient(sessionId);
+
+                    String systemPrompt = promptService.formatPrompt(
+                        taskType,
+                        userName,
+                        taskField
+                    );
+
+                    String initMessage = "질문 생성을 시작합니다.";
+                    session.addUserMessage(initMessage);
+                    chatSessionManager.updateSession(session);
+
+                    ResponseStream<GenerateContentResponse> stream =
+                        geminiStreamingService.streamResponse(client, session, systemPrompt, initMessage);
+
+                    StringBuilder fullResponse = new StringBuilder();
+                    for (GenerateContentResponse response : stream) {
+                        String chunk = geminiStreamingService.extractText(response);
+                        if (chunk != null && !chunk.isEmpty()) {
+                            fullResponse.append(chunk);
+                            emitter.send(SseEmitter.event()
+                                .name("message")
+                                .data(new ChatStreamChunkDto(chunk)));
+                        }
+                    }
+
+                    session.addAssistantMessage(fullResponse.toString());
+                    chatSessionManager.updateSession(session);
+
+                    emitter.send(SseEmitter.event()
+                        .name("done")
+                        .data(new ChatDoneEventDto(true)));
+
+                    log.info("Initial guidance message automatically sent for userId: {}", userId);
+
+                } catch (Exception e) {
+                    log.error("Failed to send initial guidance message for userId: {}", userId, e);
+                    try {
+                        emitter.completeWithError(e);
+                    } catch (Exception ex) {
+                        log.error("Failed to complete emitter with error", ex);
+                    }
+                }
+            });
+
         } catch (IOException e) {
             log.error("Failed to send connected event", e);
             emitter.completeWithError(e);
         }
 
         return emitter;
-    }
+    } 
 
     @PostMapping("/message")
     public void sendMessage(
@@ -207,6 +258,61 @@ public class ChatController {
                 .data(data));
 
             log.info("SSE test connection established for userId: {}", userId);
+
+            // Automatically send first question after connection
+            ChatSession session = chatSessionManager.getSessionByUserId(userId);
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String sessionId = "user-" + userId;
+                    Client client = chatSessionManager.getClient(sessionId);
+
+                    List<String> questionTexts = questionInfos.stream()
+                        .map(ChatSession.ReviewQuestionInfo::getQuestionText)
+                        .collect(Collectors.toList());
+
+                    String systemPrompt = promptService.formatTestPrompt(
+                        tutorLevel,
+                        userName,
+                        questionTexts
+                    );
+
+                    String initMessage = "테스트를 시작합니다.";
+                    session.addUserMessage(initMessage);
+                    chatSessionManager.updateSession(session);
+
+                    ResponseStream<GenerateContentResponse> stream =
+                        geminiStreamingService.streamResponse(client, session, systemPrompt, initMessage);
+
+                    StringBuilder fullResponse = new StringBuilder();
+                    for (GenerateContentResponse response : stream) {
+                        String chunk = geminiStreamingService.extractText(response);
+                        if (chunk != null && !chunk.isEmpty()) {
+                            fullResponse.append(chunk);
+                            emitter.send(SseEmitter.event()
+                                .name("message")
+                                .data(new ChatStreamChunkDto(chunk)));
+                        }
+                    }
+
+                    session.addAssistantMessage(fullResponse.toString());
+                    chatSessionManager.updateSession(session);
+
+                    emitter.send(SseEmitter.event()
+                        .name("done")
+                        .data(new ChatDoneEventDto(true)));
+
+                    log.info("First question automatically sent for userId: {}", userId);
+
+                } catch (Exception e) {
+                    log.error("Failed to send initial question for userId: {}", userId, e);
+                    try {
+                        emitter.completeWithError(e);
+                    } catch (Exception ex) {
+                        log.error("Failed to complete emitter with error", ex);
+                    }
+                }
+            });
+
         } catch (IOException e) {
             log.error("Failed to send connected event", e);
             emitter.completeWithError(e);
