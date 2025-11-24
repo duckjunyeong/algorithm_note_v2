@@ -162,8 +162,20 @@ public class JwtVerificationService {
         Object exp = payload.get("exp");
         if (exp instanceof Number) {
             long expiration = ((Number) exp).longValue();
-            if (Instant.now().getEpochSecond() >= expiration) {
-                throw new JwtVerificationException("JWT token has expired");
+            long currentTime = Instant.now().getEpochSecond();
+            long leeway = clerkJwtProperties.getExpirationLeewaySeconds();
+
+            // Add configurable leeway for testing environments
+            if (currentTime >= (expiration + leeway)) {
+                throw new JwtVerificationException(
+                    String.format("JWT token has expired (exp: %d, now: %d, leeway: %d seconds)",
+                        expiration, currentTime, leeway)
+                );
+            }
+
+            if (leeway > 0) {
+                log.debug("Token expiration validation with {}s leeway (exp: {}, now: {})",
+                    leeway, expiration, currentTime);
             }
         }
 

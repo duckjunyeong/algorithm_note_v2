@@ -19,6 +19,8 @@ public class ClerkJwtProperties {
 
     private long jwksCacheExpirationSeconds = 3600;
 
+    private long expirationLeewaySeconds = 0;
+
     public String getJwksUrl() {
         if (instanceDomain == null || instanceDomain.trim().isEmpty()) {
             throw new IllegalStateException("Clerk instance domain is not configured");

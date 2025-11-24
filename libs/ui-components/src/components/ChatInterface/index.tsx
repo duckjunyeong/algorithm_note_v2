@@ -28,7 +28,7 @@ export function ChatInterface(props: ChatInterfaceProps) {
       isProcessingAudio={isProcessingAudio}
       messages={props.messages}
       isBotTyping={props.isBotTyping}
-      messagesEndRef={messagesEndRef}
+      messagesEndRef={messagesEndRef as React.RefObject<HTMLDivElement>}
       onSendMessage={handleSendMessage}
       onKeyPress={handleKeyPress}
       onMicClick={handleMicClick}

@@ -27,16 +27,42 @@ public class GeminiStreamingService {
         String systemPrompt,
         String userMessage) {
 
+        // Client 상태 진단
+        log.info("=== Gemini API Call Diagnostics ===");
+        log.info("Session: {}", session.getSessionId());
+        log.info("Model: {}", MODEL_ID);
+        log.info("Client object: {}", client != null ? "NOT NULL" : "NULL");
+
+        if (client != null) {
+            // Client 객체의 내부 상태 확인
+            try {
+                log.info("Client class: {}", client.getClass().getName());
+                log.info("Client toString: {}", client.toString());
+            } catch (Exception e) {
+                log.warn("Could not inspect client: {}", e.getMessage());
+            }
+        }
+
         GenerateContentConfig config = GenerateContentConfig.builder()
             .systemInstruction(Content.fromParts(Part.fromText(systemPrompt)))
             .build();
 
         List<Content> conversationContents = buildConversationHistory(session, userMessage);
 
-        log.debug("Streaming response for session: {} with {} messages",
-            session.getSessionId(), conversationContents.size());
+        log.info("Conversation history size: {} messages", conversationContents.size());
+        log.info("System prompt length: {} characters", systemPrompt != null ? systemPrompt.length() : 0);
+        log.info("Calling generateContentStream...");
 
-        return client.models.generateContentStream(MODEL_ID, conversationContents, config);
+        try {
+            ResponseStream<GenerateContentResponse> stream =
+                client.models.generateContentStream(MODEL_ID, conversationContents, config);
+            log.info("✅ Stream created successfully");
+            return stream;
+        } catch (Exception e) {
+            log.error("❌ Failed to create stream: {}", e.getMessage());
+            log.error("Exception type: {}", e.getClass().getName());
+            throw e;
+        }
     }
 
     private List<Content> buildConversationHistory(ChatSession session, String userMessage) {

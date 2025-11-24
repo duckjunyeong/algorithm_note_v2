@@ -9,8 +9,6 @@ export function ReviewFlowModal(props: UseReviewFlowModalProps) {
     selectedTutorLevel,
     reviewCardId,
     reviewCard,
-    handleSelectAiMode,
-    handleProceedToTest,
     handleBackToAiSelection,
     handleClose,
     isOpen,
@@ -24,8 +22,6 @@ export function ReviewFlowModal(props: UseReviewFlowModalProps) {
       selectedTutorLevel={selectedTutorLevel}
       reviewCardId={reviewCardId}
       reviewCard={reviewCard}
-      onSelectAiMode={handleSelectAiMode}
-      onProceedToTest={handleProceedToTest}
       onBackToAiSelection={handleBackToAiSelection}
       onClose={handleClose}
     />

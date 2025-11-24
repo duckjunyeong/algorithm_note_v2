@@ -1,8 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiX, FiChevronLeft } from 'react-icons/fi';
-import { Brain, GraduationCap, Award } from 'lucide-react';
 import type { ReviewFlowView } from './useReviewFlowModal';
-import type { AiMode, AiModeOption } from '../../../../components/TaskReviewAiChooser/useTaskReviewAiChooserModal';
+import type { AiMode } from '../../../../components/TaskReviewAiChooser/useTaskReviewAiChooserModal';
 import { TaskReviewAiChooserModal } from '../../../../components/TaskReviewAiChooser';
 import { TestView } from './views/TestView';
 import { ChatModal } from '../../../../components/ChatModal';
@@ -14,35 +13,9 @@ export interface ReviewFlowModalViewProps {
   selectedTutorLevel: string | null;
   reviewCardId: number | null;
   reviewCard: any | null;
-  onSelectAiMode: (modeId: string) => void;
-  onProceedToTest: () => void;
   onBackToAiSelection: () => void;
   onClose: () => void;
 }
-
-const AI_MODE_OPTIONS: AiModeOption[] = [
-  {
-    id: 'beginner-tutor',
-    title: '입문 튜터',
-    description: '생성된 질문들과 관련된 분야에 대해서 무지한 AI Model입니다.',
-    icon: <Brain size={24} />,
-    iconBgClass: 'bg-green-100 text-green-600',
-  },
-  {
-    id: 'advanced-tutor',
-    title: '학부생 튜터',
-    description: '관련된 분야에 대해서 학부생 수준 AI Model입니다.',
-    icon: <GraduationCap size={24} />,
-    iconBgClass: 'bg-blue-100 text-blue-600',
-  },
-  {
-    id: 'prof-tutor',
-    title: '교수 튜터',
-    description: '생성된 질문들과 관련된 분야에 대해서 교수 수준 AI Model입니다.',
-    icon: <Award size={24} />,
-    iconBgClass: 'bg-purple-100 text-purple-600',
-  },
-];
 
 export function ReviewFlowModalView({
   isOpen,
@@ -51,8 +24,6 @@ export function ReviewFlowModalView({
   selectedTutorLevel,
   reviewCardId,
   reviewCard,
-  onSelectAiMode,
-  onProceedToTest,
   onBackToAiSelection,
   onClose,
 }: ReviewFlowModalViewProps) {
@@ -73,35 +44,6 @@ export function ReviewFlowModalView({
     );
   }
 
-  const slideVariants = {
-    enterFromRight: {
-      x: '100%',
-      opacity: 0,
-    },
-    enterFromLeft: {
-      x: '-100%',
-      opacity: 0,
-    },
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exitToRight: {
-      x: '100%',
-      opacity: 0,
-    },
-    exitToLeft: {
-      x: '-100%',
-      opacity: 0,
-    },
-  };
-
-  const transition = {
-    type: 'spring',
-    stiffness: 300,
-    damping: 30,
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="absolute inset-0" onClick={onClose} />
@@ -116,11 +58,10 @@ export function ReviewFlowModalView({
             onClick={(e) => e.stopPropagation()}
           >
             <TaskReviewAiChooserModal
-              aiModes={AI_MODE_OPTIONS}
-              selectedAiModeId={selectedAiMode}
-              onAiModeSelect={onSelectAiMode}
-              onCancel={onClose}
-              onNext={onProceedToTest}
+              isOpen={true}
+              reviewCardId={reviewCardId}
+              reviewCard={reviewCard}
+              onClose={onClose}
             />
           </motion.div>
         ) : (

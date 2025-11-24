@@ -4,6 +4,9 @@ spring:
   application:
     name: algorithm_note_v2
   datasource:
+    hikari:
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
     url: jdbc:mysql://localhost:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
     username: root
     password: ${SPRING_DATASOURCE_PASSWORD:4592}
@@ -35,12 +38,15 @@ clerk:
     secret: ${CLERK_WEBHOOK_SECRET}
     max-timestamp-diff: ${CLERK_WEBHOOK_MAX_TIMESTAMP_DIFF:300}
   secret:
-    key: ${CLERK_SECRET_KEY}
+    key: ${CLERK_SECRET_KEY}`
   api-secret: ${clerk.secret.key}
   jwt:
     instance-domain: ${CLERK_INSTANCE_DOMAIN:stable-yeti-70.clerk.accounts.dev}
     issuer: ${CLERK_JWT_ISSUER:https://stable-yeti-70.clerk.accounts.dev}
     jwks-cache-expiration-seconds: ${CLERK_JWKS_CACHE_EXPIRATION:3600}
+    # Expiration leeway in seconds for testing environments (0 = disabled)
+    # WARNING: Only use in development/testing - NOT in production
+    expiration-leeway-seconds: ${CLERK_JWT_EXPIRATION_LEEWAY:3600}
 
 gcs:
   bucket:
@@ -50,16 +56,15 @@ ai:
   api:
     key: ${AI_API_KEY}
 
-
   prompt:
     memorization-question-generator: |
       # System Variables
-      # These variables are provided at runtime via String.format():
-      # - User Name: %s (1st parameter - user's name for personalization)
-      # - Domain/Field: %s (2nd parameter - learning domain, may be "NULL")
+      # These variables are provided at runtime and replaced in the prompt template:
+      # - User Name: {{USER_NAME}} - user's name for personalization
+      # - Domain/Field: {{DOMAIN}} - learning domain, may be "NULL"
       #
-      # Usage in prompt: Reference these variables as USER_NAME and DOMAIN throughout the prompt.
-      # The AI should use these variable names (e.g., "USER_NAME님", "DOMAIN 분야") when generating responses.
+      # Usage in prompt: Reference these variables as {{USER_NAME}} and {{DOMAIN}} throughout the prompt.
+      # The AI should use these variable names (e.g., "{{USER_NAME}}님", "{{DOMAIN}} 분야") when generating responses.
 
       Persona:
         name: '학습 내용 검증 질문 생성 AI'
@@ -111,7 +116,7 @@ ai:
               - "핵심 사실 추출: 암기할 수 있는 구체적이고 명확한 '사실(Fact)' 단위로 분해합니다."
             output:
               description: "추출된 핵심 사항 목록과 함께 사용자에게 어떤 항목에 대해 암기 질문을 만들지 선택하도록 요청하는 마크다운 형식의 메시지를 직접 출력합니다."
-              example_message_domain_exists: "**USER_NAME**님이 학습하신 헬스 분야의 '삼두근'에 대한 내용이군요.\n이 중에서 암기할 만한 핵심 사항을 다음과 같이 정리해 봤어요.\n\n## ✅ 암기할 핵심 사항\n\n1. 삼두근을 구성하는 근육의 총 개수\n2. 삼두근에서 가장 큰 부위를 차지하는 근육\n3. 삼두근을 구성하는 3가지 근육의 이름\n\n**선택 방법:** 번호를 클릭하거나 수정사항을 입력해주세요."
+              example_message_domain_exists: "**{{USER_NAME}}**님이 학습하신 헬스 분야의 '삼두근'에 대한 내용이군요.\n이 중에서 암기할 만한 핵심 사항을 다음과 같이 정리해 봤어요.\n\n## ✅ 암기할 핵심 사항\n\n1. 삼두근을 구성하는 근육의 총 개수\n2. 삼두근에서 가장 큰 부위를 차지하는 근육\n3. 삼두근을 구성하는 3가지 근육의 이름\n\n**선택 방법:** 번호를 클릭하거나 수정사항을 입력해주세요."
               example_message_domain_null: "**{{USER_NAME}}**님이 학습하신 '삼두근'에 대한 내용이군요.\n이 중에서 암기할 만한 핵심 사항을 다음과 같이 정리해 봤어요.\n\n## ✅ 암기할 핵심 사항\n\n1. 삼두근을 구성하는 근육의 총 개수\n2. 삼두근에서 가장 큰 부위를 차지하는 근육\n3. 삼두근을 구성하는 3가지 근육의 이름\n\n**선택 방법:** 번호를 클릭하거나 수정사항을 입력해주세요."
       
         - Step2_HandlingUserResponse:
@@ -169,12 +174,12 @@ ai:
       
     concept-question-generator: |
       # System Variables
-      # These variables are provided at runtime via String.format():
-      # - User Name: %s (1st parameter - user's name for personalization)
-      # - Domain/Field: %s (2nd parameter - learning domain, may be "NULL")
+      # These variables are provided at runtime and replaced in the prompt template:
+      # - User Name: {{USER_NAME}} - user's name for personalization
+      # - Domain/Field: {{DOMAIN}} - learning domain, may be "NULL"
       #
-      # Usage in prompt: Reference these variables as USER_NAME and DOMAIN throughout the prompt.
-      # The AI should use these variable names (e.g., "USER_NAME님", "DOMAIN 분야") when generating responses.
+      # Usage in prompt: Reference these variables as {{USER_NAME}} and {{DOMAIN}} throughout the prompt.
+      # The AI should use these variable names (e.g., "{{USER_NAME}}님", "{{DOMAIN}} 분야") when generating responses.
 
       Persona:
         name: '학습 원리 분석가'
@@ -225,8 +230,8 @@ ai:
               - "핵심 원리/개념 추출: 암기할 '사실(Fact)'이 아닌, **'원인', '배경', '이유', '목적'**을 파악할 수 있는 핵심 주제(Topic) 단위로 분해합니다."
             output:
               description: "추출된 핵심 원리/개념 주제 목록과 함께 사용자에게 어떤 주제에 대해 심층 질문을 만들지 선택하도록 요청하는 마크다운 형식의 메시지를 직접 출력합니다."
-              example_message_domain_exists: "**USER_NAME**님이 학습하신 컴퓨터 공학 분야의 'CORS와 SOP'에 대한 내용이군요.\n이 중에서 원리를 파악해 볼 만한 핵심 주제를 다음과 같이 정리해 봤어요.\n\n## ✅ 원리 탐구 주제\n\n1. SOP 정책이 통신을 금지했던 이유 (보안적 배경)\n2. CORS 정책이 필요한 이유 (도메인 간 통신 목적)\n3. SOP와 CORS의 작동 원리\n\n**선택 방법:** 번호를 클릭하거나 수정사항을 입력해주세요."
-              example_message_domain_null: "**USER_NAME**님이 학습하신 'CORS와 SOP'에 대한 내용이군요.\n이 중에서 원리를 파악해 볼 만한 핵심 주제를 다음과 같이 정리해 봤어요.\n\n## ✅ 원리 탐구 주제\n\n1. SOP 정책이 통신을 금지했던 이유 (보안적 배경)\n2. CORS 정책이 필요한 이유 (도메인 간 통신 목적)\n3. SOP와 CORS의 작동 원리\n\n**선택 방법:** 번호를 클릭하거나 수정사항을 입력해주세요."
+              example_message_domain_exists: "**{{USER_NAME}}**님이 학습하신 컴퓨터 공학 분야의 'CORS와 SOP'에 대한 내용이군요.\n이 중에서 원리를 파악해 볼 만한 핵심 주제를 다음과 같이 정리해 봤어요.\n\n## ✅ 원리 탐구 주제\n\n1. SOP 정책이 통신을 금지했던 이유 (보안적 배경)\n2. CORS 정책이 필요한 이유 (도메인 간 통신 목적)\n3. SOP와 CORS의 작동 원리\n\n**선택 방법:** 번호를 클릭하거나 수정사항을 입력해주세요."
+              example_message_domain_null: "**{{USER_NAME}}**님이 학습하신 'CORS와 SOP'에 대한 내용이군요.\n이 중에서 원리를 파악해 볼 만한 핵심 주제를 다음과 같이 정리해 봤어요.\n\n## ✅ 원리 탐구 주제\n\n1. SOP 정책이 통신을 금지했던 이유 (보안적 배경)\n2. CORS 정책이 필요한 이유 (도메인 간 통신 목적)\n3. SOP와 CORS의 작동 원리\n\n**선택 방법:** 번호를 클릭하거나 수정사항을 입력해주세요."
 
         - Step2_HandlingUserResponse:
             trigger: "Step1에서 제시된 리스트에 대해 사용자가 응답했을 때."
@@ -284,12 +289,12 @@ ai:
 
     approach-question-generator: |
       # System Variables
-      # These variables are provided at runtime via String.format():
-      # - User Name: %s (1st parameter - user's name for personalization)
-      # - Domain/Field: %s (2nd parameter - learning domain, may be "NULL")
+      # These variables are provided at runtime and replaced in the prompt template:
+      # - User Name: {{USER_NAME}} - user's name for personalization
+      # - Domain/Field: {{DOMAIN}} - learning domain, may be "NULL"
       #
-      # Usage in prompt: Reference these variables as USER_NAME and DOMAIN throughout the prompt.
-      # The AI should use these variable names (e.g., "USER_NAME님", "DOMAIN 분야") when generating responses.
+      # Usage in prompt: Reference these variables as {{USER_NAME}} and {{DOMAIN}} throughout the prompt.
+      # The AI should use these variable names (e.g., "{{USER_NAME}}님", "{{DOMAIN}} 분야") when generating responses.
 
       Persona:
         name: '문제 상황 역설계 AI'
@@ -718,6 +723,11 @@ ai:
             ## 🤔 질문 [3/5]
             (세 번째 질문 제시...)
       input_placeholder: "사용자 이름: {{USER_NAME}}\n다음은 복습할 질문 목록입니다. 이 목록을 기반으로 위의 프롬프트 지시에 따라 대화를 시작하라.\nInput: {{REVIEW_QUESTIONS}}"
+
+google:
+  api:
+    key: ${GOOGLE_API_KEY}
+
 server:
   port: 8080
   tomcat:

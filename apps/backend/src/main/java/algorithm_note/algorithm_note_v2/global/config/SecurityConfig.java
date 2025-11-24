@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
             )
             .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/api/test/health").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )

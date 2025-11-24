@@ -21,27 +21,40 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: algornote-redis-prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data-prod:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
   app:
-    build:
-      context: .
-      args:
-        VITE_DASHBOARD_URL: ${VITE_DASHBOARD_URL}
-        VITE_LANDING_URL: ${VITE_LANDING_URL}
-        VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY}
-        VITE_CLERK_SIGN_IN_URL: ${VITE_CLERK_SIGN_IN_URL}
-        VITE_CLERK_SIGN_UP_URL: ${VITE_CLERK_SIGN_UP_URL}
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-        VITE_MIN_REPEAT_CYCLE_MS: ${VITE_MIN_REPEAT_CYCLE_MS}
+    image: junan01/synapse:vl1.6
     container_name: algornote-app-prod
+    ports:
+      - "8080:8080"
     env_file:
-      - ./apps/backend/.env
+      - ./.env.production
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/algornote?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: rootpassword
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - app-network
@@ -66,3 +79,4 @@ networks:
 
 volumes:
   mysql-data-prod:
+  redis-data-prod:

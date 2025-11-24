@@ -1,6 +1,5 @@
 
 import { create } from 'zustand';
-import type { StreakInfo } from '../../../../libs/api-types/src';
 import { ActivityService } from '../services/activityService';
 import { getTodayDateString } from '../../../../libs/core-logic/src';
 

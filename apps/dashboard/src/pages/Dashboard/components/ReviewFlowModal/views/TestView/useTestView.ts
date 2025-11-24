@@ -160,7 +160,7 @@ export function useTestView({ reviewCardId, reviewCard, selectedAiMode, onClose 
         questionId: currentQuestion.reviewQuestionId,
         content: answerContent,
         evaluationResult: result,
-        aiMode: selectedAiMode || undefined
+        aiMode: (selectedAiMode === 'normal-tutor' ? undefined : selectedAiMode) || undefined
       });
 
       setQuestionResults(prev => {

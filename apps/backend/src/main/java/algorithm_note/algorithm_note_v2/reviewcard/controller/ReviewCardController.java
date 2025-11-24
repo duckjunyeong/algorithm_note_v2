@@ -54,7 +54,9 @@ public class ReviewCardController {
 
         log.info("Found {} review cards for user", reviewCards.size());
 
-        log.info("ReviewCard: {}", reviewCards.get(0).getReviewQuestions());
+        if (!reviewCards.isEmpty()) {
+            log.info("First ReviewCard questions: {}", reviewCards.get(0).getReviewQuestions());
+        }
         return ResponseEntity.ok(reviewCards);
     }
 

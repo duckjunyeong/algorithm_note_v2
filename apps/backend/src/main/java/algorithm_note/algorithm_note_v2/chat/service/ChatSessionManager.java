@@ -20,8 +20,8 @@ public class ChatSessionManager {
 
     private final ChatSessionRepository chatSessionRepository;
 
-    @Value("${ai.api.key}")
-    private String apiKey;
+    // Google Gemini SDK는 GOOGLE_API_KEY 환경변수를 자동으로 읽습니다.
+    // @Value 어노테이션으로 주입하는 대신 SDK의 기본 동작을 사용합니다.
 
     private final ConcurrentHashMap<String, Client> clientCache = new ConcurrentHashMap<>();
 
@@ -34,9 +34,32 @@ public class ChatSessionManager {
             deleteSession(sessionId);
         }
 
-        Client client = Client.builder().apiKey(apiKey).build();
-        clientCache.put(sessionId, client);
-        log.info("Created Gemini Client for session: {}", sessionId);
+        // API Key 진단 로깅
+        logApiKeyDiagnostics("createSession");
+
+        log.info("Building Gemini Client using GOOGLE_API_KEY environment variable");
+        Client client;
+        try {
+            // API 키를 환경변수에서 읽어서 명시적으로 전달
+            String apiKey = System.getenv("GOOGLE_API_KEY");
+            if (apiKey == null || apiKey.isEmpty()) {
+                throw new IllegalStateException("GOOGLE_API_KEY environment variable is not set");
+            }
+            log.info("GOOGLE_API_KEY found: {}****", apiKey.substring(0, 4));
+
+            // SDK에 API 키를 명시적으로 전달
+            client = Client.builder().apiKey(apiKey).build();
+            log.info("✅ Client created with API key");
+            log.info("Client object created: {}", client != null ? "NOT NULL" : "NULL");
+
+            clientCache.put(sessionId, client);
+            log.info("Created Gemini Client for session: {}", sessionId);
+        } catch (Exception e) {
+            log.error("❌ Failed to create Gemini Client: {}", e.getMessage());
+            log.error("Exception type: {}", e.getClass().getName());
+            log.error("Hint: Make sure GOOGLE_API_KEY environment variable is set");
+            throw e;
+        }
 
         ChatSession session = ChatSession.builder()
                 .sessionId(sessionId)
@@ -61,9 +84,32 @@ public class ChatSessionManager {
             deleteSession(sessionId);
         }
 
-        Client client = Client.builder().apiKey(apiKey).build();
-        clientCache.put(sessionId, client);
-        log.info("Created Gemini Client for test session: {}", sessionId);
+        // API Key 진단 로깅
+        logApiKeyDiagnostics("createTestSession");
+
+        log.info("Building Gemini Client for test session using GOOGLE_API_KEY environment variable");
+        Client client;
+        try {
+            // API 키를 환경변수에서 읽어서 명시적으로 전달
+            String apiKey = System.getenv("GOOGLE_API_KEY");
+            if (apiKey == null || apiKey.isEmpty()) {
+                throw new IllegalStateException("GOOGLE_API_KEY environment variable is not set");
+            }
+            log.info("GOOGLE_API_KEY found: {}****", apiKey.substring(0, 4));
+
+            // SDK에 API 키를 명시적으로 전달
+            client = Client.builder().apiKey(apiKey).build();
+            log.info("✅ Client created with API key for test session");
+            log.info("Client object created: {}", client != null ? "NOT NULL" : "NULL");
+
+            clientCache.put(sessionId, client);
+            log.info("Created Gemini Client for test session: {}", sessionId);
+        } catch (Exception e) {
+            log.error("❌ Failed to create Gemini Client for test session: {}", e.getMessage());
+            log.error("Exception type: {}", e.getClass().getName());
+            log.error("Hint: Make sure GOOGLE_API_KEY environment variable is set");
+            throw e;
+        }
 
         ChatSession session = ChatSession.builder()
                 .sessionId(sessionId)
@@ -154,5 +200,56 @@ public class ChatSessionManager {
 
         log.info("Retrieved session for reviewCardId: {} and userId: {}", reviewCardId, userId);
         return session;
+    }
+
+    /**
+     * API Key 로딩 상태를 진단하고 로그를 출력하는 메서드
+     */
+    private void logApiKeyDiagnostics(String context) {
+        log.info("=== [{}] API Key Diagnostics ===", context);
+
+        // 1. GOOGLE_API_KEY 환경변수 확인 (SDK가 사용하는 표준 환경변수)
+        String googleApiKey = System.getenv("GOOGLE_API_KEY");
+        log.info("1. Environment Variable GOOGLE_API_KEY (used by SDK):");
+        if (googleApiKey != null) {
+            log.info("   ✅ FOUND");
+            log.info("   - Length: {}", googleApiKey.length());
+            log.info("   - Preview: {}****", googleApiKey.length() > 4 ? googleApiKey.substring(0, 4) : "TOO_SHORT");
+
+            // API 키 형식 검증
+            if (googleApiKey.length() < 20) {
+                log.warn("   ⚠️  WARNING: API key seems too short");
+            }
+            if (!googleApiKey.startsWith("AIza")) {
+                log.warn("   ⚠️  WARNING: Google Gemini API keys typically start with 'AIza'");
+            }
+        } else {
+            log.error("   ❌ NOT FOUND - GOOGLE_API_KEY environment variable is not set!");
+            log.error("   - This will cause Gemini API calls to fail");
+            log.error("   - Set GOOGLE_API_KEY in docker-compose.prod.yml");
+        }
+
+        // 2. AI_API_KEY 환경변수 확인 (레거시, 참고용)
+        String aiApiKey = System.getenv("AI_API_KEY");
+        log.info("2. Environment Variable AI_API_KEY (legacy):");
+        if (aiApiKey != null) {
+            log.info("   ✅ Found (length: {})", aiApiKey.length());
+            // GOOGLE_API_KEY와 비교
+            if (googleApiKey != null && !googleApiKey.equals(aiApiKey)) {
+                log.warn("   ⚠️  WARNING: AI_API_KEY and GOOGLE_API_KEY have different values!");
+            }
+        } else {
+            log.info("   - Not set (this is OK, GOOGLE_API_KEY is used instead)");
+        }
+
+        // 3. 최종 상태
+        log.info("3. Status Summary:");
+        if (googleApiKey != null && googleApiKey.length() > 20) {
+            log.info("   ✅ READY - Gemini API calls should work");
+        } else {
+            log.error("   ❌ NOT READY - Gemini API calls will fail");
+        }
+
+        log.info("=== End of API Key Diagnostics ===");
     }
 }

@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useReviewCardStore } from '../../store/useReviewCardStore';
 import { useCategoryStore } from '../../store/useCategoryStore';
-import { useAuthStore } from '../../store/useAuthStore';
 import { categoryService } from '../../services/categoryService';
 import { ReviewCardService } from '../../services/reviewCardService';
 import { showErrorToast, showSuccessToast } from '../../utils/toast';

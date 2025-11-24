@@ -111,8 +111,22 @@ public class PromptService {
     private String replaceTemplateVariables(String template, Map<String, String> variables) {
         String result = template;
         for (Map.Entry<String, String> entry : variables.entrySet()) {
-            result = result.replace("{{" + entry.getKey() + "}}", entry.getValue());
+            String placeholder = "{{" + entry.getKey() + "}}";
+            String value = entry.getValue();
+
+            if (result.contains(placeholder)) {
+                result = result.replace(placeholder, value);
+                log.debug("Replaced template variable: {} -> {}", placeholder, value);
+            } else {
+                log.warn("Template variable not found in prompt: {}", placeholder);
+            }
         }
+
+        // Check for any remaining unreplaced variables
+        if (result.contains("{{") && result.contains("}}")) {
+            log.warn("Prompt still contains unreplaced template variables. Please check the template format.");
+        }
+
         return result;
     }
 }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { ConfirmModal } from '../ConfirmModal';
 
 interface Question {
   reviewQuestionId: number;

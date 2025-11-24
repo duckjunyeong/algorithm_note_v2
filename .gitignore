@@ -1,7 +1,11 @@
 # Dependencies
 /node_modules
 **/*/node_modules
-
+CLAUDE.md
+*.sql
+.claude
+rules
+implement-docs
 # Build output
 /dist
 **/*/dist
@@ -9,6 +13,7 @@
 **/*/build
 /out
 **/*/out
+
 
 # IDE configuration
 .idea/

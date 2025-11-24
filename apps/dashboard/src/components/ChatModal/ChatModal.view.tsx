@@ -21,7 +21,6 @@ interface ChatModalViewProps {
   messages: MessageProps[];
   inputValue: string;
   loading: boolean;
-  initLoading: boolean;
   connectionState: 'connecting' | 'connected' | 'error';
   sessionId: string | null;
   chatAreaRef: React.RefObject<HTMLDivElement | null>;
@@ -57,7 +56,6 @@ export const ChatModalView: React.FC<ChatModalViewProps> = ({
   messages,
   inputValue,
   loading,
-  initLoading,
   connectionState,
   sessionId,
   chatAreaRef,

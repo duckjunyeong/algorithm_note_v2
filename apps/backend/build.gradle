@@ -44,7 +44,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-thymeleaf:4.0.0-M2")
 
 
-	implementation 'com.microsoft.playwright:playwright:1.41.0'
+	implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.11.1'
 	implementation 'com.github.alexdlaird:java-ngrok:2.3.16'
 	implementation "com.svix:svix:1.76.1"
 	compileOnly 'org.projectlombok:lombok'
