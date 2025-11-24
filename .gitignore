@@ -17,7 +17,8 @@ implement-docs
 .env.production
 ngix.conf
 ngix.prod.conf
-
+docker-build.sh
+docker-build.bat
 # IDE configuration
 .idea/
 .vscode/

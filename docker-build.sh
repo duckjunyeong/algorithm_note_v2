@@ -44,7 +44,7 @@ echo "🐳 Building Docker image: synapse:latest"
 echo "(with production environment variables from .env.production)"
 echo ""
 
-# Build Docker image with production environment variables
+
 docker build \
   --build-arg VITE_DASHBOARD_URL=http://localhost/dashboard \
   --build-arg VITE_LANDING_URL=http://localhost \
